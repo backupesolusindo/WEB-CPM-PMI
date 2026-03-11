@@ -1,0 +1,522 @@
+[07-Dec-2018 12:18:31 UTC] PHP Fatal error:  Cannot redeclare Login::coba() in /home/u5221572/public_html/e-cafe/application/controllers/Login.php on line 86
+[08-Dec-2018 22:41:06 UTC] PHP Fatal error:  Cannot redeclare Barang::input() in /home/u5221572/public_html/e-cafe/application/controllers/Barang.php on line 59
+[11-Dec-2018 17:03:30 UTC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/u5221572/public_html/e-cafe/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[21-Dec-2018 09:07:07 UTC] PHP Fatal error:  'break' not in the 'loop' or 'switch' context in /home/u5221572/public_html/e-cafe/application/controllers/Billing.php on line 93
+[22-Dec-2018 09:53:30 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home/u5221572/public_html/e-cafe/application/views/Billing/Transaksi/transaksi.php on line 35
+[22-Dec-2018 09:54:15 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in /home/u5221572/public_html/e-cafe/application/views/Billing/Transaksi/transaksi.php on line 35
+[24-Jan-2019 06:17:22 UTC] PHP Fatal error:  require(): Failed opening required '/home/u5221572/public_html/e-cafe/application/controllers/vendor/autoload.php' (include_path='.:/opt/alt/php70/usr/share/pear') in /home/u5221572/public_html/e-cafe/application/controllers/Billing.php on line 3
+[24-Jan-2019 06:17:38 UTC] PHP Fatal error:  require(): Failed opening required '/vendor/autoload.php' (include_path='.:/opt/alt/php70/usr/share/pear') in /home/u5221572/public_html/e-cafe/application/controllers/Billing.php on line 3
+[24-Jan-2019 06:17:54 UTC] PHP Fatal error:  require(): Failed opening required '/home/u5221572/public_html/e-cafe/application/controllers../../vendor/autoload.php' (include_path='.:/opt/alt/php70/usr/share/pear') in /home/u5221572/public_html/e-cafe/application/controllers/Billing.php on line 3
+[09-Jun-2022 11:17:11 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[12-Jul-2022 12:34:21 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[12-Jul-2022 12:34:51 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[12-Jul-2022 12:35:21 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[13-Jul-2022 11:13:03 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Absensi::approval() in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/application/controllers/Absensi.php on line 218
+[25-Nov-2022 06:50:21 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[25-Nov-2022 06:50:51 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[25-Nov-2022 06:51:21 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[02-Jan-2023 13:43:18 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[02-Jan-2023 13:43:48 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[15-Mar-2023 08:08:53 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 300 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 210
+[15-Mar-2023 08:13:53 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 300 seconds exceeded in /home/lkmbkdsi/public_html/SUBDOMAIN/presensi.lkmbkdsitubondo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[27-Feb-2025 21:19:10 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::delete() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 102
+[27-Feb-2025 21:19:41 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::delete() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 102
+[27-Feb-2025 21:27:09 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::delete() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 102
+[27-Feb-2025 21:27:36 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::delete() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 102
+[27-Feb-2025 21:27:38 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::delete() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 102
+[27-Feb-2025 23:21:57 Asia/Jakarta] PHP Fatal error:  Allowed memory size of 1073741824 bytes exhausted (tried to allocate 16384 bytes) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/system/core/Loader.php on line 957
+[27-Feb-2025 23:22:13 Asia/Jakarta] PHP Fatal error:  Allowed memory size of 1073741824 bytes exhausted (tried to allocate 16384 bytes) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/system/core/Loader.php on line 957
+[02-Mar-2025 20:20:00 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelPekerjaan::get_edit() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelPekerjaan.php on line 41
+[02-Mar-2025 20:20:15 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelPekerjaan::get_edit() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelPekerjaan.php on line 41
+[02-Mar-2025 20:20:18 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelPekerjaan::get_edit() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelPekerjaan.php on line 41
+[02-Mar-2025 20:20:19 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelPekerjaan::get_edit() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelPekerjaan.php on line 41
+[03-Mar-2025 11:42:58 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::edit() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 146
+[05-Mar-2025 09:51:41 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 40
+[05-Mar-2025 13:34:57 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 40
+[05-Mar-2025 14:58:00 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 14:58:58 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:00:46 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:00:48 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:08:45 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:08:47 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:08:54 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[05-Mar-2025 15:09:10 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::update_total_poin() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 183
+[06-Mar-2025 08:53:10 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelTotalPoint::get_rekap_pekerjaan() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelTotalPoint.php on line 125
+[06-Mar-2025 22:30:32 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 4
+[06-Mar-2025 22:32:43 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 8
+[06-Mar-2025 22:38:00 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 10
+[06-Mar-2025 22:42:16 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 10
+[06-Mar-2025 22:42:55 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 10
+[06-Mar-2025 22:45:27 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 10
+[06-Mar-2025 22:46:06 Asia/Jakarta] PHP Fatal error:  Trait 'Firebase\JWT\JWT' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 10
+[07-Mar-2025 09:56:22 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'tabel.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/views/Pekerjaan/RiwayatPekerjaan/index.php on line 41
+[07-Mar-2025 09:57:12 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'search_result' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/views/Pekerjaan/RiwayatPekerjaan/index.php on line 41
+[07-Mar-2025 09:57:14 Asia/Jakarta] PHP Fatal error:  require(): Failed opening required 'search_result' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/views/Pekerjaan/RiwayatPekerjaan/index.php on line 41
+[07-Mar-2025 13:09:46 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:11:18 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:12:46 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:13:47 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:13:53 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:14:49 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:15:01 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:15:03 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:15:07 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 13:16:11 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 06:18:09 UTC] PHP Fatal error:  Uncaught Error: Class 'ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php:25
+Stack trace:
+#0 /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php(115): require_once()
+#1 {main}
+  thrown in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 25
+[07-Mar-2025 13:21:55 Asia/Jakarta] PHP Fatal error:  Cannot redeclare composerRequirecd52f0d58f5374fdfd6c52f70dca85d1() (previously declared in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php:63) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 63
+[07-Mar-2025 06:23:04 UTC] PHP Fatal error:  Uncaught Error: Class 'ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php:26
+Stack trace:
+#0 /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php(115): require_once()
+#1 {main}
+  thrown in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 26
+[07-Mar-2025 06:35:17 UTC] PHP Fatal error:  Uncaught Error: Class 'ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php:26
+Stack trace:
+#0 /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php(115): require_once()
+#1 {main}
+  thrown in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 26
+[07-Mar-2025 06:37:03 UTC] PHP Fatal error:  Uncaught Error: Class 'ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php:26
+Stack trace:
+#0 /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php(115): require_once()
+#1 {main}
+  thrown in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 26
+[07-Mar-2025 06:40:24 UTC] PHP Fatal error:  Uncaught Error: Class 'ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1' not found in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php:26
+Stack trace:
+#0 /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php(115): require_once()
+#1 {main}
+  thrown in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 26
+[07-Mar-2025 07:31:43 UTC] PHP Warning:  require_once(/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php): failed to open stream: No such file or directory in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php on line 115
+[07-Mar-2025 07:31:43 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/index.php on line 115
+[07-Mar-2025 07:35:01 UTC] PHP Warning:  require_once(/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:35:01 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:39:12 UTC] PHP Warning:  require_once(/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:39:12 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:40:39 UTC] PHP Warning:  require_once(/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php): failed to open stream: No such file or directory in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:40:39 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/autoload.php on line 23
+[07-Mar-2025 07:46:12 UTC] PHP Warning:  require(/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php): failed to open stream: No such file or directory in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php on line 25
+[07-Mar-2025 07:46:12 UTC] PHP Fatal error:  require(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/autoload_real.php on line 25
+[07-Mar-2025 07:46:35 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 07:51:19 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 07:51:51 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 07:57:49 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 08:04:02 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:06 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:08 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:10 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:14 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:15 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:17 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:19 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:21 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:23 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:25 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:27 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:29 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:31 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:33 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:35 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:37 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:39 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:41 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 11:46:43 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 13:32:13 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 13:32:14 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 13:32:15 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 13:32:24 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 13:39:57 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 16:56:09 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 16:56:13 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 19:44:27 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:35 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:39 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:43 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:50 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:54 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:19:58 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:02 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:06 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:09 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:11 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:14 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:17 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:20 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:22 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:25 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:28 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:31 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:33 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:36 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 21:20:38 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 23:25:56 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[07-Mar-2025 23:26:00 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 05:09:07 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:35:53 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:40:00 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:46:19 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:48:08 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.0". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:49:00 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 7.4". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:49:03 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 7.4". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 08:49:04 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 7.4". You are running 7.4.33. in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/vendor/composer/platform_check.php on line 24
+[08-Mar-2025 15:50:39 Asia/Jakarta] PHP Fatal error:  Cannot declare class ComposerAutoloaderInitcd52f0d58f5374fdfd6c52f70dca85d1, because the name is already in use in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/vendor/composer/autoload_real.php on line 5
+[11-Mar-2025 09:35:10 Asia/Jakarta] PHP Fatal error:  Namespace declaration statement has to be the very first statement or after any declare call in the script in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/libraries/UserCredentialsNoRefresh.php on line 4
+[11-Mar-2025 09:36:55 Asia/Jakarta] PHP Fatal error:  Access level to OAuth2\GrantType\UserCredentialsNoRefresh::createAccessToken() must be public (as in class OAuth2\GrantType\UserCredentials) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/libraries/UserCredentialsNoRefresh.php on line 19
+[11-Mar-2025 09:40:57 Asia/Jakarta] PHP Fatal error:  Declaration of OAuth2\GrantType\UserCredentialsNoRefresh::createAccessToken(OAuth2\Server $server, array $clientDetails, array $userInfo, ?OAuth2\TokenType\AccessTokenInterface $accessToken = NULL) must be compatible with OAuth2\GrantType\UserCredentials::createAccessToken(OAuth2\ResponseType\AccessTokenInterface $accessToken, $client_id, $user_id, $scope) in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/libraries/UserCredentialsNoRefresh.php on line 19
+[12-Mar-2025 09:30:24 Asia/Jakarta] PHP Fatal error:  require_once(): Failed opening required '/home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Oauth2.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 5
+[12-Mar-2025 22:34:21 Asia/Jakarta] PHP Warning:  The use statement with non-compound name 'OAuth2' has no effect in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Api/Login.php on line 6
+[18-Mar-2025 13:20:05 Asia/Jakarta] Start Date: 2025-01-03, End Date: 1970-01-01
+[18-Mar-2025 13:20:09 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-04-04
+[18-Mar-2025 13:20:14 Asia/Jakarta] Start Date: 2025-01-04, End Date: 2025-04-04
+[18-Mar-2025 13:20:25 Asia/Jakarta] Start Date: 2025-01-04, End Date: 2025-04-04
+[18-Mar-2025 13:20:29 Asia/Jakarta] Start Date: 2025-05-04, End Date: 2025-05-04
+[18-Mar-2025 13:20:34 Asia/Jakarta] Start Date: 2025-05-04, End Date: 1970-01-01
+[18-Mar-2025 13:20:37 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:20:38 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:20:39 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:20:46 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-04-04
+[18-Mar-2025 13:20:49 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-04-04
+[18-Mar-2025 13:20:53 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-12-04
+[18-Mar-2025 13:20:57 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-03-05
+[18-Mar-2025 13:21:00 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:21:07 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:21:10 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:21:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-09-05
+[18-Mar-2025 13:23:14 Asia/Jakarta] Start Date: 2025-01-03, End Date: 1970-01-01
+[18-Mar-2025 13:23:18 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-04-04
+[18-Mar-2025 13:23:23 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-05-04
+[18-Mar-2025 13:23:27 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-10-04
+[18-Mar-2025 13:23:31 Asia/Jakarta] Start Date: 2025-01-03, End Date: 1970-01-01
+[18-Mar-2025 13:23:34 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-11-04
+[18-Mar-2025 13:23:40 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-11-04
+[18-Mar-2025 13:24:06 Asia/Jakarta] Start Date: 2025-01-03, End Date: 1970-01-01
+[18-Mar-2025 13:24:11 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-04-04
+[18-Mar-2025 13:24:16 Asia/Jakarta] Start Date: 2025-01-03, End Date: 2025-03-04
+[18-Mar-2025 13:26:42 Asia/Jakarta] Start Date: 2025-01-03, End Date: 1970-01-01
+[18-Mar-2025 13:26:46 Asia/Jakarta] Start Date: 2025-04-04, End Date: 2025-04-04
+[18-Mar-2025 13:26:47 Asia/Jakarta] Start Date: 2025-04-04, End Date: 2025-04-04
+[18-Mar-2025 13:26:47 Asia/Jakarta] Start Date: 2025-04-04, End Date: 2025-04-04
+[18-Mar-2025 13:26:49 Asia/Jakarta] Start Date: 2025-04-04, End Date: 1970-01-01
+[18-Mar-2025 13:26:58 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:26:59 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:26:59 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:27:02 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:27:05 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:27:08 Asia/Jakarta] Start Date: 2025-07-03, End Date: 1970-01-01
+[18-Mar-2025 13:27:17 Asia/Jakarta] Start Date: 2024-01-10, End Date: 1970-01-01
+[18-Mar-2025 13:27:22 Asia/Jakarta] Start Date: 2024-01-10, End Date: 2026-06-05
+[18-Mar-2025 13:27:31 Asia/Jakarta] Start Date: 2024-01-10, End Date: 1970-01-01
+[18-Mar-2025 13:27:32 Asia/Jakarta] Start Date: 2024-01-10, End Date: 1970-01-01
+[18-Mar-2025 13:27:36 Asia/Jakarta] Start Date: 2024-01-10, End Date: 2026-06-05
+[18-Mar-2025 13:27:53 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-06-05
+[18-Mar-2025 13:27:57 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-06-05
+[18-Mar-2025 13:28:02 Asia/Jakarta] Start Date: 2026-04-05, End Date: 2026-06-05
+[18-Mar-2025 13:28:07 Asia/Jakarta] Start Date: 2026-01-05, End Date: 2026-06-05
+[18-Mar-2025 13:28:09 Asia/Jakarta] Start Date: 2026-01-05, End Date: 2026-06-05
+[18-Mar-2025 13:28:12 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-06-05
+[18-Mar-2025 13:28:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:28:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:28:28 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-02-05
+[18-Mar-2025 13:28:34 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-01-05
+[18-Mar-2025 13:28:37 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-01-05
+[18-Mar-2025 13:28:44 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-01-05
+[18-Mar-2025 13:28:47 Asia/Jakarta] Start Date: 2026-01-05, End Date: 2026-01-05
+[18-Mar-2025 13:28:51 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-01-05
+[18-Mar-2025 13:28:54 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:28:58 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2026-01-05
+[18-Mar-2025 13:32:40 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-03-03
+[18-Mar-2025 13:32:52 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:32:58 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:32:58 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:33:07 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:33:13 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-01-03
+[18-Mar-2025 13:33:25 Asia/Jakarta] Start Date: 2025-01-02, End Date: 2025-01-03
+[18-Mar-2025 13:33:27 Asia/Jakarta] Start Date: 2025-01-02, End Date: 2025-01-03
+[18-Mar-2025 13:33:33 Asia/Jakarta] Start Date: 2025-02-02, End Date: 2025-01-03
+[18-Mar-2025 13:33:40 Asia/Jakarta] Start Date: 2025-02-01, End Date: 2025-01-03
+[18-Mar-2025 13:33:45 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-01-03
+[18-Mar-2025 13:33:47 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-01-03
+[18-Mar-2025 13:33:58 Asia/Jakarta] Start Date: 1970-01-01, End Date: 2025-08-02
+[18-Mar-2025 13:34:59 Asia/Jakarta] Start Date: 1924-05-11, End Date: 1970-01-01
+[18-Mar-2025 13:35:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:35:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:35:20 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:19 Asia/Jakarta] Start Date: 2022-09-07, End Date: 1970-01-01
+[18-Mar-2025 13:36:22 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:25 Asia/Jakarta] Start Date: 2025-07-08, End Date: 2025-07-08
+[18-Mar-2025 13:36:28 Asia/Jakarta] Start Date: 2025-08-08, End Date: 2025-08-08
+[18-Mar-2025 13:36:30 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:31 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:31 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:31 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:31 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:36:31 Asia/Jakarta] Start Date: 1970-01-01, End Date: 1970-01-01
+[18-Mar-2025 13:54:50 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-18, End: 1923-10-01
+[18-Mar-2025 13:54:59 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-18, End: 1923-10-01
+[18-Mar-2025 13:55:26 Asia/Jakarta] Refreshing with params - Employee: , Start: 23-09-15, End: 2025-03-07
+[18-Mar-2025 13:55:38 Asia/Jakarta] Refreshing with params - Employee: , Start: 1925-05-15, End: 2025-03-07
+[18-Mar-2025 13:55:47 Asia/Jakarta] Refreshing with params - Employee: , Start: 1931-04-09, End: 2025-03-07
+[18-Mar-2025 13:55:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 1942-05-05, End: 2025-03-07
+[18-Mar-2025 13:56:04 Asia/Jakarta] Refreshing with params - Employee: , Start: 1944-02-23, End: 2025-03-07
+[18-Mar-2025 13:56:12 Asia/Jakarta] Refreshing with params - Employee: , Start: 1944-02-23, End: 2025-03-07
+[18-Mar-2025 13:56:26 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-26, End: 2025-03-07
+[18-Mar-2025 13:56:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-01-30, End: 2025-03-07
+[18-Mar-2025 13:56:48 Asia/Jakarta] Searching with params - Employee: , Start: 2024-12-31, End: 2025-03-07
+[18-Mar-2025 13:56:49 Asia/Jakarta] Searching with params - Employee: , Start: 2024-12-31, End: 2025-03-07
+[18-Mar-2025 13:56:54 Asia/Jakarta] Searching with params - Employee: , Start: 2024-12-31, End: 2025-02-28
+[18-Mar-2025 13:57:32 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:06 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:07 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:08 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:14 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:15 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:16 Asia/Jakarta] Searching with params - Employee: , Start: 2025-02-27, End: 2025-04-04
+[18-Mar-2025 13:58:22 Asia/Jakarta] Searching with params - Employee: , Start: 2025-01-29, End: 2025-04-04
+[18-Mar-2025 13:58:30 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-01-29, End: 2025-04-04
+[18-Mar-2025 13:58:31 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-01-29, End: 2025-04-04
+[18-Mar-2025 13:59:30 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 13:59:32 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 13:59:33 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:19 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:19 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:20 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:20 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:21 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:21 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:21 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:21 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:20:21 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:37:14 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:06 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:06 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:07 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:07 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:08 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:09 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:09 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:10 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:10 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:10 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:11 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:11 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:11 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:12 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:13 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:14 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:14 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:15 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:15 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:16 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:32 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:32 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:32 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:45:33 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:27 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:28 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:28 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:29 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:30 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:31 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:31 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:37 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[18-Mar-2025 14:47:38 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-18, End: 2025-03-18
+[19-Mar-2025 08:31:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 08:54:37 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 09:11:47 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 09:11:49 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 09:27:42 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 09:27:57 Asia/Jakarta] Searching with params - Employee: 003, Start: 24-09-14, End: 2025-03-19
+[19-Mar-2025 09:28:12 Asia/Jakarta] Refreshing with params - Employee: , Start: 1924-11-06, End: 1924-11-06
+[19-Mar-2025 09:28:24 Asia/Jakarta] Refreshing with params - Employee: , Start: , End: 1932-12-29
+[19-Mar-2025 09:28:34 Asia/Jakarta] Refreshing with params - Employee: , Start: , End: 1932-12-29
+[19-Mar-2025 09:29:14 Asia/Jakarta] Searching with params - Employee: 003, Start: 2025-01-01, End: 2025-04-30
+[19-Mar-2025 09:29:22 Asia/Jakarta] Searching with params - Employee: 003, Start: 2025-01-01, End: 2025-06-05
+[19-Mar-2025 10:59:15 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 1924-10-15
+[19-Mar-2025 10:59:32 Asia/Jakarta] Searching with params - Employee: 003, Start: 2025-03-19, End: 1925-08-08
+[19-Mar-2025 10:59:45 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 10:59:47 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 2025-03-19
+[19-Mar-2025 11:03:21 Asia/Jakarta] Searching with params - Employee: , Start: 24-09-14, End: 24-09-14
+[19-Mar-2025 11:41:25 Asia/Jakarta] Searching with params - Employee: , Start: 1924-10-08, End: 1924-10-08
+[19-Mar-2025 11:47:27 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-19, End: 1924-10-07
+[20-Mar-2025 09:28:07 Asia/Jakarta] Refreshing with params - Employee: , Start: 25-09-15, End: 25-09-15
+[20-Mar-2025 09:28:21 Asia/Jakarta] Refreshing with params - Employee: , Start: 25-09-15, End: 1932-07-05
+[20-Mar-2025 09:28:35 Asia/Jakarta] Refreshing with params - Employee: , Start: 25-09-15, End: 2010-07-23
+[20-Mar-2025 09:28:51 Asia/Jakarta] Searching with params - Employee: 002, Start: 25-09-15, End: 2010-07-23
+[20-Mar-2025 09:38:41 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-20, End: 2025-03-20
+[20-Mar-2025 09:45:53 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-20, End: 25-09-15
+[20-Mar-2025 09:47:43 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-20, End: 2025-02-08
+[20-Mar-2025 09:47:50 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-20, End: 2025-02-08
+[20-Mar-2025 14:20:51 Asia/Jakarta] PHP Fatal error:  Cannot redeclare Pekerjaan::ListPekerjaan() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/controllers/Pekerjaan.php on line 352
+[24-Mar-2025 10:29:10 Asia/Jakarta] Query: SELECT COUNT(*) as total
+FROM `riwayat_pekerjaan`
+WHERE `created_at` >= '2025-01-03'
+AND `created_at` <= '1970-01-01'
+[24-Mar-2025 10:29:10 Asia/Jakarta] Total: 0
+[25-Mar-2025 09:44:44 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:44:47 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:45:36 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:45:38 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:57:44 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:47 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:48 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:51 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:52 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:53 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:53 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:53 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:53 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:53 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:54 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:54 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:54 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:54 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:54 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:55 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:55 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:55 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:55 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:55 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:56 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:57 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:57 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:57 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:57 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:57 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:58:58 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 09:59:29 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:30 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:33 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:34 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:38 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:39 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:39 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 09:59:41 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 10:00:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-08-29
+[25-Mar-2025 10:01:04 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:04 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:06 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:07 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:11 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:36 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:37 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:01:49 Asia/Jakarta] Searching with params - Employee: 003, Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:01 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:52 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:52 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:52 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:52 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:52 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:02:53 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:09:22 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:09:22 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:09:26 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 
+[25-Mar-2025 10:09:39 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:10:57 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:41 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 10:14:41 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-01
+[25-Mar-2025 11:05:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 11:05:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 11:05:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 11:05:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 11:10:17 Asia/Jakarta] Searching with params - Employee: 002, Start: 2025-03-01, End: 30-09-15
+[25-Mar-2025 11:10:18 Asia/Jakarta] Searching with params - Employee: 002, Start: 2025-03-01, End: 30-09-15
+[25-Mar-2025 11:10:24 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 30-09-15
+[25-Mar-2025 11:19:41 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:42 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:42 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:42 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:42 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:42 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 11:19:43 Asia/Jakarta] Refreshing with params - Employee: , Start: 1930-10-17, End: 1930-10-17
+[25-Mar-2025 13:07:23 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:24 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:24 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:26 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:26 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:26 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:26 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:26 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:07:27 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:10:34 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 1930-10-11
+[25-Mar-2025 13:11:25 Asia/Jakarta] Searching with params - Employee: , Start: 1930-10-11, End: 2025-05-16
+[25-Mar-2025 13:12:49 Asia/Jakarta] Refreshing with params - Employee: , Start: 1930-10-11, End: 2025-05-16
+[25-Mar-2025 13:13:24 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:26 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:31 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:32 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:33 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:33 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:33 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:33 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:34 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:34 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:34 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:34 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:34 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:35 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:37 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:38 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:16:40 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:19:12 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:19:13 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:19:17 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:19:18 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:19:19 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:19:19 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:19:19 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:19:20 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:20:20 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:20:24 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-06
+[25-Mar-2025 13:20:28 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-17
+[25-Mar-2025 13:20:30 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-17
+[25-Mar-2025 13:20:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-27
+[25-Mar-2025 13:21:00 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-27
+[25-Mar-2025 13:21:04 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-19
+[25-Mar-2025 13:21:35 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-27
+[25-Mar-2025 13:21:42 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-17
+[25-Mar-2025 13:21:46 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-12
+[25-Mar-2025 13:21:51 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-25
+[25-Mar-2025 13:21:58 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-25, End: 2025-03-25
+[25-Mar-2025 13:23:17 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-17, End: 2025-03-17
+[25-Mar-2025 13:23:20 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-17, End: 2025-03-27
+[25-Mar-2025 13:32:15 Asia/Jakarta] PHP Fatal error:  Cannot redeclare ModelRiwayatPekerjaan::get_today_tasks() in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/models/ModelRiwayatPekerjaan.php on line 250
+[26-Mar-2025 11:16:45 Asia/Jakarta] Searching with params - Employee: , Start: 2025-03-01, End: 2025-03-18
+[26-Mar-2025 11:16:50 Asia/Jakarta] Refreshing with params - Employee: , Start: 2025-03-01, End: 2025-03-18
+[03-Dec-2025 13:23:41 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 100000 seconds exceeded in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[03-Dec-2025 14:15:21 Asia/Jakarta] PHP Fatal error:  Maximum execution time of 100000 seconds exceeded in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[15-Dec-2025 10:00:36 Asia/Jakarta] PHP Fatal error:  Can't use function return value in write context in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/views/Laporan/Presensi/realtime_location.php on line 88
+[15-Dec-2025 10:00:39 Asia/Jakarta] PHP Fatal error:  Can't use function return value in write context in /home/esolusi2/SubDomain/presensi-pmi.esolusindo.com/application/views/Laporan/Presensi/realtime_location.php on line 88
+[27-Feb-2026 10:24:32 Asia/Jakarta] Refreshing with params - Employee: , Start: 2026-02-01, End: 2026-02-27
+[27-Feb-2026 10:24:32 Asia/Jakarta] Refreshing with params - Employee: , Start: 2026-02-01, End: 2026-02-27
+[27-Feb-2026 10:24:37 Asia/Jakarta] Refreshing with params - Employee: , Start: 2026-02-01, End: 2026-02-27

@@ -1,0 +1,79 @@
+.tanggal-promo{
+  font-family:'Copperplate',	'Courier New';
+  font-size:8px;
+  font-weight:bold;
+  font-style:bold;
+  position:absolute;
+  bottom:30px;
+  right:50px;
+  color:#e67e22
+}
+
+.promo-gratis-item{
+  line-height: 1em;
+  text-align:right;
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  right:105px;
+  top:100px;
+  width:20%;height:20px
+}
+
+.judul-promo{
+  font-family:'Copperplate',	'Courier New';
+  font-size:18px;
+  font-weight:bold;
+  font-style:bold;
+  position:absolute;
+  top:30px;
+  left:45px;
+  color:#e67e22
+}
+
+.promo-cashback-1{
+  line-height: 1em;text-align:right;color: white;font-size: 10px;position: absolute;right:105px;top:100px;width:20%;height:20px
+}
+
+.promo-cashback-2{
+  line-height: 1em;text-align:right;color: white;font-size: 8px;position: absolute;right:105px;top:113px;width:30%;height:20px
+}
+
+.promo-cashback-3{
+  line-height: 1em;text-align:right;;color: white;font-size: 10px;position: absolute;right:105px;top:125px;width:20%;height:20px
+}
+
+.promo-item-percent{
+  line-height: 1em;text-align:right;color: white;font-size: 16px;position: absolute;right:105px;top:100px;width:20%;height:20px
+}
+
+.promo-item{
+  line-height: 1em;text-align:right;color: white;font-size: 14px;position: absolute;right:105px;top:100px;width:20%;height:20px
+}
+.badge-hapus {
+  position: absolute;
+  top: 36px;
+  left: 65px;
+}
+
+.badge-atas {
+  position: absolute;
+  top: 36px;
+  right: 54px;
+}
+
+.btn-atas {
+  position: absolute;
+  top: 17px;
+  right: 8px;
+}
+
+.btn-hapus {
+  position: absolute;
+  top: 17px;
+}
+
+.color-table.info-table thead th {
+  background-color: #01c0c8 !important;
+  color: #fff;
+}

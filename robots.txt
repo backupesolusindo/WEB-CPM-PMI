@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemapindex.xml
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemap846.xml
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemap161.xml
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemap837.xml
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemap608.xml
+Sitemap: http://presensi-pmi.esolusindo.com/?sitemap693.xml
+Sitemap: http://presensi-pmi.esolusindo.com/pages.php?sitemap389.xml
