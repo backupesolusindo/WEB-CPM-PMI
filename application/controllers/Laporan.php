@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Laporan extends CI_Controller{
+class Laporan extends CI_Controller
+{
 
   public function __construct()
   {
@@ -25,7 +26,7 @@ class Laporan extends CI_Controller{
     $parent = $this->input->post("unit");
     $html = "<option value=''>Semua Sub Unit</option>";
     foreach ($this->ModelUnit->get_sub_unit($parent)->result() as $value) {
-      $html .= '<option value="'.$value->nama_unit.'">'.$value->nama_unit.'</option>';
+      $html .= '<option value="' . $value->nama_unit . '">' . $value->nama_unit . '</option>';
     }
     echo $html;
   }
@@ -36,7 +37,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Presensi Pegawai",
       'body'          => 'Laporan/Presensi/index',
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -46,7 +47,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Presensi Pegawai",
       'body'          => 'Laporan/Aktif/index',
       'pegawai'       => $this->ModelPegawai->get_list()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -80,10 +81,10 @@ class Laporan extends CI_Controller{
       'body'          => 'Laporan/Presensi/detail',
       'pegawai'       => $pegawai,
       'absensi'       => $absen,
-      'absensi_pulang'=> $absenpulang,
+      'absensi_pulang' => $absenpulang,
       'istirahat'     => $istirahat,
-      'selesaiIstirahat'=> $selesaiIstirahat,
-     );
+      'selesaiIstirahat' => $selesaiIstirahat,
+    );
     $this->load->view('index', $data);
   }
 
@@ -100,7 +101,7 @@ class Laporan extends CI_Controller{
       'tgl_mulai'       => $tgl_mulai,
       'tgl_akhir'       => $tgl_akhir,
       'status_filter'       => $status_filter,
-     );
+    );
     $this->load->view('Laporan/Presensi/tabel', $data);
   }
 
@@ -110,7 +111,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Presensi Kegiatan Pegawai",
       'body'          => 'Laporan/Kegiatan/index',
       'unit'   => $this->ModelUnit->get_unit()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -126,7 +127,7 @@ class Laporan extends CI_Controller{
     $kegiatan = $this->ModelKegiatan->get_all($tgl_mulai, $tgl_akhir, $unit, $sub_unit);
     $data = array(
       'kegiatan'          => $kegiatan
-     );
+    );
     $this->load->view('Laporan/Kegiatan/tabel', $data);
   }
 
@@ -138,7 +139,7 @@ class Laporan extends CI_Controller{
       'body'          => 'Laporan/Kegiatan/detail',
       'kegiatan'      => $this->ModelKegiatan->get_data($idkegiatan)->row_array(),
       'peserta'       => $this->ModelKegiatan->getPesertaKegiatan($idkegiatan),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -148,7 +149,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Cuti Pegawai",
       'body'          => 'Laporan/Cuti/index',
       'unit'   => $this->ModelUnit->get_unit()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -163,7 +164,7 @@ class Laporan extends CI_Controller{
       'cuti'          => $cuti,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/Cuti/tabel', $data);
   }
 
@@ -173,7 +174,7 @@ class Laporan extends CI_Controller{
     $this->db->where("idizin", $idizin);
     if ($this->db->delete("izin")) {
       echo "berhasil";
-    }else {
+    } else {
       echo "gagal";
     }
   }
@@ -186,7 +187,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -207,7 +208,7 @@ class Laporan extends CI_Controller{
       'pegawai'       => $pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/RekapitulasiPresensi/tabel', $data);
   }
 
@@ -219,7 +220,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -241,7 +242,7 @@ class Laporan extends CI_Controller{
       'pegawai'       => $pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/TotalPresensi/tabel', $data);
   }
 
@@ -253,7 +254,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -277,7 +278,7 @@ class Laporan extends CI_Controller{
       'pegawai'       => $pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/TotalPresensiDispensasi/tabel', $data);
   }
 
@@ -289,7 +290,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -314,7 +315,7 @@ class Laporan extends CI_Controller{
       'pegawai'       => $pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/LaporanDinasLuar/tabel', $data);
   }
 
@@ -336,7 +337,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Detail Rekapitulasi Presensi",
       'body'          => 'Laporan/RekapitulasiPresensi/detail',
       'pegawai'       => $this->ModelPegawai->edit($uuid)->row_array(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -348,6 +349,7 @@ class Laporan extends CI_Controller{
     // $tgl_akhir  = "2021-11-30";
     $uuid       = $this->input->post("uuid");
     // $uuid       = "1f92b01f-00eb-11eb-ab7b-fefcfe8d8c7c";
+    $this->load->model("ModelLembur");
     $data = array(
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
@@ -355,8 +357,9 @@ class Laporan extends CI_Controller{
       'presensi'      => $this->ModelRiwayat->RiwayatHarian($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
       'kegiatan'      => $this->ModelLaporan->rekapKegiatan($uuid, $tgl_mulai, $tgl_akhir)->result(),
       'luar_jam'      => $this->ModelLaporan->rekapPresensiLuarJam($uuid, $tgl_mulai, $tgl_akhir)->result(),
-      'cuti'          => $this->ModelPerizinan->get_riwayat($uuid, null, $tgl_mulai, $tgl_akhir)->result()
-     );
+      'cuti'          => $this->ModelPerizinan->get_riwayat($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'lembur'        => $this->ModelLembur->riwayat_lembur($uuid, null, $tgl_mulai, $tgl_akhir)->result()
+    );
     $this->load->view('Laporan/RekapitulasiPresensi/detail_tabel', $data);
   }
 
@@ -368,7 +371,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -391,7 +394,7 @@ class Laporan extends CI_Controller{
       'tipe_pegawai'  => $tipe_pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/KejanggalanPresensi/tabel', $data);
     // $tgl_mulai  = date("Y-m-d", strtotime($this->input->post("start")));
     // $tgl_akhir  = date("Y-m-d", strtotime($this->input->post("end")));
@@ -415,7 +418,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -439,7 +442,7 @@ class Laporan extends CI_Controller{
       'tipe_pegawai'  => $tipe_pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/DiluarJamKerja/tabel', $data);
   }
 
@@ -449,7 +452,7 @@ class Laporan extends CI_Controller{
       'title'         => "Laporan Jadwal Kerja Pegawai",
       'body'          => 'Laporan/JadwalWF/index',
       'unit'          => $this->ModelUnit->get_unit()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -458,7 +461,7 @@ class Laporan extends CI_Controller{
     $uuid = $this->input->post("pegawai");
     $data = array(
       'jadwal'        => $this->ModelJadwalWF->getJadwal($uuid)
-     );
+    );
     $this->load->view('Laporan/JadwalWF/Kalender', $data);
   }
 
@@ -468,7 +471,7 @@ class Laporan extends CI_Controller{
     $pegawai   = $this->ModelPegawai->get_UnitPegawai($unit);
     $html = "";
     foreach ($pegawai->result() as $value) {
-      $html .= '<option value="'.$value->uuid.'">'.$value->nama_pegawai.'</option>';
+      $html .= '<option value="' . $value->uuid . '">' . $value->nama_pegawai . '</option>';
     }
     echo $html;
   }
@@ -481,7 +484,7 @@ class Laporan extends CI_Controller{
       'unit'          => $this->ModelUnit->get_parent_unit()->result(),
       'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
       'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
-     );
+    );
     $this->load->view('index', $data);
   }
 
@@ -505,8 +508,102 @@ class Laporan extends CI_Controller{
       'tipe_pegawai'  => $tipe_pegawai,
       'tgl_mulai'     => $tgl_mulai,
       'tgl_akhir'     => $tgl_akhir,
-     );
+    );
     $this->load->view('Laporan/Lembur/tabel', $data);
   }
 
+  function rekapitulasi_cuti()
+  {
+    $array = array(
+      'title' => "Rekapitulasi Cuti Pegawai",
+      'body'  => "Laporan/Cuti/RekapitulasiCuti",
+      'unit'  => $this->ModelUnit->get_parent_unit()->result(),
+    );
+    $this->load->view('index', $array);
+  }
+
+  function data_rekapitulasi_cuti()
+  {
+    $tgl_mulai = $this->input->post("start");
+    $tgl_akhir = $this->input->post("end");
+    $unit = $this->input->post("unit");
+    $sub_unit = $this->input->post("sub_unit");
+    $status = $this->input->post("status");
+
+    // Ambil data cuti
+    $cuti_data = $this->ModelPerizinan->get_riwayatMonitoring($unit, $status, $tgl_mulai, $tgl_akhir, $sub_unit);
+
+    $rekapitulasi = array();
+    $pegawai_cuti = array();
+
+    foreach ($cuti_data->result() as $value) {
+      $nip = $value->NIP ?? $value->NIK ?? "-";
+
+      if (!isset($pegawai_cuti[$nip])) {
+        $pegawai_cuti[$nip] = array(
+          'nip' => $nip,
+          'nama' => $value->nama_pegawai,
+          'unit' => $value->unit ?? "-",
+          'cuti_tahunan' => $value->total_cuti ?? 0,
+          'total_cuti' => 0,
+          'cuti_disetujui' => 0,
+          'cuti_pending' => 0,
+          'cuti_ditolak' => 0,
+          'detail' => array()
+        );
+      }
+
+      $pegawai_cuti[$nip]['total_cuti']++;
+
+      if ($value->status == "1") {
+        $pegawai_cuti[$nip]['cuti_disetujui']++;
+      } elseif ($value->status == "0") {
+        $pegawai_cuti[$nip]['cuti_pending']++;
+      } elseif ($value->status == "2") {
+        $pegawai_cuti[$nip]['cuti_ditolak']++;
+      }
+
+      // Hitung durasi cuti
+      $tanggal_mulai = strtotime($value->tanggal_mulai);
+      $tanggal_akhir = strtotime($value->tanggal_akhir);
+      $durasi = ceil(($tanggal_akhir - $tanggal_mulai) / (60 * 60 * 24)) + 1;
+
+      $pegawai_cuti[$nip]['detail'][] = array(
+        'jenis' => $value->jenis_izin ?? "Cuti",
+        'tanggal_mulai' => date("d-m-Y", strtotime($value->tanggal_mulai)),
+        'tanggal_selesai' => date("d-m-Y", strtotime($value->tanggal_akhir)),
+        'durasi' => $durasi . " hari",
+        'status' => $value->status,
+        'keterangan' => $value->keterangan ?? "-"
+      );
+    }
+
+    // Convert ke array biasa
+    foreach ($pegawai_cuti as $data) {
+      $rekapitulasi[] = $data;
+    }
+
+    echo json_encode($rekapitulasi);
+  }
+
+  function export_rekapitulasi_cuti()
+  {
+    $tgl_mulai = $this->input->get("start");
+    $tgl_akhir = $this->input->get("end");
+    $unit = $this->input->get("unit");
+    $sub_unit = $this->input->get("sub_unit");
+    $status = $this->input->get("status");
+
+    // Ambil data cuti
+    $cuti_data = $this->ModelPerizinan->get_riwayatMonitoring($unit, $status, $tgl_mulai, $tgl_akhir, $sub_unit);
+
+    $data = array(
+      'title' => 'Rekapitulasi Cuti Pegawai',
+      'periode' => date("d-m-Y", strtotime($tgl_mulai)) . ' s/d ' . date("d-m-Y", strtotime($tgl_akhir)),
+      'unit' => $unit ?? 'Semua Unit',
+      'data' => $cuti_data->result()
+    );
+
+    $this->load->view('Laporan/Cuti/ExportRekapitulasiCuti', $data);
+  }
 }

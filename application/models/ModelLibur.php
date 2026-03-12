@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class ModelLibur extends CI_Model{
+class ModelLibur extends CI_Model
+{
 
   public function __construct()
   {
@@ -11,14 +12,13 @@ class ModelLibur extends CI_Model{
 
   function getLibur($tahun)
   {
-    $this->db->where("LEFT(tanggal, 4) ",$tahun);
+    $this->db->where("YEAR(tanggal) ", $tahun);
     $this->db->order_by("tanggal");
     return $this->db->get("tanggal_libur");
   }
   function getDataLibur($tanggal)
   {
-    $this->db->where("tanggal",date("Y-m-d", strtotime($tanggal)));
+    $this->db->where("tanggal", date("Y-m-d", strtotime($tanggal)));
     return $this->db->get("tanggal_libur");
   }
-
 }

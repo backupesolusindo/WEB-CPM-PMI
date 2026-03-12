@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class ModelPerizinan extends CI_Model {
+class ModelPerizinan extends CI_Model
+{
 
     public function __construct()
     {
@@ -37,14 +38,14 @@ class ModelPerizinan extends CI_Model {
     {
         $this->db->join("jenis_perizinan", "jenis_perizinan.idjenis_perizinan = izin.jenis_perizinan_idjenis_perizinan");
         $this->db->join("pegawai", "pegawai.uuid = izin.pegawai_uuid");
-        $this->db->where("uuid",$uuid);
+        $this->db->where("uuid", $uuid);
 
         if ($aproval != null || $aproval != "") {
             $this->db->where("status", $aproval);
         }
 
-        if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "" ) {
-            $this->db->where('izin.tanggal_mulai BETWEEN "'.$tgl_mulai.'" AND "'.$tgl_akhir.'"');
+        if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "") {
+            $this->db->where('izin.tanggal_mulai BETWEEN "' . $tgl_mulai . '" AND "' . $tgl_akhir . '"');
         }
 
         return $this->db->get("izin");
@@ -57,22 +58,23 @@ class ModelPerizinan extends CI_Model {
     {
         $this->db->join("jenis_perizinan", "jenis_perizinan.idjenis_perizinan = izin.jenis_perizinan_idjenis_perizinan");
         $this->db->join("pegawai", "pegawai.uuid = izin.pegawai_uuid");
-        $this->db->join("unit", "unit.nama_unit LIKE CONCAT_WS(' ', pegawai.jenis_unit, pegawai.unit)");
+        $this->db->join("unit", "unit.nama_unit = pegawai.unit");
+        // $this->db->join("cuti_tahunan", "cuti_tahunan.pegawai_uuid = pegawai.uuid AND cuti_tahunan.tahun_cuti = YEAR(izin.tanggal_mulai)", 'left');
 
         if ($aproval != null || $aproval != "") {
             $this->db->where("izin.status", $aproval);
         }
 
-        if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "" ) {
-            $this->db->where('izin.tanggal_mulai BETWEEN "'.$tgl_mulai.'" AND "'.$tgl_akhir.'"');
+        if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "") {
+            $this->db->where('izin.tanggal_mulai BETWEEN "' . $tgl_mulai . '" AND "' . $tgl_akhir . '"');
         }
 
         if ($sub_unit != null || $sub_unit != "") {
-            $this->db->like("unit.nama_unit",$sub_unit);
+            $this->db->like("unit.nama_unit", $sub_unit);
         } elseif ($unit != null || $unit != "") {
             $this->db->group_start();
-            $this->db->like("unit.nama_unit",$unit);
-            $this->db->or_like("unit.parent_unit",$unit);
+            $this->db->like("unit.nama_unit", $unit);
+            $this->db->or_like("unit.parent_unit", $unit);
             $this->db->group_end();
         }
 
@@ -103,28 +105,28 @@ class ModelPerizinan extends CI_Model {
     // FILTER IZIN (UTAMA UNTUK CUTIPEGAWAI)
     // ============================
     public function get_filtered($start = null, $end = null, $status = null)
-{
-    $this->db->select('izin.*, pegawai.NIP, pegawai.nama_pegawai, jenis_perizinan.jenis_izin');
-    $this->db->from('izin');
-    $this->db->join('pegawai', 'pegawai.uuid = izin.pegawai_uuid', 'left');
-    $this->db->join('jenis_perizinan', 'jenis_perizinan.idjenis_perizinan = izin.jenis_perizinan_idjenis_perizinan', 'left');
+    {
+        $this->db->select('izin.*, pegawai.NIP, pegawai.nama_pegawai, jenis_perizinan.jenis_izin');
+        $this->db->from('izin');
+        $this->db->join('pegawai', 'pegawai.uuid = izin.pegawai_uuid', 'left');
+        $this->db->join('jenis_perizinan', 'jenis_perizinan.idjenis_perizinan = izin.jenis_perizinan_idjenis_perizinan', 'left');
 
-    // Filter tanggal
-    if (!empty($start) && !empty($end)) {
-        $this->db->where('izin.tanggal_mulai >=', $start);
-        $this->db->where('izin.tanggal_akhir <=', $end);
+        // Filter tanggal
+        if (!empty($start) && !empty($end)) {
+            $this->db->where('izin.tanggal_mulai >=', $start);
+            $this->db->where('izin.tanggal_akhir <=', $end);
+        }
+
+        // Filter status
+        if ($status !== "" && $status !== null) {
+            $this->db->where('izin.status', $status);
+        }
+
+        // Urutkan paling baru di atas
+        $this->db->order_by('izin.tanggal_mulai', 'DESC');
+
+        return $this->db->get();
     }
-
-    // Filter status
-    if ($status !== "" && $status !== null) {
-        $this->db->where('izin.status', $status);
-    }
-
-    // Urutkan paling baru di atas
-    $this->db->order_by('izin.tanggal_mulai', 'DESC');
-
-    return $this->db->get();
-}
 
 
     // ============================
@@ -145,7 +147,7 @@ class ModelPerizinan extends CI_Model {
         return $this->db->delete('izin');
     }
 
-        // ==============================
+    // ==============================
     // HAPUS MASSAL IZIN
     // ==============================
     public function hapusMassalIzin($ids)
@@ -166,7 +168,7 @@ class ModelPerizinan extends CI_Model {
         return $result;
     }
 
-        // ==============================
+    // ==============================
     // UPDATE STATUS MASSAL IZIN
     // ==============================
     public function updateStatusMassalIzin($ids, $status)
@@ -202,4 +204,3 @@ class ModelPerizinan extends CI_Model {
         return $this->db->get('izin')->row();
     }
 }
-

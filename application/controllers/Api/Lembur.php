@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Lembur extends CI_Controller{
+class Lembur extends CI_Controller
+{
 
   public function __construct()
   {
@@ -21,20 +22,20 @@ class Lembur extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$kampus->result(),'message'=>$res));
+    echo json_encode(array('data' => $kampus->result(), 'message' => $res));
   }
 
   function absen_lembur()
   {
     $patch = "document/foto_lembur/";
     // echo $patch;
-    $config['upload_path']          = "./".$patch;
+    $config['upload_path']          = "./" . $patch;
     $config['allowed_types']        = '*';
     $config['max_size']             = 11240;
     $data = array();
@@ -54,7 +55,7 @@ class Lembur extends CI_Controller{
             'absen_latitude'       => $this->input->post("lat"),
             'absen_longtitude'     => $this->input->post("long"),
             'status_lokasi'        => $this->input->post("status_lokasi"),
-            'foto'                 => $patch.$this->upload->data()['file_name']
+            'foto'                 => $patch . $this->upload->data()['file_name']
           );
           if ($this->db->insert("absen_lembur", $data)) {
             // $id_insert = $this->db->insert_id();
@@ -64,22 +65,22 @@ class Lembur extends CI_Controller{
               'message' => "Berhasil",
               'status' => 200
             );
-          }else {
+          } else {
             $res = array(
               'message' => "Gagal Menyimpan",
               'status' => 501
             );
           }
-        }else {
+        } else {
           $res = array(
             'message' => "Gagal",
             'status' => 500
           );
         }
-      }else {
+      } else {
         $absen_lembur = $absen_lembur->row_array();
         $data = array(
-          'jam_presensi_selesai'=> date("Y-m-d H:i:s"),
+          'jam_presensi_selesai' => date("Y-m-d H:i:s"),
         );
         $this->db->where("idabsen_lembur", $absen_lembur['idabsen_lembur']);
         if ($this->db->update('absen_lembur', $data)) {
@@ -87,25 +88,24 @@ class Lembur extends CI_Controller{
             'message' => "Berhasil",
             'status' => 200
           );
-        }else {
+        } else {
           $res = array(
             'message' => "Gagal Menyimpan",
             'status' => 501
           );
         }
       }
-
-    }else {
+    } else {
       $tgl_ket = date("d-m-Y", strtotime($kegiatan['tanggal']));
       if ($kegiatan['tanggal'] != $kegiatan['tanggal_selesai']) {
-        date("d-m-Y", strtotime($kegiatan['tanggal']))." s/d ".date("d-m-Y", strtotime($kegiatan['tanggal_selesai']));
+        date("d-m-Y", strtotime($kegiatan['tanggal'])) . " s/d " . date("d-m-Y", strtotime($kegiatan['tanggal_selesai']));
       }
       $res = array(
-        'message' => "Belum Waktunya Presensi, Lembur Tanggal ".$tgl_ket,
+        'message' => "Belum Waktunya Presensi, Lembur Tanggal " . $tgl_ket,
         'status' => 500
       );
     }
-    echo json_encode(array('response'=>$data,'message'=>$res));
+    echo json_encode(array('response' => $data, 'message' => $res));
   }
 
   function cek_absen_lembur($idlembur, $uuid)
@@ -116,29 +116,29 @@ class Lembur extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$kampus->result(),'message'=>$res));
+    echo json_encode(array('data' => $kampus->result(), 'message' => $res));
   }
 
   function list_aproval()
   {
     $unit = $this->input->post("unit");
     $data = array();
-    $riwayat = $this->ModelLembur->getKegiatanAproval($unit,"0");
+    $riwayat = $this->ModelLembur->getKegiatanAproval($unit, "0");
     if ($riwayat->num_rows() > 0) {
       foreach ($riwayat->result() as $value) {
         $kegiatan = $this->ModelKegiatan->get_data($value->kegiatan_idkegiatan)->row_array();
         $ar = array(
-          'idabsen_lembur'=> $value->idabsen_lembur,
+          'idabsen_lembur' => $value->idabsen_lembur,
           'nama_pegawai'    => $value->nama_pegawai,
           'NIP'             => $value->NIP,
           'absen_latitude'  => $value->absen_latitude,
-          'absen_longtitude'=> $value->absen_longtitude,
+          'absen_longtitude' => $value->absen_longtitude,
           'foto'            => $value->foto,
           'jam_presensi'    => date("H:i:s", strtotime($value->jam_presensi)),
           'tgl_presensi'    => date("D, d M Y", strtotime($value->jam_presensi)),
@@ -151,13 +151,13 @@ class Lembur extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$data,'message'=>$res));
+    echo json_encode(array('data' => $data, 'message' => $res));
   }
 
   function approval_lembur()
@@ -170,13 +170,12 @@ class Lembur extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('message'=>$res));
+    echo json_encode(array('message' => $res));
   }
-
 }

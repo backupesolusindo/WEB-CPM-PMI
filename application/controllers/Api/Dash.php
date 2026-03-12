@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Dash extends CI_Controller{
+class Dash extends CI_Controller
+{
 
   public function __construct()
   {
@@ -19,6 +20,7 @@ class Dash extends CI_Controller{
     $this->load->model("ModelKampus");
     $this->load->model("ModelTugasBelajar");
     $this->load->model("ModelLembur");
+    $this->load->model("ModelLibur");
     $this->load->model('ModelAuth');
     $this->ModelAuth->verify_token();
   }
@@ -36,7 +38,7 @@ class Dash extends CI_Controller{
     if ($peg->num_rows() > 0) {
       $pegawai          = $peg->row_array();
       // if ($pegawai['foto_profil'] != null || $pegawai['foto_profil'] != "" ) {
-        $pegawai['foto_profil'] = "desain/Login/logopmi.png";
+      $pegawai['foto_profil'] = "desain/Login/logopmi.png";
       // }
       $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
       $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tanggal)->row_array();
@@ -55,18 +57,18 @@ class Dash extends CI_Controller{
       $tugas_belajar    = @$this->ModelTugasBelajar->get_cekPegawai($uuid);
       $jadwal_masukdata = @$this->ModelJadwalMasuk->get_jadwalmasuk($jabatan['idjabatan']);
       if ($jadwal_masukdata->num_rows() < 1) {
-          $jadwal_masukdata= $this->ModelJadwalMasuk->get_jadwalmasuk();
+        $jadwal_masukdata = $this->ModelJadwalMasuk->get_jadwalmasuk();
       }
       $jadwal_masukdata = $jadwal_masukdata->row_array();
       $jadwal_masuk["masuk_notif1"] = date('H:i', strtotime('-30 minutes', strtotime($jadwal_masukdata['jam_masuk'])));
       $jadwal_masuk["masuk_notif2"] = date('H:i', strtotime('-10 minutes', strtotime($jadwal_masukdata['jam_masuk'])));
       $jadwal_masuk["masuk_notif3"] = date('H:i', strtotime('0 minutes', strtotime($jadwal_masukdata['jam_masuk'])));
       $jadwal_masuk["pulang_notif"] = date('H:i', strtotime('0 minutes', strtotime($jadwal_masukdata['jam_pulang'])));
-      if($absen) {
+      if ($absen) {
         $waktu_absen = strtotime($absen['waktu']);
-        $waktu_pulang = strtotime($absenpulang['waktu'] ?? date('H:i:s')) ; // gunakan waktu sekarang jika null
+        $waktu_pulang = strtotime($absenpulang['waktu'] ?? date('H:i:s')); // gunakan waktu sekarang jika null
         $durasi_detik = $waktu_pulang - $waktu_absen;
-        $durasi_absensi["limit_durasi"] = strtotime($jadwal_masukdata['jam_pulang']) - strtotime($jadwal_masukdata['jam_masuk']);  
+        $durasi_absensi["limit_durasi"] = strtotime($jadwal_masukdata['jam_pulang']) - strtotime($jadwal_masukdata['jam_masuk']);
         $durasi_absensi["time_durasi"] = $durasi_detik;
         $durasi_absensi["ket_durasi"] = $this->core->formatDurasiLengkap($durasi_detik);
       }
@@ -78,7 +80,7 @@ class Dash extends CI_Controller{
         $datadinasluar["nama_surat"] = $dinasluar["nama_surat"];
         $datadinasluar["tanggal_mulai"] = date("d-m-Y", strtotime($dinasluar["tanggal_mulai"]));
         $datadinasluar["tanggal_selesai"] = date("d-m-Y", strtotime($dinasluar["tanggal_selesai"]));
-      }else {
+      } else {
         $datadinasluar["status"] = "1";
         $datadinasluar["ada_surat"] = "0";
       }
@@ -119,13 +121,13 @@ class Dash extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$data,'message'=>$res));
+    echo json_encode(array('data' => $data, 'message' => $res));
   }
 
   function getKegiatanTerkini()
@@ -137,13 +139,13 @@ class Dash extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$kampus->result(),'message'=>$res));
+    echo json_encode(array('data' => $kampus->result(), 'message' => $res));
   }
 
   function infoStats()
@@ -151,7 +153,10 @@ class Dash extends CI_Controller{
     $tgl_mulai = date("Y-m-d", strtotime($this->input->post("mulai")));
     $tgl_akhir = date("Y-m-d", strtotime($this->input->post("akhir")));
     $unit = $this->input->post("unit");
-    $wfh=0; $wfo=0; $kegiatan=0; $cuti=0;
+    $wfh = 0;
+    $wfo = 0;
+    $kegiatan = 0;
+    $cuti = 0;
     $toleransi = 0;
     $terlambat = 0;
     $tepat = 0;
@@ -159,7 +164,7 @@ class Dash extends CI_Controller{
     foreach ($absenharian->result() as $value) {
       if ($value->jenis_tempat == 1) {
         $wfo += 1;
-      }elseif ($value->jenis_tempat == 2) {
+      } elseif ($value->jenis_tempat == 2) {
         $wfh += 1;
       }
       $jam_jadwal   = strtotime($value->jam_jadwal);
@@ -167,11 +172,11 @@ class Dash extends CI_Controller{
       $diff         = $masuk - $jam_jadwal;
       if ($diff <= 0) {
         $tepat += 1;
-      }else {
+      } else {
         $wtoleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
         if ($diff <= $wtoleransi) {
           $toleransi += 1;
-        }else {
+        } else {
           $terlambat += 1;
         }
       }
@@ -186,7 +191,7 @@ class Dash extends CI_Controller{
       'terlambat' => $terlambat,
       'kegiatan' => $kegiatan,
       'cuti' => $cuti,
-     ));
+    ));
   }
 
   function get_monitoring($uuid)
@@ -196,10 +201,10 @@ class Dash extends CI_Controller{
     if ($peg->num_rows() > 0) {
       $peg         = $peg->row_array();
       $pegawai          = $peg;
-      $jmlApPresensi    = $this->ModelRiwayat->RiwayatHarianMonitoring($peg["nama_unit"],"0")->num_rows();
-      $jmlApLembur      = $this->ModelLembur->getKegiatanAproval($peg["nama_unit"],"0")->num_rows();
-      $jmlApKegiatan    = $this->ModelKegiatan->getKegiatanAproval($peg["nama_unit"],"0")->num_rows();
-      $jmlApCuti        = $this->ModelPerizinan->get_riwayatMonitoring($peg["nama_unit"],"0")->num_rows();
+      $jmlApPresensi    = $this->ModelRiwayat->RiwayatHarianMonitoring($peg["nama_unit"], "0")->num_rows();
+      $jmlApLembur      = $this->ModelLembur->getKegiatanAproval($peg["nama_unit"], "0")->num_rows();
+      $jmlApKegiatan    = $this->ModelKegiatan->getKegiatanAproval($peg["nama_unit"], "0")->num_rows();
+      $jmlApCuti        = $this->ModelPerizinan->get_riwayatMonitoring($peg["nama_unit"], "0")->num_rows();
       $data = array(
         'pegawai' => $pegawai,
         'jmlApPresensi'   => $jmlApPresensi,
@@ -213,13 +218,13 @@ class Dash extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$data,'message'=>$res));
+    echo json_encode(array('data' => $data, 'message' => $res));
   }
 
   function getStatus($uuid)
@@ -227,7 +232,7 @@ class Dash extends CI_Controller{
     $toleransi = 0;
     $terlambat = 0;
     $tepat = 0;
-    $tgl_mulai = date("Y-m-")."01";
+    $tgl_mulai = date("Y-m-") . "01";
     $tgl_akhir = date("Y-m-d");
     $absenharian = $this->ModelRiwayat->RiwayatHarianMonitoringPegawai($uuid, null, $tgl_mulai, $tgl_akhir);
     foreach ($absenharian->result() as $value) {
@@ -236,11 +241,11 @@ class Dash extends CI_Controller{
       $diff  = $masuk - $jam_jadwal;
       if ($diff <= 0) {
         $tepat += 1;
-      }else {
+      } else {
         $wtoleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
         if ($diff <= $wtoleransi) {
           $toleransi += 1;
-        }else {
+        } else {
           $terlambat += 1;
         }
       }
@@ -271,7 +276,7 @@ class Dash extends CI_Controller{
             $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
           }
         }
-      }else {
+      } else {
         $jabatan          = $this->ModelJabatan->get_data_edit("pegawai")->row_array();
         $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk("pegawai")->result();
       }
@@ -292,13 +297,13 @@ class Dash extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$data,'message'=>$res));
+    echo json_encode(array('data' => $data, 'message' => $res));
   }
 
   function set_jadwal_WFH($uuid)
@@ -312,16 +317,16 @@ class Dash extends CI_Controller{
       $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"], "2");
       if ($jadwalmasuk->num_rows() > 0) {
         $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"],"2")->result();
+        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"], "2")->result();
         if ($jabatan['lintas_hari'] == 1) {
           if ($this->ModelAbsensi->get_Absensi($pegawai["idabsen"], date("Y-m-d"))->num_rows() < 1) {
             $tgl_kemarin      = date('Y-m-d', strtotime('-1 days', strtotime($tanggal)));
             $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
           }
         }
-      }else {
+      } else {
         $jabatan          = $this->ModelJabatan->get_data_edit("pegawai")->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk("pegawai","2")->result();
+        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk("pegawai", "2")->result();
       }
       $absenpulang      = @$this->ModelAbsensi->get_AbsensiPulang($absen["idabsensi"])->row_array();
       $istirahat        = @$this->ModelAbsensi->get_Absensi_Istirahat($pegawai["idistirahat"], date("Y-m-d"))->row_array();
@@ -340,13 +345,180 @@ class Dash extends CI_Controller{
         'message' => "Success",
         'status' => 200
       );
-    }else {
+    } else {
       $res = array(
         'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
         'status' => 500
       );
     }
-    echo json_encode(array('data'=>$data,'message'=>$res));
+    echo json_encode(array('data' => $data, 'message' => $res));
   }
 
+  function getKalender()
+  {
+    $uuid = $this->input->post("uuid");
+    $bulan = $this->input->post("bulan"); // format: Y-m (contoh: 2025-03)
+    $tahun = $this->input->post("tahun"); // format: Y (contoh: 2025)
+
+    // Validasi input
+    if (empty($uuid)) {
+      echo json_encode(array(
+        'data' => array(),
+        'message' => array(
+          'message' => "UUID pegawai tidak boleh kosong",
+          'status' => 400
+        )
+      ));
+      return;
+    }
+
+    // Set default bulan dan tahun jika tidak ada
+    if (empty($bulan)) {
+      $bulan = date("Y-m");
+    }
+    if (empty($tahun)) {
+      $tahun = date("Y");
+    }
+
+    // Validasi pegawai
+    $peg = $this->ModelPegawai->edit($uuid);
+    if ($peg->num_rows() < 1) {
+      echo json_encode(array(
+        'data' => array(),
+        'message' => array(
+          'message' => "Pegawai tidak ditemukan",
+          'status' => 404
+        )
+      ));
+      return;
+    }
+
+    $pegawai = $peg->row_array();
+
+    // Hitung tanggal awal dan akhir bulan
+    $tgl_mulai = $tahun . "-" . $bulan . "-01";
+    $tgl_akhir = date("Y-m-t", strtotime($tgl_mulai));
+
+    // Ambil data presensi
+    $presensi = $this->ModelRiwayat->RiwayatHarian($uuid, null, $tgl_mulai, $tgl_akhir);
+    $data_presensi = array();
+    foreach ($presensi->result() as $row) {
+      $tanggal = date("Y-m-d", strtotime($row->waktu));
+      $pulang = $this->ModelRiwayat->Pulang($row->idabsensi)->row();
+
+      $data_presensi[$tanggal] = array(
+        'idabsensi' => $row->idabsensi,
+        'tanggal' => $tanggal,
+        'waktu_masuk' => date("H:i:s", strtotime($row->waktu)),
+        'waktu_pulang' => $pulang ? date("H:i:s", strtotime($pulang->waktu)) : null,
+        'jenis_tempat' => $row->jenis_tempat, // 1=WFO, 2=WFH
+        'status_absensi' => $row->status_absensi,
+        'keterangan' => $row->keterangan ?? null
+      );
+    }
+
+    // Ambil data cuti/izin
+    $izin = $this->ModelPerizinan->get_riwayat($uuid, null, $tgl_mulai, $tgl_akhir);
+    $data_izin = array();
+    foreach ($izin->result() as $row) {
+      // Hitung semua tanggal dalam range izin
+      $start = strtotime($row->tanggal_mulai);
+      $end = strtotime($row->tanggal_akhir);
+
+      for ($i = $start; $i <= $end; $i += 86400) {
+        $tanggal = date("Y-m-d", $i);
+        // Hanya masukkan jika dalam bulan yang diminta
+        if (substr($tanggal, 0, 7) == $bulan) {
+          if (!isset($data_izin[$tanggal])) {
+            $data_izin[$tanggal] = array();
+          }
+          $data_izin[$tanggal][] = array(
+            'idizin' => $row->idizin,
+            'jenis_izin' => $row->jenis_izin,
+            'tanggal_mulai' => $row->tanggal_mulai,
+            'tanggal_akhir' => $row->tanggal_akhir,
+            'keterangan' => $row->keterangan,
+            'status' => $row->status
+          );
+        }
+      }
+    }
+
+    // Ambil data hari libur
+    $libur = $this->ModelLibur->getLibur($tahun);
+    $data_libur = array();
+    foreach ($libur->result() as $row) {
+      $tanggal = $row->tanggal;
+      // Hanya masukkan jika dalam bulan yang diminta
+      if (substr($tanggal, 0, 7) == $bulan) {
+        $data_libur[$tanggal] = array(
+          'idlibur' => $row->idlibur,
+          'tanggal' => $tanggal,
+          'keterangan' => $row->keterangan
+        );
+      }
+    }
+
+    // Gabungkan semua data per tanggal
+    $kalender = array();
+    $start_date = strtotime($tgl_mulai);
+    $end_date = strtotime($tgl_akhir);
+
+    for ($i = $start_date; $i <= $end_date; $i += 86400) {
+      $tanggal = date("Y-m-d", $i);
+      $hari = date("N", $i); // 1=Senin, 7=Minggu
+
+      $kalender[] = array(
+        'tanggal' => $tanggal,
+        'hari' => $this->getNamaHari($hari),
+        'hari_numeric' => $hari,
+        'is_weekend' => ($hari == 6 || $hari == 7), // Sabtu atau Minggu
+        'presensi' => isset($data_presensi[$tanggal]) ? $data_presensi[$tanggal] : null,
+        'izin' => isset($data_izin[$tanggal]) ? $data_izin[$tanggal] : array(),
+        'libur' => isset($data_libur[$tanggal]) ? $data_libur[$tanggal] : null
+      );
+    }
+
+    $data = array(
+      'pegawai' => array(
+        'uuid' => $pegawai['uuid'],
+        'nama' => $pegawai['nama_pegawai'],
+        'nip' => $pegawai['NIP']
+      ),
+      'periode' => array(
+        'bulan' => $bulan,
+        'tahun' => $tahun,
+        'tanggal_mulai' => $tgl_mulai,
+        'tanggal_akhir' => $tgl_akhir
+      ),
+      'kalender' => $kalender,
+      'summary' => array(
+        'total_hari' => count($kalender),
+        'total_presensi' => count($data_presensi),
+        'total_izin' => $izin->num_rows(),
+        'total_libur' => count($data_libur)
+      )
+    );
+
+    $res = array(
+      'message' => "Success",
+      'status' => 200
+    );
+
+    echo json_encode(array('data' => $data, 'message' => $res));
+  }
+
+  private function getNamaHari($hari_numeric)
+  {
+    $nama_hari = array(
+      1 => 'Senin',
+      2 => 'Selasa',
+      3 => 'Rabu',
+      4 => 'Kamis',
+      5 => 'Jumat',
+      6 => 'Sabtu',
+      7 => 'Minggu'
+    );
+    return $nama_hari[$hari_numeric];
+  }
 }
