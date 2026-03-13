@@ -19,6 +19,7 @@ class Laporan extends CI_Controller
     $this->load->model("ModelJabatan");
     $this->load->model("ModelLibur");
     $this->load->model("ModelJadwalMasuk");
+    $this->load->model("ModelLembur");
   }
 
   function sub_unit()
@@ -605,5 +606,66 @@ class Laporan extends CI_Controller
     );
 
     $this->load->view('Laporan/Cuti/ExportRekapitulasiCuti', $data);
+  }
+
+  function RekapitulasiLembur()
+  {
+    $data = array(
+      'title'         => "Laporan Rekapitulasi Lembur Pegawai",
+      'body'          => 'Laporan/RekapitulasiLembur/index',
+      'unit'          => $this->ModelUnit->get_parent_unit()->result(),
+      'tipe'          => $this->ModelPegawai->tipe_pegawai()->result(),
+      'jabatan'       => $this->ModelJabatan->get_jabatan_aktif()->result(),
+    );
+    $this->load->view('index', $data);
+  }
+
+  function tabelRekapitulasiLembur()
+  {
+    $tgl_mulai = date("Y-m-d", strtotime($this->input->post("start")));
+    $tgl_akhir = date("Y-m-d", strtotime($this->input->post("end")));
+    $unit      = $this->input->post("unit");
+    $sub_unit  = $this->input->post("sub_unit");
+    $tipe_pegawai  = $this->input->post("tipe_pegawai");
+    $jabatan  = $this->input->post("jabatan");
+    $status_approval  = $this->input->post("status_approval");
+
+    $pegawai   = $this->ModelPegawai->get_UnitPegawai($unit, $sub_unit, $tipe_pegawai, $jabatan);
+    if ($unit == "") {
+      $unit = "Semua Unit";
+    }
+    $data = array(
+      'unit'          => $unit,
+      'pegawai'       => $pegawai,
+      'tgl_mulai'     => $tgl_mulai,
+      'tgl_akhir'     => $tgl_akhir,
+      'status_approval' => $status_approval,
+    );
+    $this->load->view('Laporan/RekapitulasiLembur/tabel', $data);
+  }
+
+  function DetailLembur($uuid)
+  {
+    $data = array(
+      'title'         => "Detail Laporan Lembur Pegawai",
+      'body'          => 'Laporan/RekapitulasiLembur/detail',
+      'pegawai'       => $this->ModelPegawai->edit($uuid)->row_array(),
+    );
+    $this->load->view('index', $data);
+  }
+
+  function tabelDetailLembur()
+  {
+    $tgl_mulai  = date("Y-m-d", strtotime($this->input->post("start")));
+    $tgl_akhir  = date("Y-m-d", strtotime($this->input->post("end")));
+    $uuid       = $this->input->post("uuid");
+    $this->load->model("ModelLembur");
+    $data = array(
+      'tgl_mulai'     => $tgl_mulai,
+      'tgl_akhir'     => $tgl_akhir,
+      'pegawai'       => $this->ModelPegawai->edit($uuid)->row_array(),
+      'lembur'        => $this->ModelLembur->riwayat_lembur($uuid, null, $tgl_mulai, $tgl_akhir)->result()
+    );
+    $this->load->view('Laporan/RekapitulasiLembur/detail_tabel', $data);
   }
 }

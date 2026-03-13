@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Lembur extends CI_Controller{
+class Lembur extends CI_Controller
+{
 
   public function __construct()
   {
@@ -17,7 +18,7 @@ class Lembur extends CI_Controller{
     $unit = $this->ModelUnit->get_parent_unit()->result();
     $data = array(
       'title'         => 'JADWAL PRESENSI KEGIATAN',
-      'body'          => 'Lembur/list' ,
+      'body'          => 'Lembur/list',
       'unit'          => $unit
     );
     $this->load->view('index', $data);
@@ -28,9 +29,9 @@ class Lembur extends CI_Controller{
     $unit = $this->input->post("unit");
     $subunit = $this->input->post("sub_unit");
     if ($subunit == "" || $subunit == null) {
-        $unit = $this->input->post("unit");
-    }else {
-        $unit = $subunit;
+      $unit = $this->input->post("unit");
+    } else {
+      $unit = $subunit;
     }
     $data = array(
       'data'          => $this->ModelLembur->get_lembur_unit($unit)->result()
@@ -71,6 +72,46 @@ class Lembur extends CI_Controller{
     $this->load->view('index', $data);
   }
 
+  function Presensi($id)
+  {
+    $data = array(
+      'title'     => 'DAFTAR PRESENSI LEMBUR',
+      'body'      => 'Lembur/presensi',
+      'lembur'    => $this->ModelLembur->get_data($id)->row_array(),
+      'presensi'  => $this->ModelLembur->get_cek($id, null)->result()
+    );
+    $this->load->view('index', $data);
+  }
+
+  function approve_presensi()
+  {
+    $id = $this->input->post("id");
+    $data = array(
+      'status_aproval' => '1'
+    );
+    $this->db->where("idabsen_lembur", $id);
+    if ($this->db->update('absen_lembur', $data)) {
+      echo json_encode(array('status' => 'success', 'message' => 'Presensi berhasil disetujui'));
+    } else {
+      echo json_encode(array('status' => 'error', 'message' => 'Gagal menyetujui presensi'));
+    }
+  }
+
+  function reject_presensi()
+  {
+    $id = $this->input->post("id");
+    $data = array(
+      'status_aproval' => '2'
+    );
+    $this->db->where("idabsen_lembur", $id);
+    if ($this->db->update('absen_lembur', $data)) {
+      echo json_encode(array('status' => 'success', 'message' => 'Presensi berhasil ditolak'));
+    } else {
+      echo json_encode(array('status' => 'error', 'message' => 'Gagal menolak presensi'));
+    }
+  }
+
+
   function insert_peserta()
   {
     $idlembur = $this->input->post("idlembur");
@@ -78,7 +119,7 @@ class Lembur extends CI_Controller{
     $data = array();
     $this->db->where("lembur_idlembur", $idlembur);
     if ($this->db->delete("peserta_lembur")) {
-      for ($i=0; $i < sizeof($pegawai); $i++) {
+      for ($i = 0; $i < sizeof($pegawai); $i++) {
         $ar = array(
           'lembur_idlembur' => $idlembur,
           'pegawai_uuid'        => $pegawai[$i]
@@ -87,23 +128,23 @@ class Lembur extends CI_Controller{
       }
       // echo json_encode($data);
       if ($this->db->insert_batch("peserta_lembur", $data)) {
-        for ($i=0; $i < sizeof($pegawai); $i++) {
+        for ($i = 0; $i < sizeof($pegawai); $i++) {
           $lembur = $this->ModelLembur->get_data($idlembur)->row_array();
           $da = $this->ModelPegawai->edit($pegawai[$i])->row_array();
           @$this->core->curlNotif(
             $da["token"],
-            "Lembur : ".$lembur['keterangan_lembur'],
-            "Dilaksanakan Tanggal".date('d-m-Y', strtotime($lembur['tgl_mulai']))
+            "Lembur : " . $lembur['keterangan_lembur'],
+            "Dilaksanakan Tanggal" . date('d-m-Y', strtotime($lembur['tgl_mulai']))
           );
         }
         $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Tambah Data Berhasil"));
-      }else {
+      } else {
         $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
       }
-    }else {
+    } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
     }
-    redirect(base_url().'Lembur');
+    redirect(base_url() . 'Lembur');
   }
 
   function insert()
@@ -119,7 +160,7 @@ class Lembur extends CI_Controller{
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
     }
-    redirect(base_url().'Lembur');
+    redirect(base_url() . 'Lembur');
   }
 
   function update()
@@ -136,7 +177,7 @@ class Lembur extends CI_Controller{
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
     }
-    redirect(base_url().'Lembur');
+    redirect(base_url() . 'Lembur');
   }
 
   function hapus($kode)
@@ -144,14 +185,13 @@ class Lembur extends CI_Controller{
     $idkegiatan = $this->core->decrypt_url($kode);
     $this->db->where("kegiatan_idkegiatan", $idkegiatan);
     $this->db->delete("kegiatan_peserta");
-      $this->db->where("idkegiatan", $idkegiatan);
-      if ($this->db->delete('kegiatan')) {
-        $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Hapus Data Berhasil","type" => "success" ));
-        redirect(base_url().'Kegiatan');
-      } else {
-        $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Hapus Ulang","type" => "danger" ));
-        redirect(base_url().'Kegiatan');
-      }
+    $this->db->where("idkegiatan", $idkegiatan);
+    if ($this->db->delete('kegiatan')) {
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Hapus Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'Kegiatan');
+    } else {
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Hapus Ulang", "type" => "danger"));
+      redirect(base_url() . 'Kegiatan');
+    }
   }
-
 }

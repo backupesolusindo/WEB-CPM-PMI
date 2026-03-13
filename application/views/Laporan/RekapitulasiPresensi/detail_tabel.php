@@ -456,16 +456,16 @@
             $totalDurasi = 0;
             foreach ($lembur as $value):
               $durasiMenit = strtotime($value->jam_presensi_selesai) - strtotime($value->jam_presensi);
-              if ($value->status_aproval == 1) {
-                $total_menit = $total_menit + $durasiMenit;
+              if ($value->status_aproval == '1') {
+                $totalDurasi = $totalDurasi + $durasiMenit;
               }
             ?>
               <tr>
                 <td class="text-center"><?php echo $no++; ?></td>
                 <td class="text-center">
-                  <?php if ($value->status_aproval == 1): ?>
+                  <?php if ($value->status_aproval == '1'): ?>
                     <span class="badge bg-success">Disetujui</span>
-                  <?php elseif ($value->status_aproval == 2): ?>
+                  <?php elseif ($value->status_aproval == '2'): ?>
                     <span class="badge bg-danger">Ditolak</span>
                   <?php else: ?>
                     <span class="badge bg-warning">Menunggu Approval</span>

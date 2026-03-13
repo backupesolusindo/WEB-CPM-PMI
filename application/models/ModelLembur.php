@@ -64,13 +64,17 @@ class ModelLembur extends CI_Model
     return $this->db->get("lembur");
   }
 
-  function get_cek($idlembur, $uuid, $tanggal = null)
+  function get_cek($idlembur, $uuid = null, $tanggal = null)
   {
+    $this->db->join("pegawai", "pegawai.uuid = absen_lembur.pegawai_uuid");
     if ($tanggal != null || $tanggal != "") {
       $this->db->where("LEFT(jam_presensi,10)", date("Y-m-d", strtotime($tanggal)));
     }
     $this->db->where("lembur_idlembur", $idlembur);
-    $this->db->where("pegawai_uuid", $uuid);
+    if ($uuid != null || $uuid != "") {
+      $this->db->where("absen_lembur.pegawai_uuid", $uuid);
+    }
+    $this->db->order_by("jam_presensi", "DESC");
     return $this->db->get("absen_lembur");
   }
 

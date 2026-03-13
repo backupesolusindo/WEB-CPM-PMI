@@ -2,6 +2,22 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/id.js'></script>
 
+<style>
+    .badge-purple {
+        background-color: #7460ee;
+        color: white;
+    }
+
+    .bg-purple {
+        background-color: #7460ee !important;
+        color: white;
+    }
+
+    .text-purple {
+        color: #7460ee;
+    }
+</style>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -67,6 +83,7 @@
                         <span class="badge badge-success mr-2"><i class="fa fa-circle"></i> Presensi</span>
                         <span class="badge badge-warning mr-2"><i class="fa fa-circle"></i> Cuti</span>
                         <span class="badge badge-info mr-2"><i class="fa fa-circle"></i> Kegiatan</span>
+                        <span class="badge badge-purple mr-2"><i class="fa fa-circle"></i> Lembur</span>
                     </div>
                 </div>
                 <div id='calendar'></div>
@@ -105,6 +122,11 @@
                     <li class="nav-item">
                         <a class="nav-link" id="kegiatan-tab" data-toggle="tab" href="#kegiatan" role="tab">
                             <i class="fa fa-briefcase text-info"></i> Kegiatan <span class="badge badge-info" id="badgeKegiatan">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="lembur-tab" data-toggle="tab" href="#lembur" role="tab">
+                            <i class="fa fa-clock text-purple"></i> Lembur <span class="badge badge-purple" id="badgeLembur">0</span>
                         </a>
                     </li>
                 </ul>
@@ -169,6 +191,28 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tableKegiatan">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="lembur" role="tabpanel">
+                        <div class="table-responsive mt-3">
+                            <table class="table table-hover table-bordered">
+                                <thead class="bg-purple text-white">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                        <th>Unit</th>
+                                        <th>Jam Presensi</th>
+                                        <th>Keterangan</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableLembur">
                                     <tr>
                                         <td colspan="7" class="text-center">Tidak ada data</td>
                                     </tr>
@@ -295,6 +339,7 @@
                 $('#tablePresensi').html('<tr><td colspan="8" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
                 $('#tableCuti').html('<tr><td colspan="7" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
                 $('#tableKegiatan').html('<tr><td colspan="7" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
+                $('#tableLembur').html('<tr><td colspan="7" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
             },
             success: function(data) {
                 // Tampilkan alert jika hari libur
@@ -309,6 +354,7 @@
                 $('#badgePresensi').text(data.presensi.length);
                 $('#badgeCuti').text(data.cuti.length);
                 $('#badgeKegiatan').text(data.kegiatan.length);
+                $('#badgeLembur').text(data.lembur.length);
 
                 // Populate Presensi Table
                 var htmlPresensi = '';
@@ -367,6 +413,35 @@
                     htmlKegiatan = '<tr><td colspan="7" class="text-center">Tidak ada data kegiatan</td></tr>';
                 }
                 $('#tableKegiatan').html(htmlKegiatan);
+
+                // Populate Lembur Table
+                var htmlLembur = '';
+                if (data.lembur.length > 0) {
+                    $.each(data.lembur, function(index, item) {
+                        var statusBadge = 'secondary';
+                        var statusText = 'Pending';
+                        if (item.status == '1') {
+                            statusBadge = 'success';
+                            statusText = 'Disetujui';
+                        } else if (item.status == '2') {
+                            statusBadge = 'danger';
+                            statusText = 'Ditolak';
+                        }
+
+                        htmlLembur += '<tr>';
+                        htmlLembur += '<td>' + (index + 1) + '</td>';
+                        htmlLembur += '<td>' + item.nip + '</td>';
+                        htmlLembur += '<td>' + item.nama + '</td>';
+                        htmlLembur += '<td>' + item.unit + '</td>';
+                        htmlLembur += '<td>' + item.jam_presensi + '</td>';
+                        htmlLembur += '<td>' + item.keterangan + '</td>';
+                        htmlLembur += '<td><span class="badge badge-' + statusBadge + '">' + statusText + '</span></td>';
+                        htmlLembur += '</tr>';
+                    });
+                } else {
+                    htmlLembur = '<tr><td colspan="7" class="text-center">Tidak ada data lembur</td></tr>';
+                }
+                $('#tableLembur').html(htmlLembur);
 
                 // Show modal
                 $('#modalDetail').modal('show');

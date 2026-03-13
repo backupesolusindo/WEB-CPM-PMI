@@ -14,6 +14,7 @@ class Dashboard extends CI_Controller
     $this->load->model('ModelPerizinan');
     $this->load->model('ModelKegiatan');
     $this->load->model('ModelLibur');
+    $this->load->model('ModelLembur');
   }
 
   function index()
@@ -284,6 +285,26 @@ class Dashboard extends CI_Controller
       );
     }
 
+    // Data Lembur
+    $lembur = $this->ModelLembur->getKegiatanAproval($unit, "1", $tgl_mulai, $tgl_akhir, $sub_unit);
+    $lembur_count = array();
+    foreach ($lembur->result() as $value) {
+      $tgl = date("Y-m-d", strtotime($value->jam_presensi));
+      if (!isset($lembur_count[$tgl])) {
+        $lembur_count[$tgl] = 0;
+      }
+      $lembur_count[$tgl]++;
+    }
+
+    foreach ($lembur_count as $tgl => $count) {
+      $events[] = array(
+        'title' => $count . ' Lembur',
+        'start' => $tgl,
+        'color' => '#7460ee',
+        'type' => 'lembur'
+      );
+    }
+
     echo json_encode($events);
   }
 
@@ -297,6 +318,7 @@ class Dashboard extends CI_Controller
       'presensi' => array(),
       'cuti' => array(),
       'kegiatan' => array(),
+      'lembur' => array(),
       'libur' => null
     );
 
@@ -369,6 +391,19 @@ class Dashboard extends CI_Controller
         'tanggal_mulai' => date("d-m-Y", strtotime($value->tanggal_mulai)),
         'tanggal_selesai' => date("d-m-Y", strtotime($value->tanggal_selesai)),
         'lokasi' => $value->lokasi
+      );
+    }
+
+    // Data Lembur
+    $lembur = $this->ModelLembur->getKegiatanAproval($unit, "1", $tanggal, $tanggal, $sub_unit);
+    foreach ($lembur->result() as $value) {
+      $data['lembur'][] = array(
+        'nama' => $value->nama_pegawai,
+        'nip' => $value->NIP ?? $value->NIK ?? "-",
+        'unit' => $value->unit,
+        'jam_presensi' => date("d-m-Y H:i:s", strtotime($value->jam_presensi)),
+        'keterangan' => $value->keterangan ?? "-",
+        'status' => $value->status_aproval
       );
     }
 

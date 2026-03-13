@@ -1,0 +1,133 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>Rekapitulasi Lembur Pegawai</h4>
+            </div>
+            <div class="card-body row">
+                <div class="col-md-3">
+                    <label>Unit :</label>
+                    <select id="unit" class="form-control select2 col-md-12" required onchange="sub_unit()">
+                        <option value="">Semua Unit</option>
+                        <?php foreach ($unit as $value): ?>
+                            <option value="<?php echo $value->nama_unit; ?>"><?php echo $value->nama_unit ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3" hidden>
+                    <label>Sub Unit :</label>
+                    <select id="sub_unit" class="form-control select2 col-md-12" required onchange="search()">
+                        <option value="">Semua Sub Unit</option>
+                    </select>
+                </div>
+                <div class="col-md-3" hidden>
+                    <label>Tipe Pegawai :</label>
+                    <select id="tipe_pegawai" class="form-control select2 col-md-12" required onchange="search()">
+                        <option value="">Semua Tipe Pegawai</option>
+                        <?php foreach ($tipe as $value): ?>
+                            <option value="<?php echo $value->tipe_pegawai ?>"><?php echo $value->tipe_pegawai ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Jabatan :</label>
+                    <select id="jabatan" class="form-control select2 col-md-12" required onchange="search()">
+                        <option value="">Semua Jabatan</option>
+                        <?php foreach ($jabatan as $value): ?>
+                            <option value="<?php echo $value->idjabatan ?>"><?php echo $value->namajabatan ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Status Approval :</label>
+                    <select id="status_approval" class="form-control select2 col-md-12" required onchange="search()">
+                        <option value="">Semua Status</option>
+                        <option value="DISETUJUI">Disetujui</option>
+                        <option value="DITOLAK">Ditolak</option>
+                        <option value="MENUNGGU">Menunggu</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Menurut Tanggal :</label>
+                    <div class="input-daterange input-group" id="date-range">
+                        <input type="text" class="form-control" name="start" id="start" value="<?php echo date("01-m-Y") ?>" readonly />
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-info b-0 text-white">S/D</span>
+                        </div>
+                        <input type="text" class="form-control" name="end" id="end" value="<?php echo date("d-m-Y") ?>" readonly />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <br>
+                    <button type="button" class="btn btn-info btn-md" onclick="search()"> <i class="fa fa-search"></i> Cari</button>
+                </div>
+                <div class="col-12">
+                    <div class="loader__figure" hidden="true"></div>
+                    <div class="table-responsive hasilSearch">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="<?php echo base_url() ?>/desain/dist/js/pages/jquery.PrintArea.js" type="text/JavaScript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        search();
+    });
+
+    function sub_unit() {
+        var unit = $("#unit").val();
+        $.ajax({
+            type: 'POST',
+            url: '<?php echo base_url() ?>Laporan/sub_unit',
+            data: {
+                unit: unit
+            },
+            success: function(response) {
+                $("#sub_unit").html(response);
+            }
+        });
+    }
+
+    function search() {
+        var start = $('#start').val();
+        var end = $('#end').val();
+        var unit = $('#unit').val();
+        var sub_unit = $('#sub_unit').val();
+        var tipe_pegawai = $('#tipe_pegawai').val();
+        var jabatan = $('#jabatan').val();
+        var status_approval = $('#status_approval').val();
+        $.ajax({
+            type: "POST",
+            url: "<?php echo base_url(); ?>Laporan/tabelRekapitulasiLembur",
+            data: {
+                start: start,
+                end: end,
+                unit: unit,
+                sub_unit: sub_unit,
+                tipe_pegawai: tipe_pegawai,
+                jabatan: jabatan,
+                status_approval: status_approval
+            },
+            beforeSend: function() {
+                $('.loader__figure').attr("hidden", false);
+            },
+            success: function(data) {
+                $('.loader__figure').attr("hidden", true);
+                $('.hasilSearch').html(data);
+                $('#table-print').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: ['excel'],
+                })
+            },
+            error: function(e) {
+                $('.loader__figure').attr("hidden", true);
+                alert(e);
+            },
+        });
+    }
+</script>
