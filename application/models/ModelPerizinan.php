@@ -56,6 +56,7 @@ class ModelPerizinan extends CI_Model
     // ============================
     public function get_riwayatMonitoring($unit = null, $aproval = null, $tgl_mulai = null, $tgl_akhir = null, $sub_unit = null)
     {
+        $this->db->select("izin.*, jenis_perizinan.*, unit.nama_unit, pegawai.nama_pegawai, pegawai.unit");
         $this->db->join("jenis_perizinan", "jenis_perizinan.idjenis_perizinan = izin.jenis_perizinan_idjenis_perizinan");
         $this->db->join("pegawai", "pegawai.uuid = izin.pegawai_uuid");
         $this->db->join("unit", "unit.nama_unit = pegawai.unit");

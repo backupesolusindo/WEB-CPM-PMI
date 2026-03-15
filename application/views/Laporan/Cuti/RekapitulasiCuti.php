@@ -53,7 +53,7 @@
                 <h4 class="card-title">Rekapitulasi Cuti Pegawai</h4>
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered" id="tableRekapitulasi">
-                        <thead class="">
+                        <thead>
                             <tr>
                                 <th>No</th>
                                 <th>NIP</th>
@@ -117,6 +117,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#tableRekapitulasi').DataTable();
         // Load data saat halaman pertama kali dibuka
         loadRekapitulasi();
     });
@@ -154,10 +155,7 @@
             },
             dataType: "json",
             beforeSend: function() {
-                // Destroy DataTable jika sudah ada
-                if ($.fn.DataTable.isDataTable('#tableRekapitulasi')) {
-                    $('#tableRekapitulasi').DataTable().destroy();
-                }
+                // $('#tableRekapitulasi').DataTable().destroy();
                 $('#bodyRekapitulasi').html('<tr><td colspan="10" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
             },
             success: function(data) {
@@ -176,7 +174,7 @@
                         html += '<td class="text-center">' + item.cuti_ditolak + '</td>';
                         html += '<td class="text-center">' + item.total_cuti + '</td>';
                         html += '<td class="text-center">';
-                        html += '<button class="btn btn-sm btn-info" onclick=\'showDetail(' + JSON.stringify(item) + ')\'><i class="fa fa-eye"></i> Detail</button>';
+                        html += '<button class="btn btn-sm btn-info btn-rounded" onclick=\'showDetail(' + JSON.stringify(item) + ')\'><i class="fa fa-eye"></i> Detail</button>';
                         html += '</td>';
                         html += '</tr>';
                     });
@@ -186,6 +184,7 @@
                 $('#bodyRekapitulasi').html(html);
 
                 // Inisialisasi DataTable pada elemen table, bukan tbody
+                $('#tableRekapitulasi').DataTable().destroy();
                 $('#tableRekapitulasi').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"

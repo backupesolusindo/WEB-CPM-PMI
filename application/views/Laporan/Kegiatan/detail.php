@@ -75,6 +75,7 @@
                   <th>Waktu Datang</th>
                   <th>Lokasi</th>
                   <th>Status Kedatangan</th>
+                  <th>Approval</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,6 +105,25 @@
                           echo '<h5><span class="badge bg-danger">Terlambat</span></h5>';
                         }
                       } ?> </td>
+                    <td id="approval-<?php echo $value->idabsen_kegiatan; ?>">
+                      <?php if ($value->status_aproval == 1): ?>
+                        <h5><span class="badge bg-success">Disetujui</span></h5>
+                        <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
+                          <button class="btn btn-danger btn-sm btn-approval mt-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="2"><i class='fa fa-ban'></i></button>
+                        <?php endif; ?>
+                      <?php elseif ($value->status_aproval == 2): ?>
+                        <h5><span class="badge bg-danger">Ditolak</span></h5>
+                        <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
+                          <button class="btn btn-success btn-sm btn-approval mt-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
+                        <?php endif; ?>
+                      <?php else: ?>
+                        <h5><span class="badge bg-warning">Menunggu</span></h5>
+                        <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
+                          <button class="btn btn-success btn-sm btn-approval mr-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
+                          <button class="btn btn-danger btn-sm btn-approval btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="2"><i class='fa fa-ban'></i></button>
+                        <?php endif; ?>
+                      <?php endif; ?>
+                    </td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -242,6 +262,26 @@
             popClose: close
           };
           $("div.printableArea").printArea(options);
+        });
+
+        $(document).on("click", ".btn-approval", function() {
+          var id     = $(this).data("id");
+          var status = $(this).data("status");
+          var label  = status == 1 ? "menyetujui" : "menolak";
+          if (!confirm("Yakin ingin " + label + " presensi ini?")) return;
+          $.ajax({
+            url: "<?php echo base_url(); ?>Laporan/approval_kegiatan",
+            type: "POST",
+            data: { idabsen_kegiatan: id, status: status },
+            success: function(res) {
+              var r = JSON.parse(res);
+              if (r.status == 200) {
+                location.reload();
+              } else {
+                alert("Gagal melakukan approval");
+              }
+            }
+          });
         });
       });
     </script>
