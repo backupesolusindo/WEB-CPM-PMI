@@ -139,8 +139,8 @@ class Kpi extends CI_Controller
     }
 
     /**
-     * Get KPI pegawai tertentu
-     * GET /api/kpi/get_pegawai?pegawai_id=1&bulan=1&tahun=2025
+     * Get KPI pegawai tertentu (riwayat semua periode)
+     * GET /api/kpi/get_pegawai?pegawai_id=uuid&bulan=1&tahun=2025
      */
     public function get_pegawai()
     {
@@ -170,6 +170,133 @@ class Kpi extends CI_Controller
                 'message' => 'Gagal mengambil data KPI: ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Get detail lengkap KPI satu pegawai pada periode tertentu
+     *
+     * GET /api/kpi/detail?pegawai_id=uuid&bulan=3&tahun=2026
+     *
+     * Response:
+     * {
+     *   "status": true,
+     *   "data": {
+     *     "pegawai": { uuid, nip, nama_pegawai, email, no_hp, departemen, jabatan },
+     *     "periode": { bulan, tahun, label },
+     *     "kpi": {
+     *       "nilai_presensi", "nilai_kegiatan", "nilai_cuti",
+     *       "nilai_pekerjaan", "nilai_dinas_luar",
+     *       "nilai_kpi_final", "kategori_kinerja",
+     *       "bobot_snapshot", "dihitung_pada"
+     *     },
+     *     "riwayat": [ ...semua periode sebelumnya ]
+     *   }
+     * }
+     */
+    public function detail()
+    {
+        $pegawai_id = $this->input->get('pegawai_id');
+        $bulan      = $this->input->get('bulan')  ?: date('n');
+        $tahun      = $this->input->get('tahun')  ?: date('Y');
+
+        if (!$pegawai_id) {
+            http_response_code(400);
+            echo json_encode([
+                'status'  => false,
+                'message' => 'Parameter pegawai_id wajib diisi'
+            ]);
+            return;
+        }
+
+        // Ambil data pegawai
+        $pegawai = $this->db->select('
+                p.uuid, p.NIP as nip, p.nama_pegawai, p.email,
+                u.nama_unit  AS departemen,
+                p.jab_struktur AS jabatan
+            ', FALSE)
+            ->from('pegawai p')
+            ->join('unit u', 'u.idunit = p.unit', 'left')
+            ->where('p.uuid', $pegawai_id)
+            ->get()->row_array();
+
+        if (!$pegawai) {
+            http_response_code(404);
+            echo json_encode([
+                'status'  => false,
+                'message' => 'Pegawai tidak ditemukan'
+            ]);
+            return;
+        }
+
+        // Ambil KPI periode yang diminta
+        $kpi_row = $this->db
+            ->where('pegawai_id',    $pegawai_id)
+            ->where('periode_bulan', $bulan)
+            ->where('periode_tahun', $tahun)
+            ->get('kpi_calculation_log')->row_array();
+
+        // Susun objek kpi (null-safe jika belum dihitung)
+        $kpi = null;
+        if ($kpi_row) {
+            $nf = floatval($kpi_row['nilai_kpi_final']);
+            if      ($nf >= 90) $kategori = 'Sangat Baik';
+            elseif  ($nf >= 80) $kategori = 'Baik';
+            elseif  ($nf >= 70) $kategori = 'Cukup';
+            elseif  ($nf >= 60) $kategori = 'Kurang';
+            else                $kategori = 'Sangat Kurang';
+
+            $kpi = [
+                'nilai_presensi'   => (float) $kpi_row['nilai_presensi'],
+                'nilai_kegiatan'   => (float) $kpi_row['nilai_kegiatan'],
+                'nilai_cuti'       => (float) $kpi_row['nilai_cuti'],
+                'nilai_pekerjaan'  => (float) $kpi_row['nilai_pekerjaan'],
+                'nilai_dinas_luar' => (float) $kpi_row['nilai_dinas_luar'],
+                'nilai_kpi_final'  => (float) $kpi_row['nilai_kpi_final'],
+                'kategori_kinerja' => $kategori,
+                'bobot_snapshot'   => json_decode($kpi_row['bobot_snapshot'] ?? 'null'),
+                'dihitung_pada'    => $kpi_row['created_at'] ?? null,
+            ];
+        }
+
+        // Ambil semua riwayat KPI pegawai ini
+        $riwayat_raw = $this->Kpi_model->get_kpi_pegawai($pegawai_id);
+        $riwayat = array_map(function ($r) {
+            $nf = floatval($r['nilai_kpi_final']);
+            if      ($nf >= 90) $kat = 'Sangat Baik';
+            elseif  ($nf >= 80) $kat = 'Baik';
+            elseif  ($nf >= 70) $kat = 'Cukup';
+            elseif  ($nf >= 60) $kat = 'Kurang';
+            else                $kat = 'Sangat Kurang';
+
+            return [
+                'periode_bulan'    => (int)  $r['periode_bulan'],
+                'periode_tahun'    => (int)  $r['periode_tahun'],
+                'periode_label'    => date('F Y', mktime(0, 0, 0, $r['periode_bulan'], 1, $r['periode_tahun'])),
+                'nilai_presensi'   => (float) $r['nilai_presensi'],
+                'nilai_kegiatan'   => (float) $r['nilai_kegiatan'],
+                'nilai_cuti'       => (float) $r['nilai_cuti'],
+                'nilai_pekerjaan'  => (float) $r['nilai_pekerjaan'],
+                'nilai_dinas_luar' => (float) $r['nilai_dinas_luar'],
+                'nilai_kpi_final'  => (float) $r['nilai_kpi_final'],
+                'kategori_kinerja' => $kat,
+                'dihitung_pada'    => $r['created_at'] ?? null,
+            ];
+        }, $riwayat_raw);
+
+        echo json_encode([
+            'status'  => true,
+            'message' => 'Detail KPI pegawai berhasil diambil',
+            'data'    => [
+                'pegawai' => $pegawai,
+                'periode' => [
+                    'bulan' => (int) $bulan,
+                    'tahun' => (int) $tahun,
+                    'label' => date('F Y', mktime(0, 0, 0, $bulan, 1, $tahun)),
+                ],
+                'kpi'     => $kpi,
+                'riwayat' => $riwayat,
+            ]
+        ]);
     }
 
     /**

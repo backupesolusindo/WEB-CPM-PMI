@@ -99,50 +99,84 @@ class Kpi extends CI_Controller
     }
 
     /**
-     * Proses hitung KPI batch
+     * AJAX: Ambil list pegawai untuk proses hitung KPI sequential
      */
-    public function proses_hitung()
+    public function ajax_get_pegawai_list()
     {
-        $bulan = $this->input->post('bulan');
-        $tahun = $this->input->post('tahun');
-        $unit_id = $this->input->post('unit_id');
+        $bulan    = $this->input->post('bulan');
+        $tahun    = $this->input->post('tahun');
+        $unit_id  = $this->input->post('unit_id');
 
         if (!$bulan || !$tahun) {
-            $this->session->set_flashdata('error', 'Bulan dan tahun wajib diisi');
-            redirect('kpi');
+            echo json_encode(['status' => false, 'message' => 'Bulan dan tahun wajib diisi']);
+            return;
+        }
+
+        $this->db->select('uuid, nip, nama_pegawai');
+        if ($unit_id) {
+            $this->db->where('unit', $unit_id);
+        }
+        $pegawai_list = $this->db->get('pegawai')->result_array();
+
+        echo json_encode([
+            'status' => true,
+            'bulan'  => $bulan,
+            'tahun'  => $tahun,
+            'total'  => count($pegawai_list),
+            'data'   => $pegawai_list
+        ]);
+    }
+
+    /**
+     * AJAX: Hitung KPI satu pegawai (dipanggil sequential dari frontend)
+     */
+    public function ajax_hitung_single()
+    {
+        $pegawai_id = $this->input->post('pegawai_id');
+        $bulan      = $this->input->post('bulan');
+        $tahun      = $this->input->post('tahun');
+
+        if (!$pegawai_id || !$bulan || !$tahun) {
+            echo json_encode(['status' => false, 'message' => 'Parameter tidak lengkap']);
+            return;
         }
 
         try {
-            // Ambil semua pegawai
-            $this->db->select('uuid');
-            if ($unit_id) {
-                $this->db->where('unit', $unit_id);
-            }
-            $pegawai_list = $this->db->get('pegawai')->result_array();
+            $result = $this->Kpi_model->hitung_kpi($pegawai_id, $bulan, $tahun);
+            $this->Kpi_model->save_kpi_calculation($result);
 
-            $success_count = 0;
-            $failed_count = 0;
-
-            foreach ($pegawai_list as $pegawai) {
-                try {
-                    $result = $this->Kpi_model->hitung_kpi($pegawai['uuid'], $bulan, $tahun);
-                    $this->Kpi_model->save_kpi_calculation($result);
-                    $success_count++;
-                } catch (Exception $e) {
-                    $failed_count++;
-                }
-            }
-
-            $this->session->set_flashdata('success', "KPI berhasil dihitung untuk $success_count pegawai");
-
-            if ($failed_count > 0) {
-                $this->session->set_flashdata('warning', "$failed_count pegawai gagal dihitung");
-            }
+            echo json_encode([
+                'status'      => true,
+                'pegawai_id'  => $pegawai_id,
+                'message'     => 'Berhasil'
+            ]);
         } catch (Exception $e) {
-            $this->session->set_flashdata('error', 'Gagal menghitung KPI: ' . $e->getMessage());
+            echo json_encode([
+                'status'      => false,
+                'pegawai_id'  => $pegawai_id,
+                'message'     => $e->getMessage()
+            ]);
         }
+    }
 
-        redirect('kpi');
+    /**
+     * Daftar Pegawai dengan KPI
+     */
+    public function daftar_pegawai()
+    {
+        $data['title'] = 'Daftar Pegawai & KPI';
+        $data['user'] = $this->session->userdata();
+        $data['bulan_selected'] = $this->input->get('bulan') ?: date('n');
+        $data['tahun_selected'] = $this->input->get('tahun') ?: date('Y');
+        $data['unit_id_selected'] = $this->input->get('unit_id') ?: '';
+        $data['unit_list'] = $this->db->get('unit')->result_array();
+        $data['pegawai_kpi'] = $this->Kpi_model->get_daftar_pegawai_kpi(
+            $data['bulan_selected'],
+            $data['tahun_selected'],
+            $data['unit_id_selected']
+        );
+        $data['body'] = 'kpi/daftar_pegawai';
+        $this->load->view('index', $data);
     }
 
     /**
@@ -164,9 +198,8 @@ class Kpi extends CI_Controller
         // Ambil history KPI
         $data['kpi_history'] = $this->Kpi_model->get_kpi_pegawai($pegawai_id);
 
-        $this->load->view('template/header', $data);
-        $this->load->view('kpi/detail', $data);
-        $this->load->view('template/footer');
+        $data['body'] = 'kpi/detail';
+        $this->load->view('index', $data);
     }
 
     /**
@@ -213,7 +246,7 @@ class Kpi extends CI_Controller
             echo '<tr>';
             echo '<td>' . $no++ . '</td>';
             echo '<td>' . $row['nip'] . '</td>';
-            echo '<td>' . $row['nama_lengkap'] . '</td>';
+            echo '<td>' . $row['nama_pegawai'] . '</td>';
             echo '<td>' . $row['departemen'] . '</td>';
             echo '<td>' . $row['nilai_presensi'] . '</td>';
             echo '<td>' . $row['nilai_kegiatan'] . '</td>';
@@ -234,15 +267,22 @@ class Kpi extends CI_Controller
      */
     public function ajax_get_data()
     {
-        $bulan = $this->input->get('bulan');
-        $tahun = $this->input->get('tahun');
+        $bulan   = $this->input->get('bulan');
+        $tahun   = $this->input->get('tahun');
         $unit_id = $this->input->get('unit_id');
 
-        // $data = $this->Kpi_model->get_kpi_by_periode($bulan, $tahun, $unit_id);
+        // Pastikan tidak ada output sebelumnya
+        if (ob_get_length()) ob_clean();
+        header('Content-Type: application/json');
+
+        $data = $this->Kpi_model->get_kpi_by_periode($bulan, $tahun, $unit_id);
 
         echo json_encode([
             'status' => true,
-            'data' => $data
+            'bulan'  => $bulan,
+            'tahun'  => $tahun,
+            'count'  => count($data),
+            'data'   => $data
         ]);
     }
 
@@ -254,11 +294,14 @@ class Kpi extends CI_Controller
         $bulan = $this->input->get('bulan');
         $tahun = $this->input->get('tahun');
 
+        if (ob_get_length()) ob_clean();
+        header('Content-Type: application/json');
+
         $statistik = $this->Kpi_model->get_statistik_kpi($bulan, $tahun);
 
         echo json_encode([
             'status' => true,
-            'data' => $statistik
+            'data'   => $statistik ?: (object)[]
         ]);
     }
 
@@ -271,11 +314,14 @@ class Kpi extends CI_Controller
         $tahun = $this->input->get('tahun');
         $limit = $this->input->get('limit') ?? 10;
 
+        if (ob_get_length()) ob_clean();
+        header('Content-Type: application/json');
+
         $ranking = $this->Kpi_model->get_ranking_kpi($bulan, $tahun, $limit);
 
         echo json_encode([
             'status' => true,
-            'data' => $ranking
+            'data'   => $ranking
         ]);
     }
 }

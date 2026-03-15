@@ -56,7 +56,7 @@
                         <i class="fa fa-search"></i> Tampilkan
                     </button>
 
-                    <button type="button" class="btn btn-success" onclick="hitungKPI()">
+                    <button type="button" class="btn btn-success" onclick="hitungKPI()" id="btnHitungKPI">
                         <i class="fa fa-calculator"></i> Hitung KPI
                     </button>
                     <a href="<?= base_url('kpi/pengaturan_bobot') ?>" class="btn btn-warning">
@@ -175,6 +175,34 @@
         </div>
     </div>
 </div>
+<!-- Modal Progress Hitung KPI -->
+<div class="modal fade" id="modalProgressKPI" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h4 class="modal-title text-white"><i class="fa fa-calculator"></i> Menghitung KPI</h4>
+            </div>
+            <div class="modal-body">
+                <p id="kpiProgressInfo" class="text-muted">Memulai...</p>
+                <div class="progress active" style="height:22px;">
+                    <div id="kpiProgressBar"
+                         class="progress-bar progress-bar-success progress-bar-striped active"
+                         role="progressbar"
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                         style="width:0%; min-width:2em;">0%</div>
+                </div>
+                <div style="max-height:200px; overflow-y:auto; margin-top:10px;">
+                    <ul id="kpiProgressLog" class="list-unstyled small"></ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnTutupProgress" type="button" class="btn btn-default"
+                        style="display:none;" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let chartKategori, chartRanking;
 
@@ -201,85 +229,79 @@
         $.ajax({
             url: '<?= base_url('kpi/ajax_get_statistik') ?>',
             type: 'GET',
-            data: {
-                bulan,
-                tahun
-            },
+            dataType: 'json',
+            data: { bulan, tahun },
             success: function(response) {
-                if (response.status) {
+                if (response.status && response.data) {
                     const data = response.data;
                     $('#statTotalPegawai').text(data.total_pegawai || 0);
                     $('#statRataKPI').text(parseFloat(data.rata_rata_kpi || 0).toFixed(2));
                     $('#statKPITertinggi').text(parseFloat(data.kpi_tertinggi || 0).toFixed(2));
                     $('#statKPITerendah').text(parseFloat(data.kpi_terendah || 0).toFixed(2));
                 }
+            },
+            error: function(xhr) {
+                console.error('Statistik error:', xhr.responseText);
             }
         });
     }
 
     function loadTabel(bulan, tahun, unit_id) {
+        $('#tableBody').html('<tr><td colspan="12" class="text-center"><i class="fa fa-spinner fa-spin"></i> Memuat data...</td></tr>');
         $.ajax({
             url: '<?= base_url('kpi/ajax_get_data') ?>',
             type: 'GET',
-            data: {
-                bulan,
-                tahun,
-                unit_id
-            },
+            dataType: 'json',
+            data: { bulan, tahun, unit_id },
             success: function(response) {
-                if (response.status) {
-                    let html = '';
-                    if (response.data.length === 0) {
-                        html = '<tr><td colspan="12" class="text-center">Tidak ada data</td></tr>';
-                    } else {
-                        response.data.forEach((item, index) => {
-                            const badgeClass = getBadgeClass(item.nilai_kpi_final);
-                            html += `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${item.nip}</td>
-                                <td>${item.nama_lengkap}</td>
-                                <td>${item.departemen || '-'}</td>
-                                <td>${parseFloat(item.nilai_presensi).toFixed(2)}</td>
-                                <td>${parseFloat(item.nilai_kegiatan).toFixed(2)}</td>
-                                <td>${parseFloat(item.nilai_cuti).toFixed(2)}</td>
-                                <td>${parseFloat(item.nilai_pekerjaan).toFixed(2)}</td>
-                                <td>${parseFloat(item.nilai_dinas_luar).toFixed(2)}</td>
-                                <td><strong>${parseFloat(item.nilai_kpi_final).toFixed(2)}</strong></td>
-                                <td><span class="badge ${badgeClass}">${item.kategori_kinerja}</span></td>
-                                <td>
-                                    <a href="<?= base_url('kpi/detail/') ?>${item.pegawai_id}" 
-                                       class="btn btn-xs btn-info" title="Detail">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        `;
-                        });
-                    }
-                    $('#tableBody').html(html);
+                let html = '';
+                if (!response.status || !response.data || response.data.length === 0) {
+                    html = '<tr><td colspan="12" class="text-center">Tidak ada data untuk periode ini</td></tr>';
+                } else {
+                    response.data.forEach((item, index) => {
+                        const badgeClass = getBadgeClass(item.nilai_kpi_final);
+                        html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.nip || '-'}</td>
+                            <td>${item.nama_pegawai || '-'}</td>
+                            <td>${item.departemen || '-'}</td>
+                            <td>${parseFloat(item.nilai_presensi || 0).toFixed(2)}</td>
+                            <td>${parseFloat(item.nilai_kegiatan || 0).toFixed(2)}</td>
+                            <td>${parseFloat(item.nilai_cuti || 0).toFixed(2)}</td>
+                            <td>${parseFloat(item.nilai_pekerjaan || 0).toFixed(2)}</td>
+                            <td>${parseFloat(item.nilai_dinas_luar || 0).toFixed(2)}</td>
+                            <td><strong>${parseFloat(item.nilai_kpi_final || 0).toFixed(2)}</strong></td>
+                            <td><span class="badge ${badgeClass}">${item.kategori_kinerja || '-'}</span></td>
+                            <td>
+                                <a href="<?= base_url('kpi/detail/') ?>${item.pegawai_id}"
+                                   class="btn btn-xs btn-info" title="Detail">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>`;
+                    });
                 }
+                $('#tableBody').html(html);
+            },
+            error: function(xhr) {
+                console.error('Tabel error:', xhr.responseText);
+                $('#tableBody').html('<tr><td colspan="12" class="text-center text-danger">Gagal memuat data</td></tr>');
             }
         });
     }
 
     function loadChart(bulan, tahun) {
-        // Load data statistik untuk chart
         $.ajax({
             url: '<?= base_url('kpi/ajax_get_statistik') ?>',
             type: 'GET',
-            data: {
-                bulan,
-                tahun
-            },
+            dataType: 'json',
+            data: { bulan, tahun },
             success: function(response) {
-                if (response.status) {
+                if (response.status && response.data) {
                     const data = response.data;
-
-                    // Chart Kategori (Pie Chart)
                     const ctxKategori = document.getElementById('chartKategori').getContext('2d');
                     if (chartKategori) chartKategori.destroy();
-
                     chartKategori = new Chart(ctxKategori, {
                         type: 'pie',
                         data: {
@@ -295,32 +317,24 @@
                                 backgroundColor: ['#00a65a', '#00c0ef', '#f39c12', '#dd4b39', '#d73925']
                             }]
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
-                        }
+                        options: { responsive: true, maintainAspectRatio: false }
                     });
                 }
-            }
+            },
+            error: function(xhr) { console.error('Chart statistik error:', xhr.responseText); }
         });
 
-        // Load ranking untuk chart
         $.ajax({
             url: '<?= base_url('kpi/ajax_get_ranking') ?>',
             type: 'GET',
-            data: {
-                bulan,
-                tahun,
-                limit: 10
-            },
+            dataType: 'json',
+            data: { bulan, tahun, limit: 10 },
             success: function(response) {
-                if (response.status) {
-                    const labels = response.data.map(item => item.nama_lengkap);
+                if (response.status && response.data && response.data.length) {
+                    const labels = response.data.map(item => item.nama_pegawai);
                     const values = response.data.map(item => parseFloat(item.nilai_kpi_final));
-
                     const ctxRanking = document.getElementById('chartRanking').getContext('2d');
                     if (chartRanking) chartRanking.destroy();
-
                     chartRanking = new Chart(ctxRanking, {
                         type: 'bar',
                         data: {
@@ -334,16 +348,12 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 100
-                                }
-                            }
+                            scales: { y: { beginAtZero: true, max: 100 } }
                         }
                     });
                 }
-            }
+            },
+            error: function(xhr) { console.error('Chart ranking error:', xhr.responseText); }
         });
     }
 
@@ -355,49 +365,73 @@
         return 'bg-red';
     }
 
-    function hitungKPI() {
-        const bulan = $('#filterBulan').val();
-        const tahun = $('#filterTahun').val();
+    async function hitungKPI() {
+        const bulan   = $('#filterBulan').val();
+        const tahun   = $('#filterTahun').val();
         const unit_id = $('#filterUnit').val();
 
-        if (!confirm('Hitung KPI untuk periode ini? Proses ini mungkin memakan waktu.')) {
+        if (!confirm('Hitung KPI untuk periode ini? Proses akan berjalan satu per satu.')) return;
+
+        // Ambil list pegawai dulu
+        let pegawaiList = [], total = 0;
+        try {
+            const res = await $.ajax({
+                url: '<?= base_url('kpi/ajax_get_pegawai_list') ?>',
+                type: 'POST',
+                data: { bulan, tahun, unit_id }
+            });
+            if (!res.status || !res.data.length) {
+                alert('Tidak ada pegawai ditemukan.');
+                return;
+            }
+            pegawaiList = res.data;
+            total       = res.total;
+        } catch (e) {
+            alert('Gagal mengambil data pegawai.');
             return;
         }
 
-        $.ajax({
-            url: '<?= base_url('kpi/proses_hitung') ?>',
-            type: 'POST',
-            data: {
-                bulan,
-                tahun,
-                unit_id
-            },
-            beforeSend: function() {
-                Swal.fire({
-                    title: 'Menghitung KPI...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
+        // Tampilkan modal progress
+        $('#modalProgressKPI').modal({ backdrop: 'static', keyboard: false });
+        $('#kpiProgressBar').css('width', '0%').attr('aria-valuenow', 0).text('0%');
+        $('#kpiProgressInfo').text('Memulai...');
+        $('#kpiProgressLog').empty();
+        $('#btnHitungKPI').prop('disabled', true);
+
+        let sukses = 0, gagal = 0;
+
+        for (let i = 0; i < pegawaiList.length; i++) {
+            const p   = pegawaiList[i];
+            const pct = Math.round(((i + 1) / total) * 100);
+
+            $('#kpiProgressInfo').text(`(${i + 1}/${total}) ${p.nama_pegawai}`);
+            $('#kpiProgressBar').css('width', pct + '%').attr('aria-valuenow', pct).text(pct + '%');
+
+            try {
+                const r = await $.ajax({
+                    url: '<?= base_url('kpi/ajax_hitung_single') ?>',
+                    type: 'POST',
+                    data: { pegawai_id: p.uuid, bulan, tahun }
                 });
-            },
-            success: function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: 'KPI berhasil dihitung'
-                });
-                loadData();
-            },
-            error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: 'Terjadi kesalahan saat menghitung KPI'
-                });
+                if (r.status) {
+                    sukses++;
+                    $('#kpiProgressLog').prepend(`<li class="text-success"><i class="fa fa-check"></i> ${p.nama_pegawai}</li>`);
+                } else {
+                    gagal++;
+                    $('#kpiProgressLog').prepend(`<li class="text-danger"><i class="fa fa-times"></i> ${p.nama_pegawai}: ${r.message}</li>`);
+                }
+            } catch (e) {
+                gagal++;
+                $('#kpiProgressLog').prepend(`<li class="text-danger"><i class="fa fa-times"></i> ${p.nama_pegawai}: request error</li>`);
             }
-        });
+        }
+
+        // Selesai
+        $('#kpiProgressInfo').text(`Selesai: ${sukses} berhasil, ${gagal} gagal`);
+        $('#kpiProgressBar').removeClass('active').css('width', '100%').text('100%');
+        $('#btnTutupProgress').show();
+        $('#btnHitungKPI').prop('disabled', false);
+        loadData();
     }
 
     function exportExcel() {
