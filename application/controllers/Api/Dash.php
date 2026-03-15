@@ -450,9 +450,9 @@ class Dash extends CI_Controller
     foreach ($libur->result() as $row) {
       $tanggal = $row->tanggal;
       // Hanya masukkan jika dalam bulan yang diminta
-      if (substr($tanggal, 0, 7) == $bulan) {
+      if (date("m", strtotime($tanggal)) == $bulan) {
         $data_libur[$tanggal] = array(
-          'idlibur' => $row->idlibur,
+          'idlibur' => $row->idtanggal_libur,
           'tanggal' => $tanggal,
           'keterangan' => $row->keterangan
         );

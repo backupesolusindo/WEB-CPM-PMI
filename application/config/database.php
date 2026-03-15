@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '103.163.138.56',
 	'username' => 'esolusi2_presensi_pmi',
 	'password' => 'rahasiapmi',
 	'database' => 'esolusi2_presensi_pmi',

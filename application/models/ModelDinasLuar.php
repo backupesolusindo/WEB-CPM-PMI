@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class ModelDinasLuar extends CI_Model{
+class ModelDinasLuar extends CI_Model
+{
 
   public function __construct()
   {
@@ -11,10 +12,21 @@ class ModelDinasLuar extends CI_Model{
 
   function getAll($tgl_mulai = null, $tgl_akhir = null)
   {
-    if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "" ) {
-      $this->db->where('tanggal_mulai BETWEEN "'.date("Y-m-d", strtotime($tgl_mulai)).'" AND "'.date("Y-m-d", strtotime($tgl_akhir)).'"');
-      $this->db->or_where('tanggal_selesai BETWEEN "'.date("Y-m-d", strtotime($tgl_mulai)).'" AND "'.date("Y-m-d", strtotime($tgl_akhir)).'"');
+    if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "") {
+      $this->db->where('tanggal_mulai BETWEEN "' . date("Y-m-d", strtotime($tgl_mulai)) . '" AND "' . date("Y-m-d", strtotime($tgl_akhir)) . '"');
+      $this->db->or_where('tanggal_selesai BETWEEN "' . date("Y-m-d", strtotime($tgl_mulai)) . '" AND "' . date("Y-m-d", strtotime($tgl_akhir)) . '"');
     }
+    return $this->db->get("dinas_luar");
+  }
+
+  function getDinasLuarbyUUID($uuid, $tgl_mulai = null, $tgl_akhir = null, $status = "DISETUJUI")
+  {
+    $this->db->join('pegawai_dinasluar', 'pegawai_dinasluar.dinas_luar_iddinas_luar = dinas_luar.iddinas_luar');
+    if ($tgl_mulai != null || $tgl_akhir != null || $tgl_mulai != "" || $tgl_akhir != "") {
+      $this->db->where('tanggal_mulai BETWEEN "' . date("Y-m-d", strtotime($tgl_mulai)) . '" AND "' . date("Y-m-d", strtotime($tgl_akhir)) . '"');
+    }
+    $this->db->where("pegawai_uuid", $uuid);
+    $this->db->where("status_approval", $status);
     return $this->db->get("dinas_luar");
   }
 
@@ -33,11 +45,10 @@ class ModelDinasLuar extends CI_Model{
 
   function cekDinasLuar($uuid, $tanggal)
   {
-    $this->db->join("dinas_luar","dinas_luar.iddinas_luar = pegawai_dinasluar.dinas_luar_iddinas_luar");
+    $this->db->join("dinas_luar", "dinas_luar.iddinas_luar = pegawai_dinasluar.dinas_luar_iddinas_luar");
     $this->db->where("pegawai_uuid", $uuid);
-    $this->db->where("dinas_luar.tanggal_mulai <=","$tanggal");
-    $this->db->where("dinas_luar.tanggal_selesai >=","$tanggal");
+    $this->db->where("dinas_luar.tanggal_mulai <=", "$tanggal");
+    $this->db->where("dinas_luar.tanggal_selesai >=", "$tanggal");
     return $this->db->get("pegawai_dinasluar");
   }
-
 }

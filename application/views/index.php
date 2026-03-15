@@ -617,6 +617,9 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id_login']) && !isset($_S
     <script src="<?php echo base_url(); ?>desain/assets/node_modules/bootstrap-table/dist/bootstrap-table.ints.js"></script>
     <!-- Chart JS -->
     <script src="<?php echo base_url(); ?>desain/assets/node_modules/echarts/echarts-all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php echo @$this->session->flashdata('notifJS') ?>
     <script src="<?php echo base_url(); ?>desain/MyJS.js"></script>
     <style>

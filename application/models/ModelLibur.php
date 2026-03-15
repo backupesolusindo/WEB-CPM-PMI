@@ -10,8 +10,11 @@ class ModelLibur extends CI_Model
     //Codeigniter : Write Less Do More
   }
 
-  function getLibur($tahun)
+  function getLibur($tahun = null)
   {
+    if ($tahun == null) {
+      $tahun = date("Y");
+    }
     $this->db->where("YEAR(tanggal) ", $tahun);
     $this->db->order_by("tanggal");
     return $this->db->get("tanggal_libur");

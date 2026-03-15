@@ -23,18 +23,24 @@
     </a>
   </li>
   <?php if (['Dashboard']): ?>
-    <li <?php if ($this->uri->segment(1) == 'Dashboard' && $this->uri->segment(2) == 'kalender'): ?>class="active" <?php endif; ?>>
-      <a href="<?php echo base_url() . 'Dashboard/kalender'; ?>">
-        <i class="fas fa-calendar-alt"></i><span class="hide-menu">Dashboard Kalender</span>
+    <li>
+      <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+        <i class="fas fa-tachometer-alt"></i>
+        <span class="hide-menu">Dashboard Lainnya</span>
       </a>
-    </li>
-    <li <?php if ($this->uri->segment(1) == 'Pekerjaan' && $this->uri->segment(2) == 'Dashboard'): ?>class="active" <?php endif; ?>>
-      <a href="<?php echo base_url() . 'Pekerjaan/Dashboard'; ?>">
-        <i class="fas fa-chart-line"></i><span class="hide-menu">Dashboard CPM</span>
-      </a>
+      <ul aria-expanded="false" class="collapse">
+        <li <?php if ($this->uri->segment(1) == 'Dashboard' && $this->uri->segment(2) == 'kalender'): ?>class="active" <?php endif; ?>>
+          <a href="<?php echo base_url() . 'Dashboard/kalender'; ?>">Dashboard Kalender</a>
+        </li>
+        <li <?php if ($this->uri->segment(1) == 'Pekerjaan' && $this->uri->segment(2) == 'Dashboard'): ?>class="active" <?php endif; ?>>
+          <a href="<?php echo base_url() . 'Pekerjaan/Dashboard'; ?>">Dashboard CPM</a>
+        </li>
+        <li <?php if ($this->uri->segment(1) == 'Kpi' && $this->uri->segment(2) == ''): ?>class="active" <?php endif; ?>>
+          <a href="<?php echo base_url() . 'Kpi'; ?>">Dashboard KPI</a>
+        </li>
+      </ul>
     </li>
   <?php endif; ?>
-
   <!-- PRESENSI -->
   <?php if (@$Menu_Group['presensi']): ?>
     <li class="nav-small-cap">--- PRESENSI</li>
@@ -70,92 +76,9 @@
           <i class="fas fa-umbrella-beach"></i><span class="hide-menu">Cuti Pegawai</span>
         </a>
       </li>
-    <?php endif; ?>
-  <?php endif; ?>
-
-  <!-- LAPORAN PRESENSI -->
-  <?php if (@$Menu_Group['laporan']): ?>
-    <li class="nav-small-cap">--- LAPORAN PRESENSI</li>
-    <?php if (@$Menu_Roles['LaporanPresensi']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanPresensi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanPresensi'; ?>">
-          <i class="fas fa-file-alt"></i><span class="hide-menu">Laporan Presensi</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanTidakPresensi']): ?>
-      <li <?php if ($this->uri->segment(1) == 'LaporanTidakPresensi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'LaporanTidakPresensi'; ?>">
-          <i class="fas fa-user-times"></i><span class="hide-menu">Laporan Tidak Presensi</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['RekapitulasiPresensi']): ?>
-      <li <?php if ($this->uri->segment(2) == 'RekapitulasiPresensi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/RekapitulasiPresensi'; ?>">
-          <i class="fas fa-table"></i><span class="hide-menu">Rekapitulasi Presensi</span>
-        </a>
-      </li>
-      <li <?php if ($this->uri->segment(2) == 'TotalPresensi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/TotalPresensi'; ?>">
-          <i class="fas fa-calculator"></i><span class="hide-menu">Total Presensi</span>
-        </a>
-      </li>
-      <li <?php if ($this->uri->segment(2) == 'TotalPresensiDispensasi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/TotalPresensiDispensasi'; ?>">
-          <i class="fas fa-hand-holding-medical"></i><span class="hide-menu">Total Presensi Dispensasi</span>
-        </a>
-      </li>
-      <li <?php if ($this->uri->segment(2) == 'LaporanKejanggalanPresensi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanKejanggalanPresensi'; ?>">
-          <i class="fas fa-exclamation-triangle"></i><span class="hide-menu">Laporan Kejanggalan Presensi</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanKegiatan']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanKegiatan'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanKegiatan'; ?>">
-          <i class="fas fa-tasks"></i><span class="hide-menu">Laporan Kegiatan</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanCuti']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanCuti'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanCuti'; ?>">
-          <i class="fas fa-file-invoice"></i><span class="hide-menu">Laporan Cuti</span>
-        </a>
-      </li>
-      <li <?php if ($this->uri->segment(2) == 'rekapitulasi_cuti'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/rekapitulasi_cuti'; ?>">
-          <i class="fas fa-list-alt"></i><span class="hide-menu">Rekapitulasi Cuti</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanLembur']): ?>
-      <li <?php if ($this->uri->segment(2) == 'RekapitulasiLembur'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/RekapitulasiLembur'; ?>">
-          <i class="fas fa-plane-departure"></i><span class="hide-menu">Rekapitulasi Lembur</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanDinasLuar']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanDinasLuar'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanDinasLuar'; ?>">
-          <i class="fas fa-plane-departure"></i><span class="hide-menu">Laporan Dinas Luar</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanDiluarJam']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanDiluarJam'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanDiluarJam'; ?>">
-          <i class="fas fa-business-time"></i><span class="hide-menu">Laporan Diluar Jam</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['LaporanJadwalWF']): ?>
-      <li <?php if ($this->uri->segment(2) == 'LaporanJadwalWF'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Laporan/LaporanJadwalWF'; ?>">
-          <i class="fas fa-calendar-check"></i><span class="hide-menu">Laporan Jadwal Kerja</span>
+      <li <?php if ($this->uri->segment(1) == 'CutiTahunan'): ?>class="active" <?php endif; ?>>
+        <a href="<?php echo base_url() . 'CutiTahunan'; ?>">
+          <i class="fas fa-umbrella-beach"></i><span class="hide-menu">Cuti Tahunan</span>
         </a>
       </li>
     <?php endif; ?>
@@ -164,25 +87,140 @@
   <!-- PEKERJAAN -->
   <?php if (['Pekerjaan']): ?>
     <li class="nav-small-cap">--- PEKERJAAN</li>
-    <?php if (['ListPekerjaan']): ?>
-      <li <?php if ($this->uri->segment(1) == 'ListPekerjaan'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Pekerjaan/ListPekerjaan'; ?>">
-          <i class="fas fa-list"></i><span class="hide-menu">List Pekerjaan</span>
+    <li>
+      <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+        <i class="fas fa-briefcase"></i>
+        <span class="hide-menu">Pekerjaan</span>
+      </a>
+      <ul aria-expanded="false" class="collapse">
+        <?php if (['ListPekerjaan']): ?>
+          <li <?php if ($this->uri->segment(1) == 'ListPekerjaan'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Pekerjaan/ListPekerjaan'; ?>">List Pekerjaan</a>
+          </li>
+        <?php endif; ?>
+        <?php if (['RiwayatPekerjaan']): ?>
+          <li <?php if ($this->uri->segment(1) == 'RiwayatPekerjaan'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Pekerjaan/RiwayatPekerjaan'; ?>">Riwayat Pekerjaan</a>
+          </li>
+        <?php endif; ?>
+        <?php if (['RekapPekerjaan']): ?>
+          <li <?php if ($this->uri->segment(1) == 'RekapPekerjaan'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Pekerjaan/RekapPekerjaan'; ?>">Rekap Pekerjaan</a>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </li>
+    <?php if (@$Menu_Roles['KPI'] || @$Menu_Group['kpi']): ?>
+      <li>
+        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+          <i class="fas fa-chart-line"></i>
+          <span class="hide-menu">Key Performance Indicator</span>
         </a>
+        <ul aria-expanded="false" class="collapse">
+          <li <?php if ($this->uri->segment(1) == 'Kpi' && $this->uri->segment(2) == 'detail' && $this->uri->segment(3) == $_SESSION['id_login']): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Kpi/detail/' . $_SESSION['id_login']; ?>">KPI Pegawai</a>
+          </li>
+          <li <?php if ($this->uri->segment(1) == 'Kpi' && $this->uri->segment(2) == 'pengaturan_bobot'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Kpi/pengaturan_bobot'; ?>">Pengaturan Bobot</a>
+          </li>
+        </ul>
       </li>
     <?php endif; ?>
-    <?php if (['RiwayatPekerjaan']): ?>
-      <li <?php if ($this->uri->segment(1) == 'RiwayatPekerjaan'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Pekerjaan/RiwayatPekerjaan'; ?>">
-          <i class="fas fa-history"></i><span class="hide-menu">Riwayat Pekerjaan</span>
+    <?php if (@$Menu_Roles['Pengembangan_Diri']): ?>
+      <li>
+        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+          <i class="fas fa-chart-line"></i>
+          <span class="hide-menu">Pengembangan Diri</span>
         </a>
+        <ul aria-expanded="false" class="collapse">
+          <li <?php if ($this->uri->segment(1) == 'pdp'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'pdp'; ?>">Personal Development Plan</a>
+          </li>
+          <li <?php if ($this->uri->segment(1) == 'Skillinventory'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Skillinventory'; ?>">Skill Inventory</a>
+          </li>
+        </ul>
       </li>
     <?php endif; ?>
-    <?php if (['RekapPekerjaan']): ?>
-      <li <?php if ($this->uri->segment(1) == 'RekapPekerjaan'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Pekerjaan/RekapPekerjaan'; ?>">
-          <i class="fas fa-chart-bar"></i><span class="hide-menu">Rekap Pekerjaan</span>
+  <?php endif; ?>
+
+  <!-- LAPORAN PRESENSI -->
+  <?php if (@$Menu_Group['laporan']): ?>
+    <li class="nav-small-cap">--- LAPORAN</li>
+    <li>
+      <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+        <i class="fas fa-file-alt"></i>
+        <span class="hide-menu">Laporan Presensi</span>
+      </a>
+      <ul aria-expanded="false" class="collapse">
+        <?php if (@$Menu_Roles['LaporanPresensi']): ?>
+          <li <?php if ($this->uri->segment(2) == 'LaporanPresensi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/LaporanPresensi'; ?>">Laporan Presensi</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['LaporanTidakPresensi']): ?>
+          <li <?php if ($this->uri->segment(1) == 'LaporanTidakPresensi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'LaporanTidakPresensi'; ?>">Laporan Tidak Presensi</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['RekapitulasiPresensi']): ?>
+          <li <?php if ($this->uri->segment(2) == 'RekapitulasiPresensi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/RekapitulasiPresensi'; ?>">Rekapitulasi Presensi</a>
+          </li>
+          <li <?php if ($this->uri->segment(2) == 'TotalPresensi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/TotalPresensi'; ?>">Total Presensi</a>
+          </li>
+          <li <?php if ($this->uri->segment(2) == 'TotalPresensiDispensasi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/TotalPresensiDispensasi'; ?>">Total Presensi Dispensasi</a>
+          </li>
+          <li <?php if ($this->uri->segment(2) == 'LaporanKejanggalanPresensi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/LaporanKejanggalanPresensi'; ?>">Laporan Kejanggalan</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['LaporanKegiatan']): ?>
+          <li <?php if ($this->uri->segment(2) == 'LaporanKegiatan'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Laporan/LaporanKegiatan'; ?>">Laporan Kegiatan</a>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </li>
+
+    <?php if (@$Menu_Roles['LaporanCuti'] || @$Menu_Roles['LaporanLembur'] || @$Menu_Roles['LaporanDinasLuar'] || @$Menu_Roles['LaporanDiluarJam'] || @$Menu_Roles['LaporanJadwalWF']): ?>
+      <li>
+        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+          <i class="fas fa-chart-pie"></i>
+          <span class="hide-menu">Laporan Lainnya</span>
         </a>
+        <ul aria-expanded="false" class="collapse">
+          <?php if (@$Menu_Roles['LaporanCuti']): ?>
+            <li <?php if ($this->uri->segment(2) == 'LaporanCuti'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/LaporanCuti'; ?>">Laporan Cuti</a>
+            </li>
+            <li <?php if ($this->uri->segment(2) == 'rekapitulasi_cuti'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/rekapitulasi_cuti'; ?>">Rekapitulasi Cuti</a>
+            </li>
+          <?php endif; ?>
+          <?php if (@$Menu_Roles['LaporanLembur']): ?>
+            <li <?php if ($this->uri->segment(2) == 'RekapitulasiLembur'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/RekapitulasiLembur'; ?>">Rekapitulasi Lembur</a>
+            </li>
+          <?php endif; ?>
+          <?php if (@$Menu_Roles['LaporanDinasLuar']): ?>
+            <li <?php if ($this->uri->segment(2) == 'LaporanDinasLuar'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/LaporanDinasLuar'; ?>">Laporan Dinas Luar</a>
+            </li>
+          <?php endif; ?>
+          <?php if (@$Menu_Roles['LaporanDiluarJam']): ?>
+            <li <?php if ($this->uri->segment(2) == 'LaporanDiluarJam'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/LaporanDiluarJam'; ?>">Laporan Diluar Jam</a>
+            </li>
+          <?php endif; ?>
+          <?php if (@$Menu_Roles['LaporanJadwalWF']): ?>
+            <li <?php if ($this->uri->segment(2) == 'LaporanJadwalWF'): ?>class="active" <?php endif; ?>>
+              <a href="<?php echo base_url() . 'Laporan/LaporanJadwalWF'; ?>">Laporan Jadwal Kerja</a>
+            </li>
+          <?php endif; ?>
+        </ul>
       </li>
     <?php endif; ?>
   <?php endif; ?>
@@ -190,34 +228,34 @@
   <!-- KEPEGAWAIAN -->
   <?php if (@$Menu_Group['kepegawaian']): ?>
     <li class="nav-small-cap">--- KEPEGAWAIAN</li>
-    <?php if (@$Menu_Roles['Pegawai']): ?>
-      <li <?php if ($this->uri->segment(1) == 'Pegawai'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Pegawai'; ?>">
-          <i class="fas fa-users"></i><span class="hide-menu">Pegawai</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['Jabatan']): ?>
-      <li <?php if ($this->uri->segment(1) == 'Jabatan'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Jabatan'; ?>">
-          <i class="fas fa-id-badge"></i><span class="hide-menu">Jabatan</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['Monitoring']): ?>
-      <li <?php if ($this->uri->segment(1) == 'Monitoring'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Monitoring'; ?>">
-          <i class="fas fa-desktop"></i><span class="hide-menu">Monitoring Pegawai</span>
-        </a>
-      </li>
-    <?php endif; ?>
-    <?php if (@$Menu_Roles['JadwalLokasi']): ?>
-      <li <?php if ($this->uri->segment(1) == 'JadwalLokasi'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'JadwalLokasi'; ?>">
-          <i class="fas fa-map-marker-alt"></i><span class="hide-menu">Jadwal Lokasi</span>
-        </a>
-      </li>
-    <?php endif; ?>
+    <li>
+      <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+        <i class="fas fa-users"></i>
+        <span class="hide-menu">Kepegawaian</span>
+      </a>
+      <ul aria-expanded="false" class="collapse">
+        <?php if (@$Menu_Roles['Pegawai']): ?>
+          <li <?php if ($this->uri->segment(1) == 'Pegawai'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Pegawai'; ?>">Pegawai</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['Jabatan']): ?>
+          <li <?php if ($this->uri->segment(1) == 'Jabatan'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Jabatan'; ?>">Jabatan</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['Monitoring']): ?>
+          <li <?php if ($this->uri->segment(1) == 'Monitoring'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Monitoring'; ?>">Monitoring Pegawai</a>
+          </li>
+        <?php endif; ?>
+        <?php if (@$Menu_Roles['JadwalLokasi']): ?>
+          <li <?php if ($this->uri->segment(1) == 'JadwalLokasi'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'JadwalLokasi'; ?>">Jadwal Lokasi</a>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </li>
   <?php endif; ?>
 
   <!-- DATA MASTER -->
