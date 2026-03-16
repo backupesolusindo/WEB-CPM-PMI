@@ -254,46 +254,74 @@ class Kpi_model extends CI_Model
 
     public function get_kpi_by_periode($bulan, $tahun, $unit_id = null)
     {
-        $this->db->select('v.*');
-        $this->db->from('view_kpi_summary v');
-        // $this->db->where('v.periode_bulan', $bulan);
-        // $this->db->where('v.periode_tahun', $tahun);
+        $this->db->select('k.*, p.nip, p.nama_pegawai, u.nama_unit as departemen,
+            CASE
+                WHEN k.nilai_kpi_final >= 90 THEN "Sangat Baik"
+                WHEN k.nilai_kpi_final >= 80 THEN "Baik"
+                WHEN k.nilai_kpi_final >= 70 THEN "Cukup"
+                WHEN k.nilai_kpi_final >= 60 THEN "Kurang"
+                ELSE "Sangat Kurang"
+            END as kategori_kinerja', FALSE);
+        $this->db->from('kpi_calculation_log k');
+        $this->db->join('pegawai p', 'k.pegawai_id = p.uuid', 'left');
+        $this->db->join('unit u', 'p.unit = u.idunit', 'left');
+        $this->db->where('k.periode_bulan', $bulan);
+        $this->db->where('k.periode_tahun', $tahun);
 
-        // if ($unit_id) {
-        //     $this->db->join('pegawai p', 'v.pegawai_id = p.id');
-        //     $this->db->where('p.unit', $unit_id);
-        // }
+        if ($unit_id) {
+            $this->db->where('p.unit', $unit_id);
+        }
 
-        // $this->db->order_by('v.nilai_kpi_final', 'DESC');
+        $this->db->order_by('k.nilai_kpi_final', 'DESC');
 
         return $this->db->get()->result_array();
     }
 
     public function get_kpi_pegawai($pegawai_id, $bulan = null, $tahun = null)
     {
-        $this->db->where('pegawai_id', $pegawai_id);
+        $this->db->select('k.*,
+            CASE
+                WHEN k.nilai_kpi_final >= 90 THEN "Sangat Baik"
+                WHEN k.nilai_kpi_final >= 80 THEN "Baik"
+                WHEN k.nilai_kpi_final >= 70 THEN "Cukup"
+                WHEN k.nilai_kpi_final >= 60 THEN "Kurang"
+                ELSE "Sangat Kurang"
+            END as kategori_kinerja
+        ', FALSE);
+        $this->db->from('kpi_calculation_log k');
+        $this->db->where('k.pegawai_id', $pegawai_id);
 
         if ($bulan) {
-            $this->db->where('periode_bulan', $bulan);
+            $this->db->where('k.periode_bulan', $bulan);
         }
         if ($tahun) {
-            $this->db->where('periode_tahun', $tahun);
+            $this->db->where('k.periode_tahun', $tahun);
         }
 
-        $this->db->order_by('periode_tahun', 'DESC');
-        $this->db->order_by('periode_bulan', 'DESC');
+        $this->db->order_by('k.periode_tahun', 'DESC');
+        $this->db->order_by('k.periode_bulan', 'DESC');
 
-        return $this->db->get('view_kpi_summary')->result_array();
+        return $this->db->get()->result_array();
     }
 
     public function get_ranking_kpi($bulan, $tahun, $limit = 10)
     {
-        $this->db->where('periode_bulan', $bulan);
-        $this->db->where('periode_tahun', $tahun);
-        $this->db->order_by('nilai_kpi_final', 'DESC');
+        $this->db->select('k.nilai_kpi_final, p.nama_pegawai,
+            CASE
+                WHEN k.nilai_kpi_final >= 90 THEN "Sangat Baik"
+                WHEN k.nilai_kpi_final >= 80 THEN "Baik"
+                WHEN k.nilai_kpi_final >= 70 THEN "Cukup"
+                WHEN k.nilai_kpi_final >= 60 THEN "Kurang"
+                ELSE "Sangat Kurang"
+            END as kategori_kinerja', FALSE);
+        $this->db->from('kpi_calculation_log k');
+        $this->db->join('pegawai p', 'k.pegawai_id = p.uuid', 'left');
+        $this->db->where('k.periode_bulan', $bulan);
+        $this->db->where('k.periode_tahun', $tahun);
+        $this->db->order_by('k.nilai_kpi_final', 'DESC');
         $this->db->limit($limit);
 
-        return $this->db->get('view_kpi_summary')->result_array();
+        return $this->db->get()->result_array();
     }
 
     // ==================== HELPER ====================
@@ -342,5 +370,47 @@ class Kpi_model extends CI_Model
         $this->db->where('periode_tahun', $tahun);
 
         return $this->db->get('kpi_calculation_log')->row_array();
+    }
+
+    /**
+     * Ambil daftar semua pegawai beserta KPI pada periode tertentu
+     */
+    public function get_daftar_pegawai_kpi($bulan, $tahun, $unit_id = null)
+    {
+        $this->db->select('
+            p.uuid,
+            p.nip,
+            p.nama_pegawai,
+            u.nama_unit as departemen,
+            k.nilai_presensi,
+            k.nilai_kegiatan,
+            k.nilai_cuti,
+            k.nilai_pekerjaan,
+            k.nilai_dinas_luar,
+            k.nilai_kpi_final,
+            CASE
+                WHEN k.nilai_kpi_final >= 90 THEN "Sangat Baik"
+                WHEN k.nilai_kpi_final >= 80 THEN "Baik"
+                WHEN k.nilai_kpi_final >= 70 THEN "Cukup"
+                WHEN k.nilai_kpi_final >= 60 THEN "Kurang"
+                WHEN k.nilai_kpi_final IS NOT NULL THEN "Sangat Kurang"
+                ELSE NULL
+            END as kategori_kinerja
+        ', FALSE);
+        $this->db->from('pegawai p');
+        $this->db->join('unit u', 'p.unit = u.idunit', 'left');
+        $this->db->join(
+            'kpi_calculation_log k',
+            'k.pegawai_id = p.uuid AND k.periode_bulan = ' . (int)$bulan . ' AND k.periode_tahun = ' . (int)$tahun,
+            'left'
+        );
+
+        if ($unit_id) {
+            $this->db->where('p.unit', $unit_id);
+        }
+
+        $this->db->order_by('ISNULL(k.nilai_kpi_final) ASC, k.nilai_kpi_final DESC, p.nama_pegawai ASC', NULL, FALSE);
+
+        return $this->db->get()->result_array();
     }
 }
