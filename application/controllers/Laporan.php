@@ -144,6 +144,18 @@ class Laporan extends CI_Controller
     $this->load->view('index', $data);
   }
 
+  function approval_kegiatan()
+  {
+    $idabsen_kegiatan = $this->input->post("idabsen_kegiatan");
+    $status           = $this->input->post("status");
+    $this->db->where("idabsen_kegiatan", $idabsen_kegiatan);
+    if ($this->db->update("absen_kegiatan", array('status_aproval' => $status))) {
+      echo json_encode(array('status' => 200, 'message' => 'Berhasil'));
+    } else {
+      echo json_encode(array('status' => 500, 'message' => 'Gagal'));
+    }
+  }
+
   function LaporanCuti()
   {
     $data = array(

@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class CutiPegawai extends CI_Controller {
+class CutiPegawai extends CI_Controller
+{
 
     public function __construct()
     {
@@ -17,7 +18,7 @@ class CutiPegawai extends CI_Controller {
     public function index()
     {
         $data = array(
-            'title' => 'IZIN PESERTA PKL',
+            'title' => 'IZIN PEGAWAI',
             'body'  => 'CutiPegawai/list',
             'data'  => $this->ModelPerizinan->get_list()->result()
         );
@@ -66,28 +67,27 @@ class CutiPegawai extends CI_Controller {
 
             // Status badge
             $statusBadge =
-                ($d->status == 1) ? '<span class="badge badge-success p-2">Disetujui</span>' :
-                (($d->status == 2) ? '<span class="badge badge-danger p-2">Ditolak</span>' :
-                                   '<span class="badge badge-warning p-2">Menunggu</span>');
+                ($d->status == 1) ? '<span class="badge badge-success p-2">Disetujui</span>' : (($d->status == 2) ? '<span class="badge badge-danger p-2">Ditolak</span>' :
+                    '<span class="badge badge-warning p-2">Menunggu</span>');
 
             // File download button
             $fileBtn = (empty($d->file) || $d->file == "document/izin/")
-                        ? '<span class="badge badge-secondary">Tidak Ada File</span>'
-                        : '<a href="'.base_url($d->file).'" target="_blank" class="btn btn-info btn-sm">
+                ? '<span class="badge badge-secondary">Tidak Ada File</span>'
+                : '<a href="' . base_url($d->file) . '" target="_blank" class="btn btn-info btn-sm">
                                 <i class="fas fa-download"></i> Download
                            </a>';
 
             // Aksi button
             $aksi = '';
-            if ($d->status != 1) $aksi .= '<button class="btn btn-success btn-sm" onclick="updateStatus('.$d->idizin.',1)">Setujui</button> ';
-            if ($d->status != 2) $aksi .= '<button class="btn btn-danger btn-sm" onclick="updateStatus('.$d->idizin.',2)">Tolak</button> ';
-            if ($d->status == 1 || $d->status == 2) $aksi .= '<button class="btn btn-warning btn-sm" onclick="updateStatus('.$d->idizin.',0)">Reset</button>';
+            if ($d->status != 1) $aksi .= '<button class="btn btn-success btn-sm" onclick="updateStatus(' . $d->idizin . ',1)">Setujui</button> ';
+            if ($d->status != 2) $aksi .= '<button class="btn btn-danger btn-sm" onclick="updateStatus(' . $d->idizin . ',2)">Tolak</button> ';
+            if ($d->status == 1 || $d->status == 2) $aksi .= '<button class="btn btn-warning btn-sm" onclick="updateStatus(' . $d->idizin . ',0)">Reset</button>';
 
             // Tombol Pilih (custom checkbox) — SESUAI DENGAN list.php
             $pilihBtn = '<button 
                 class="pilih-btn" 
-                data-id="'.$d->idizin.'"
-                data-status="'.$d->status.'"
+                data-id="' . $d->idizin . '"
+                data-status="' . $d->status . '"
                 style="
                     width:18px;
                     height:18px;
@@ -107,18 +107,18 @@ class CutiPegawai extends CI_Controller {
 
             // Bangun row
             $html .= '<tr>
-                        <td>'.$pilihBtn.'</td>
-                        <td>'.$no++.'</td>
-                        <td>'.htmlspecialchars($d->NIP).'</td>
-                        <td>'.htmlspecialchars($d->nama_pegawai).'</td>
-                        <td>'.date("d-m-Y", strtotime($d->tanggal_mulai)).'</td>
-                        <td>'.date("d-m-Y", strtotime($d->tanggal_akhir)).'</td>
-                        <td>'.htmlspecialchars($d->jenis_izin).'</td>
-                        <td>'.htmlspecialchars($d->alasan).'</td>
-                        <td>'.$statusBadge.'</td>
-                        <td>'.$aksi.'</td>
-                        <td>'.$fileBtn.'</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="hapus('.$d->idizin.')"><i class="fas fa-trash"></i></button></td>
+                        <td>' . $pilihBtn . '</td>
+                        <td>' . $no++ . '</td>
+                        <td>' . htmlspecialchars($d->NIP) . '</td>
+                        <td>' . htmlspecialchars($d->nama_pegawai) . '</td>
+                        <td>' . date("d-m-Y", strtotime($d->tanggal_mulai)) . '</td>
+                        <td>' . date("d-m-Y", strtotime($d->tanggal_akhir)) . '</td>
+                        <td>' . htmlspecialchars($d->jenis_izin) . '</td>
+                        <td>' . htmlspecialchars($d->alasan) . '</td>
+                        <td>' . $statusBadge . '</td>
+                        <td>' . $aksi . '</td>
+                        <td>' . $fileBtn . '</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="hapus(' . $d->idizin . ')"><i class="fas fa-trash"></i></button></td>
                       </tr>';
         }
 
@@ -134,7 +134,7 @@ class CutiPegawai extends CI_Controller {
     public function input()
     {
         $data = array(
-            'title'   => 'FORM INPUT IZIN PESERTA PKL',
+            'title'   => 'FORM INPUT IZIN PEGAWAI',
             'body'    => 'CutiPegawai/input',
             'pegawai' => $this->ModelPegawai->get_list()->result(),
             'jenis'   => $this->ModelJenisPerizinan->get_jenisperizinan()->result(),
@@ -160,10 +160,10 @@ class CutiPegawai extends CI_Controller {
 
         if ($this->db->insert('izin', $data)) {
             $this->session->set_flashdata('notifJS', array('message' => 'Data berhasil ditambahkan', 'type' => 'success'));
-            redirect(base_url().'CutiPegawai');
+            redirect(base_url() . 'CutiPegawai');
         } else {
             $this->session->set_flashdata('notifJS', array('message' => 'Gagal menambah data', 'type' => 'error'));
-            redirect(base_url().'CutiPegawai');
+            redirect(base_url() . 'CutiPegawai');
         }
     }
 
@@ -185,7 +185,7 @@ class CutiPegawai extends CI_Controller {
             } else {
                 $upload = $this->upload->data();
                 $nama = $upload['file_name'];
-                $msg  = "Berhasil Upload ".$nama;
+                $msg  = "Berhasil Upload " . $nama;
             }
         } else {
             $msg = "File Kosong";
@@ -195,7 +195,7 @@ class CutiPegawai extends CI_Controller {
         return array(
             'pesan' => $msg,
             'nama'  => $nama,
-            'link'  => "document/izin/".$nama
+            'link'  => "document/izin/" . $nama
         );
     }
 
@@ -227,10 +227,10 @@ class CutiPegawai extends CI_Controller {
                 echo json_encode(array('success' => true, 'message' => 'Status berhasil diupdate'));
             } else {
                 $db_error = $this->db->error();
-                echo json_encode(array('success' => false, 'message' => 'Gagal update status: '.$db_error['message']));
+                echo json_encode(array('success' => false, 'message' => 'Gagal update status: ' . $db_error['message']));
             }
         } catch (Exception $e) {
-            echo json_encode(array('success' => false, 'message' => 'Error: '.$e->getMessage()));
+            echo json_encode(array('success' => false, 'message' => 'Error: ' . $e->getMessage()));
         }
     }
 
@@ -255,10 +255,10 @@ class CutiPegawai extends CI_Controller {
                 echo json_encode(array('success' => true, 'message' => 'Data berhasil dihapus'));
             } else {
                 $db_error = $this->db->error();
-                echo json_encode(array('success' => false, 'message' => 'Gagal menghapus data: '.$db_error['message']));
+                echo json_encode(array('success' => false, 'message' => 'Gagal menghapus data: ' . $db_error['message']));
             }
         } catch (Exception $e) {
-            echo json_encode(array('success' => false, 'message' => 'Error: '.$e->getMessage()));
+            echo json_encode(array('success' => false, 'message' => 'Error: ' . $e->getMessage()));
         }
     }
 
@@ -279,9 +279,15 @@ class CutiPegawai extends CI_Controller {
 
         $status = null;
         switch ($action) {
-            case 'approve': $status = 1; break;
-            case 'reject': $status = 2; break;
-            case 'reset': $status = 0; break;
+            case 'approve':
+                $status = 1;
+                break;
+            case 'reject':
+                $status = 2;
+                break;
+            case 'reset':
+                $status = 0;
+                break;
             case 'delete':
                 // Hapus langsung
                 $this->db->where_in('idizin', $ids);
