@@ -114,15 +114,19 @@ class Lembur extends CI_Controller
 
   function insert_peserta()
   {
-    $idlembur = $this->input->post("idlembur");
+    $idlembur   = $this->input->post("idlembur");
     $pegawai    = $this->input->post("uuid");
+    $jam_mulai  = $this->input->post("jam_mulai");
+    $jam_selesai = $this->input->post("jam_selesai");
     $data = array();
     $this->db->where("lembur_idlembur", $idlembur);
     if ($this->db->delete("peserta_lembur")) {
       for ($i = 0; $i < sizeof($pegawai); $i++) {
         $ar = array(
           'lembur_idlembur' => $idlembur,
-          'pegawai_uuid'        => $pegawai[$i]
+          'pegawai_uuid'    => $pegawai[$i],
+          'jam_mulai'       => $jam_mulai[$i],
+          'jam_selesai'     => $jam_selesai[$i],
         );
         array_push($data, $ar);
       }
