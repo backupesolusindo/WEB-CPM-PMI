@@ -8,7 +8,7 @@
         <?php if ($value->idjabatan != "adminr"): ?>
           <option value="<?php echo $value->idjabatan; ?>" <?php if ($value->idjabatan == @$jadwalmasuk['jabatan_idjabatan']): ?>
             <?php echo 'selected'; ?>
-          <?php endif; ?>><?php echo $value->namajabatan ?></option>
+            <?php endif; ?>><?php echo $value->namajabatan ?></option>
         <?php endif; ?>
       <?php endforeach; ?>
     </select>
@@ -23,6 +23,13 @@
     </div>
   </div>
 
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Batas Jam Masuk Minimal :</label>
+      <input type="text" name="batas_absen" id="batas_absen" class="form-control waktu-input" placeholder="contoh: 10:00" value="<?php echo @$jadwalmasuk["batas_absen"] ?>" required>
+      <small class="text-muted">Jam maksimal pegawai boleh melakukan absensi masuk</small>
+    </div>
+  </div>
 
   <div class="col-md-4">
     <div class="form-group">
@@ -43,8 +50,8 @@
       <label>Jenis Jadwal Masuk :</label>
       <select name="jenis" class="form-control select2 col-md-12" required>
         <option>...Pilih Jenis Jadwal...</option>
-        <option value="1" <?php if (@$jadwalmasuk["jenis"] == 1): ?>selected<?php endif; ?> >WFO</option>
-        <option value="2" <?php if (@$jadwalmasuk["jenis"] == 2): ?>selected<?php endif; ?> >WFH</option>
+        <option value="1" <?php if (@$jadwalmasuk["jenis"] == 1): ?>selected<?php endif; ?>>WFO</option>
+        <option value="2" <?php if (@$jadwalmasuk["jenis"] == 2): ?>selected<?php endif; ?>>WFH</option>
       </select>
     </div>
   </div>
@@ -81,7 +88,8 @@
       <input type="text" name="toleransi_kepulangan" id="toleransi_kepulangan" class="form-control waktu-input" value="<?php echo @$jadwalmasuk["toleransi_kepulangan"] ?>" required>
     </div>
   </div>
-  <div class="col-sm-12 row">
+
+  <!-- <div class="col-sm-12 row">
     <label class="col-12">Hari Kerja : </label>
     <div class="custom-control custom-checkbox col-3">
       <input type="checkbox" class="custom-control-input" name="hari" id="Mon" value="Mon">
@@ -111,7 +119,7 @@
       <input type="checkbox" class="custom-control-input" name="hari" id="Sun" value="Sun">
       <label class="custom-control-label" for="Sun">Minggu</label>
     </div>
-  </div>
+  </div> -->
 
   <div class="col-md-12" hidden>
     <div class="form-group">
@@ -127,27 +135,30 @@
     </div>
   </div>
 </div>
-<div class="form-actions" >
+<div class="form-actions">
   <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Simpan</button>
   <button type="button" class="btn btn-light waves-effect btn-sm kembali" data-dismiss="modal">Kembali</button>
 </div>
 
 <script type="text/javascript">
-function hitung() {
-  var masuk  = $('#masuk').val();
-  var pulang  = $('#pulang').val();
-  $.ajax({
-    type: "POST",
-    url: "<?php echo base_url();?>JadwalMasuk/perhitungan_jam",
-    data: {masuk: masuk, pulang:pulang},
-    success: function(data){
-      $('#total_jamkerja').val(data);
-      // alert(data);  //as a debugging message.
-    },
-    error: function(e) {
-      alert(e);
-    },
-  });
+  function hitung() {
+    var masuk = $('#masuk').val();
+    var pulang = $('#pulang').val();
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>JadwalMasuk/perhitungan_jam",
+      data: {
+        masuk: masuk,
+        pulang: pulang
+      },
+      success: function(data) {
+        $('#total_jamkerja').val(data);
+        // alert(data);  //as a debugging message.
+      },
+      error: function(e) {
+        alert(e);
+      },
+    });
 
-}
+  }
 </script>

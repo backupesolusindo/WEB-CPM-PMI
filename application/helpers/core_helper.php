@@ -1,8 +1,8 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
 function NamaAPP()
 {
-  return "ABSENSI POOLIJE";
+  return "SIIMUDD";
 }
 function Alamat()
 {
@@ -11,13 +11,10 @@ function Alamat()
 
 function Rupiah($data)
 {
-  return "Rp. ".number_format($data,0,".",".");
+  return "Rp. " . number_format($data, 0, ".", ".");
 }
 
 function MataUang($data)
 {
-  return number_format($data,0,".",".");
+  return number_format($data, 0, ".", ".");
 }
-
-
- ?>

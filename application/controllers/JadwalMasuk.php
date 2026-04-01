@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class JadwalMasuk extends CI_Controller{
+class JadwalMasuk extends CI_Controller
+{
 
   public function __construct()
   {
@@ -14,10 +15,10 @@ class JadwalMasuk extends CI_Controller{
   function index()
   {
     $data = array(
-    'title'         => 'JADWAL MASUK',
-    'body'          => 'JadwalMasuk/list' ,
-    'jadwalmasuk'   => $this->ModelJadwalMasuk->get_all_jadwalmasuk()->result(),
-  );
+      'title'         => 'JADWAL MASUK',
+      'body'          => 'JadwalMasuk/list',
+      'jadwalmasuk'   => $this->ModelJadwalMasuk->get_all_jadwalmasuk()->result(),
+    );
     $this->load->view('index', $data);
   }
 
@@ -46,24 +47,25 @@ class JadwalMasuk extends CI_Controller{
       'nama'                => $this->input->post("nama"),
       'jml_wfh'             => $this->input->post("jml_wfh"),
       'jml_wfo'             => $this->input->post("jml_wfo"),
-      'toleransi_kedatangan'=> $this->input->post("toleransi_kedatangan"),
-      'toleransi_kepulangan'=> $this->input->post("toleransi_kepulangan"),
+      'toleransi_kedatangan' => $this->input->post("toleransi_kedatangan"),
+      'toleransi_kepulangan' => $this->input->post("toleransi_kepulangan"),
+      'batas_absen'         => $this->input->post("batas_absen"),
     );
     if ($this->db->insert('jadwal_masuk', $data)) {
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Tambah Data Berhasil"));
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
     }
-    redirect(base_url().'JadwalMasuk');
+    redirect(base_url() . 'JadwalMasuk');
   }
 
   function perhitungan_jam()
   {
-    $jam_masuk = date("Y-m-d H:i", strtotime(date("Y-m-d").$this->input->post("masuk")));
-    $jam_pulang= date("Y-m-d H:i", strtotime(date("Y-m-d").$this->input->post("pulang")));
+    $jam_masuk = date("Y-m-d H:i", strtotime(date("Y-m-d") . $this->input->post("masuk")));
+    $jam_pulang = date("Y-m-d H:i", strtotime(date("Y-m-d") . $this->input->post("pulang")));
     if (strtotime($jam_pulang) < strtotime($jam_masuk)) {
-      $tgl_pulang = date("Y-m-d").$this->input->post("pulang");
-      $jam_pulang= date("Y-m-d H:i", strtotime('+1 days', strtotime($tgl_pulang)));
+      $tgl_pulang = date("Y-m-d") . $this->input->post("pulang");
+      $jam_pulang = date("Y-m-d H:i", strtotime('+1 days', strtotime($tgl_pulang)));
     }
     $awal  = date_create($jam_masuk);
     $akhir = date_create($jam_pulang); // waktu sekarang
@@ -78,7 +80,7 @@ class JadwalMasuk extends CI_Controller{
     $data = array(
       'title'        => 'FORM EDIT JADWAL MASUK',
       'form'         => 'JadwalMasuk/form',
-      'body'         => 'JadwalMasuk/edit' ,
+      'body'         => 'JadwalMasuk/edit',
       'jadwalmasuk'  => $this->ModelJadwalMasuk->get_edit($idjadwal_masuk)->row_array(),
       'jabatan'      => $this->ModelJabatan->get_data()->result()
     );
@@ -99,8 +101,9 @@ class JadwalMasuk extends CI_Controller{
       'total_jamkerja'      => $this->input->post("total_jamkerja"),
       'jml_wfh'             => $this->input->post("jml_wfh"),
       'jml_wfo'             => $this->input->post("jml_wfo"),
-      'toleransi_kedatangan'=> $this->input->post("toleransi_kedatangan"),
-      'toleransi_kepulangan'=> $this->input->post("toleransi_kepulangan"),
+      'toleransi_kedatangan' => $this->input->post("toleransi_kedatangan"),
+      'toleransi_kepulangan' => $this->input->post("toleransi_kepulangan"),
+      'batas_absen'          => $this->input->post("batas_absen"),
     );
     $this->db->where("idjadwal_masuk", $this->input->post("idjadwal_masuk"));
     if ($this->db->update('jadwal_masuk', $data)) {
@@ -108,19 +111,18 @@ class JadwalMasuk extends CI_Controller{
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Merubah Data Ulang"));
     }
-    redirect(base_url().'JadwalMasuk');
+    redirect(base_url() . 'JadwalMasuk');
   }
 
   function hapus($idjadwal_masuk)
   {
-      $this->db->where("idjadwal_masuk", $idjadwal_masuk);
-      if ($this->db->delete('jadwal_masuk')) {
-        $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Hapus Data Berhasil","type" => "success" ));
-        redirect(base_url().'JadwalMasuk');
-      } else {
-        $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Hapus Ulang","type" => "danger" ));
-        redirect(base_url().'JadwalMasuk');
-      }
+    $this->db->where("idjadwal_masuk", $idjadwal_masuk);
+    if ($this->db->delete('jadwal_masuk')) {
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Hapus Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'JadwalMasuk');
+    } else {
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Hapus Ulang", "type" => "danger"));
+      redirect(base_url() . 'JadwalMasuk');
+    }
   }
-
 }

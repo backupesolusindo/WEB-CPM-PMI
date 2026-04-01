@@ -22,6 +22,7 @@
   <!--webfonts-->
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:600italic,400,300,600,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!--//webfonts-->
 </head>
 
@@ -50,8 +51,9 @@
 
         </li>
         <h5 class="badge-password"><span class="badge badge-danger">Maaf Password Anda Salah</span></h5>
-        <li class="password">
+        <li class="password" style="position:relative;">
           <input type="password" id="password" value="Password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Password';}"><i href="#" class=" icon lock"></i>
+          <span id="togglePassword" onclick="togglePass()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999;"><i id="toggleIcon" class="fa fa-eye-slash"></i></span>
         </li>
         <div class="p-container">
           <!-- <label class="checkbox"><input type="checkbox" name="checkbox" checked><i></i>Remember Me</label> -->
@@ -82,6 +84,18 @@
 
 </html>
 <script type="text/javascript">
+  function togglePass() {
+    var input = document.getElementById('password');
+    var icon = document.getElementById('togglePassword');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = '<i id="toggleIcon" class="fa fa-eye"></i>';
+    } else {
+      input.type = 'password';
+      icon.innerHTML = '<i id="toggleIcon" class="fa fa-eye-slash"></i>';
+    }
+  }
+
   function coba() {
     $('#FormLogin').addClass('animated bounceOutLeft');
   }

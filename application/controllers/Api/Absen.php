@@ -50,7 +50,25 @@ class Absen extends CI_Controller
         $boleh_presensis = 0;
         $pesan_presensi = "Maaf Lokasi Anda Tidak Valid, Silakan Presensi Ulang";
       } else {
-        $boleh_presensis = 1;
+        // Cek batas jam absensi dari jadwal
+        $idjadwal = $this->input->post("idjadwal");
+        if (!empty($idjadwal)) {
+          $data_jadwal = $this->ModelJadwalMasuk->get_edit($idjadwal)->row_array();
+          if (!empty($data_jadwal['batas_absen'])) {
+            $batas_absen = date("H:i:s", strtotime($data_jadwal['batas_absen']));
+            $jam_sekarang = date("H:i:s");
+            if (strtotime($jam_sekarang) <= strtotime($batas_absen)) {
+              $boleh_presensis = 0;
+              $pesan_presensi = "Maaf Waktu Presensi Anda Belum Dibuka, Batas Jam " . date("H:i", strtotime($data_jadwal['batas_absen']));
+            } else {
+              $boleh_presensis = 1;
+            }
+          } else {
+            $boleh_presensis = 1;
+          }
+        } else {
+          $boleh_presensis = 1;
+        }
       }
     }
 
