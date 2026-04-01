@@ -135,13 +135,124 @@ class Laporan extends CI_Controller
   function detailKegiatan($idkegiatan)
   {
     $idkegiatan = $this->core->decrypt_url($idkegiatan);
+    $kegiatan   = $this->ModelKegiatan->get_data($idkegiatan)->row_array();
+
+    // Generate semua tanggal kegiatan
+    $tgl_mulai   = strtotime($kegiatan['tanggal']);
+    $tgl_selesai = strtotime($kegiatan['tanggal_selesai']);
+    $tanggal_list = array();
+    for ($t = $tgl_mulai; $t <= $tgl_selesai; $t = strtotime('+1 day', $t)) {
+      $tanggal_list[] = date('Y-m-d', $t);
+    }
+
+    // Ambil semua undangan
+    $semua_undangan = $this->ModelKegiatan->getUndanganPeserta($idkegiatan)->result();
+
+    // Ambil semua yang hadir
+    $semua_hadir = $this->ModelKegiatan->getPesertaKegiatan($idkegiatan)->result();
+
+    // Kelompokkan hadir per tanggal
+    $hadir_per_tgl = array();
+    foreach ($semua_hadir as $p) {
+      $tgl = date('Y-m-d', strtotime($p->jam_presensi));
+      $hadir_per_tgl[$tgl][] = $p;
+    }
+
+    // Kelompokkan tidak hadir per tanggal (undangan yang uuid-nya tidak ada di hadir hari itu)
+    $tidak_hadir_per_tgl = array();
+    foreach ($tanggal_list as $tgl) {
+      $uuid_hadir_tgl = array();
+      if (!empty($hadir_per_tgl[$tgl])) {
+        foreach ($hadir_per_tgl[$tgl] as $p) {
+          $uuid_hadir_tgl[] = $p->uuid;
+        }
+      }
+      $tidak_hadir_per_tgl[$tgl] = array();
+      foreach ($semua_undangan as $u) {
+        if (!in_array($u->uuid, $uuid_hadir_tgl)) {
+          $tidak_hadir_per_tgl[$tgl][] = $u;
+        }
+      }
+    }
+
     $data = array(
-      'title'         => "Detail Laporan Kegiatan",
-      'body'          => 'Laporan/Kegiatan/detail',
-      'kegiatan'      => $this->ModelKegiatan->get_data($idkegiatan)->row_array(),
-      'peserta'       => $this->ModelKegiatan->getPesertaKegiatan($idkegiatan),
+      'title'               => "Detail Laporan Kegiatan",
+      'body'                => 'Laporan/Kegiatan/detail',
+      'kegiatan'            => $kegiatan,
+      'tanggal_list'        => $tanggal_list,
+      'hadir_per_tgl'       => $hadir_per_tgl,
+      'tidak_hadir_per_tgl' => $tidak_hadir_per_tgl,
+      // backward compat untuk printableArea
+      'peserta'             => $this->ModelKegiatan->getPesertaKegiatan($idkegiatan),
+      'foto_kegiatan'       => $this->db->where("kegiatan_idkegiatan", $idkegiatan)->order_by("created_at", "DESC")->get("kegiatan_foto")->result(),
     );
     $this->load->view('index', $data);
+  }
+
+  function simpan_notulensi()
+  {
+    $idkegiatan = $this->input->post("idkegiatan");
+    $notulensi  = $this->input->post("notulensi");
+    $this->db->where("idkegiatan", $idkegiatan);
+    if ($this->db->update("kegiatan", array('notulensi' => $notulensi))) {
+      echo json_encode(array('status' => 200, 'message' => 'Notulensi berhasil disimpan'));
+    } else {
+      echo json_encode(array('status' => 500, 'message' => 'Gagal menyimpan notulensi'));
+    }
+  }
+
+  function upload_foto_kegiatan()
+  {
+    $idkegiatan = $this->input->post("idkegiatan");
+    $patch      = "document/foto_kegiatan_laporan/";
+
+    $config['upload_path']   = "./" . $patch;
+    $config['allowed_types'] = 'jpg|jpeg|png|gif';
+    $config['max_size']      = 10240;
+    $config['encrypt_name']  = TRUE;
+
+    if (!is_dir("./" . $patch)) {
+      mkdir("./" . $patch, 0755, true);
+    }
+
+    $this->load->library('upload', $config);
+    $this->upload->initialize($config);
+
+    if ($this->upload->do_upload('foto_kegiatan')) {
+      $file_name  = $this->upload->data()['file_name'];
+      $foto_path  = $patch . $file_name;
+
+      // Simpan ke tabel kegiatan_foto
+      $this->db->insert("kegiatan_foto", array(
+        'kegiatan_idkegiatan' => $idkegiatan,
+        'foto'                => $foto_path,
+        'created_at'          => date("Y-m-d H:i:s"),
+      ));
+      $new_id = $this->db->insert_id();
+      echo json_encode(array('status' => 200, 'message' => 'Foto berhasil diupload', 'foto' => base_url() . $foto_path, 'id' => $new_id));
+    } else {
+      echo json_encode(array('status' => 500, 'message' => $this->upload->display_errors('', '')));
+    }
+  }
+
+  function get_foto_kegiatan()
+  {
+    $idkegiatan = $this->input->post("idkegiatan");
+    $foto       = $this->db->where("kegiatan_idkegiatan", $idkegiatan)->order_by("created_at", "DESC")->get("kegiatan_foto")->result();
+    echo json_encode(array('status' => 200, 'data' => $foto));
+  }
+
+  function hapus_foto_kegiatan()
+  {
+    $id   = $this->input->post("id");
+    $row  = $this->db->where("id", $id)->get("kegiatan_foto")->row_array();
+    if ($row) {
+      @unlink("./" . $row['foto']);
+      $this->db->where("id", $id)->delete("kegiatan_foto");
+      echo json_encode(array('status' => 200, 'message' => 'Foto berhasil dihapus'));
+    } else {
+      echo json_encode(array('status' => 404, 'message' => 'Foto tidak ditemukan'));
+    }
   }
 
   function approval_kegiatan()

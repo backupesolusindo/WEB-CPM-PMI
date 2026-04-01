@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Kegiatan extends CI_Controller{
+class Kegiatan extends CI_Controller
+{
 
   public function __construct()
   {
@@ -18,7 +19,7 @@ class Kegiatan extends CI_Controller{
     $unit = $this->ModelUnit->get_parent_unit()->result();
     $data = array(
       'title'         => 'JADWAL PRESENSI KEGIATAN',
-      'body'          => 'Kegiatan/list' ,
+      'body'          => 'Kegiatan/list',
       'unit'          => $unit
     );
     $this->load->view('index', $data);
@@ -29,9 +30,9 @@ class Kegiatan extends CI_Controller{
     $unit = $this->input->post("unit");
     $subunit = $this->input->post("sub_unit");
     if ($subunit == "" || $subunit == null) {
-        $unit = $this->input->post("unit");
-    }else {
-        $unit = $subunit;
+      $unit = $this->input->post("unit");
+    } else {
+      $unit = $subunit;
     }
     // echo $unit;
     $data = array(
@@ -58,7 +59,7 @@ class Kegiatan extends CI_Controller{
     $status = 0;
     if ($this->ModelKegiatan->cekKode($id)->num_rows() > 0 || $id == "") {
       $status = 0;
-    }else {
+    } else {
       $status = 1;
     }
     echo $status;
@@ -98,7 +99,7 @@ class Kegiatan extends CI_Controller{
     $data = array();
     $this->db->where("kegiatan_idkegiatan", $idkegiatan);
     if ($this->db->delete("kegiatan_peserta")) {
-      for ($i=0; $i < sizeof($pegawai); $i++) {
+      for ($i = 0; $i < sizeof($pegawai); $i++) {
         $ar = array(
           'kegiatan_idkegiatan' => $idkegiatan,
           'pegawai_uuid'        => $pegawai[$i]
@@ -107,23 +108,23 @@ class Kegiatan extends CI_Controller{
       }
       // echo json_encode($data);
       if ($this->db->insert_batch("kegiatan_peserta", $data)) {
-        for ($i=0; $i < sizeof($pegawai); $i++) {
+        for ($i = 0; $i < sizeof($pegawai); $i++) {
           $kegiatan = $this->ModelKegiatan->get_data($idkegiatan)->row_array();
           $da = $this->ModelPegawai->edit($pegawai[$i])->row_array();
           @$this->core->curlNotif(
             $da["token"],
-            "Kegiatan : ".$kegiatan['nama_kegiatan'],
-            "Dilaksanakan Tanggal".date('d-m-Y', strtotime($kegiatan['tanggal']))." Pukul :".$kegiatan['jam_mulai']
+            "Kegiatan : " . $kegiatan['nama_kegiatan'],
+            "Dilaksanakan Tanggal" . date('d-m-Y', strtotime($kegiatan['tanggal'])) . " Pukul :" . $kegiatan['jam_mulai']
           );
         }
         $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Tambah Data Berhasil"));
-      }else {
+      } else {
         $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
       }
-    }else {
+    } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
     }
-    redirect(base_url().'Kegiatan');
+    redirect(base_url() . 'Kegiatan');
   }
 
   function insert()
@@ -145,10 +146,10 @@ class Kegiatan extends CI_Controller{
     );
     if ($this->db->insert('kegiatan', $data)) {
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Tambah Data Berhasil"));
-      redirect(base_url().'Kegiatan');
+      redirect(base_url() . 'Kegiatan');
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
-      redirect(base_url().'Kegiatan');
+      redirect(base_url() . 'Kegiatan');
     }
   }
 
@@ -171,10 +172,10 @@ class Kegiatan extends CI_Controller{
     $this->db->where("idkegiatan", $this->input->post("idkegiatan"));
     if ($this->db->update('kegiatan', $data)) {
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Tambah Data Berhasil"));
-      redirect(base_url().'Kegiatan');
+      redirect(base_url() . 'Kegiatan');
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Tambah Ulang"));
-      redirect(base_url().'Kegiatan');
+      redirect(base_url() . 'Kegiatan');
     }
   }
 
@@ -183,14 +184,13 @@ class Kegiatan extends CI_Controller{
     $idkegiatan = $this->core->decrypt_url($kode);
     $this->db->where("kegiatan_idkegiatan", $idkegiatan);
     $this->db->delete("kegiatan_peserta");
-      $this->db->where("idkegiatan", $idkegiatan);
-      if ($this->db->delete('kegiatan')) {
-        $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Hapus Data Berhasil","type" => "success" ));
-        redirect(base_url().'Kegiatan');
-      } else {
-        $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Hapus Ulang","type" => "danger" ));
-        redirect(base_url().'Kegiatan');
-      }
+    $this->db->where("idkegiatan", $idkegiatan);
+    if ($this->db->delete('kegiatan')) {
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Hapus Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'Kegiatan');
+    } else {
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Hapus Ulang", "type" => "danger"));
+      redirect(base_url() . 'Kegiatan');
+    }
   }
-
 }
