@@ -17,18 +17,18 @@ class Izin extends CI_Controller
   function insert_izin()
   {
     $data = array(
-      'pegawai_uuid'  => $this->input->post("id"),
+      'pegawai_uuid' => $this->input->post("id"),
       'tanggal_mulai' => date("Y-m-d", strtotime($this->input->post("tanggal_akhir"))),
       'tanggal_akhir' => date("Y-m-d", strtotime($this->input->post("tanggal_mulai"))),
-      'alasan'        => $this->input->post("alasan"),
+      'alasan' => $this->input->post("alasan"),
       'jenis_perizinan_idjenis_perizinan' => $this->input->post("jenis_perizinan"),
     );
 
     $patch = "document/izin/";
     // echo $patch;
-    $config['upload_path']          = "./" . $patch;
-    $config['allowed_types']        = '*';
-    $config['max_size']             = 91240;
+    $config['upload_path'] = "./" . $patch;
+    $config['allowed_types'] = '*';
+    $config['max_size'] = 91240;
     $this->load->library('upload', $config);
     if ($this->upload->do_upload('image')) {
       $data['file'] = $patch . $this->upload->data()['file_name'];
@@ -45,6 +45,25 @@ class Izin extends CI_Controller
       );
     }
     echo json_encode(array('response' => $data, 'message' => $res));
+  }
+
+  function get_jatah_cuti()
+  {
+    $uuid = $this->input->post("uuid");
+
+    $query = $this->db->get_where("cuti_tahunan", [
+      "pegawai_uuid" => $uuid,
+      "tahun_cuti" => date("Y"),
+    ]);
+
+    if ($query->num_rows() > 0) {
+      $data = $query->row();
+      $res = array('message' => "Success", 'status' => 200);
+      echo json_encode(array('data' => $data, 'message' => $res));
+    } else {
+      $res = array('message' => "Data tidak ditemukan", 'status' => 404);
+      echo json_encode(array('data' => null, 'message' => $res));
+    }
   }
 
   function get_jenis()
