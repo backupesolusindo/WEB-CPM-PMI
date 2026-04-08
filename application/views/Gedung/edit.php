@@ -5,7 +5,7 @@
         <div>
         </div>
         <!-- ini Judul -->
-        <h3 class="white-text mx-3">Form Edit Gedung</h3>
+        <h3 class="white-text mx-3">Form Edit Gedung/Ruangan</h3>
         <div>
 
         </div>

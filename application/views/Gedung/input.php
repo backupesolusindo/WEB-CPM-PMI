@@ -5,7 +5,7 @@
         <div>
         </div>
         <!-- ini Judul -->
-        <h3 class="white-text mx-3">Form Input Gedung</h3>
+        <h3 class="white-text mx-3">Form Input Gedung/Ruangan</h3>
         <div>
 
         </div>

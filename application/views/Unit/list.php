@@ -4,7 +4,7 @@
       <div class="view view-cascade gradient-card-header blue-gradient narrower py-2 mx-4 mb-3 d-flex justify-content-between align-items-center">
         <div>
         </div>
-        <h3 class="white-text mx-3">Unit</h3>
+        <h3 class="white-text mx-3">Bagian</h3>
         <div>
           <!-- <a href="<?php base_url(); ?>Unit/sinkron" class="float-right">
             <button type="button" class="btn btn-outline-white btn-rounded " data-toggle="tooltip" data-placement="top" data-original-title="Sinkronisasi Data Unit"><i class="fas fa-cloud-download-alt"></i> Sinkronisasi Unit</button>
@@ -22,9 +22,9 @@
                   <thead>
                     <tr>
                       <th width="10%">#</th>
-                      <th>Nama Unit</th>
-                      <th>Level Unit</th>
-                      <th>Parent Unit</th>
+                      <th>Nama Bagian</th>
+                      <th>Level Bagian</th>
+                      <th>Parent Bagian</th>
                       <th>Status</th>
                       <!-- <th>Opsi</th> -->
                     </tr>

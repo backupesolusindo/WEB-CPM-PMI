@@ -16,18 +16,18 @@
           <br>
         </div>
         <div class="col-md-3">
-          <label>Unit :</label>
+          <label>Bagian :</label>
           <select id="unit" class="form-control select2 col-md-12" required onchange="sub_unit()">
-            <option value="">Semua Unit</option>
+            <option value="">Semua Bagian</option>
             <?php foreach ($unit as $value): ?>
               <option value="<?php echo $value->nama_unit; ?>"><?php echo $value->nama_unit ?></option>
             <?php endforeach; ?>
           </select>
         </div>
         <div class="col-md-3">
-          <label>Sub Unit :</label>
+          <label>Sub Bagian :</label>
           <select id="sub_unit" class="form-control select2 col-md-12" required onchange="cari()">
-            <option value="">Semua Sub Unit</option>
+            <option value="">Semua Sub Bagian</option>
           </select>
         </div>
         <div class="col-md-2">

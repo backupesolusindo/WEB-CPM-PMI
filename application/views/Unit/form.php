@@ -1,11 +1,11 @@
-<h3 class="box-title"><b>Unit</b></h3>
+<h3 class="box-title"><b>Bagian</b></h3>
 <br>
-<h4 class="box-title">Unit</h4>
+<h4 class="box-title">Bagian</h4>
 <br>
 <div class="row">
   <div class="col-md-12">
       <div class="form-group">
-          <label>Nama Unit :</label>
+          <label>Nama Bagian :</label>
           <input type="text" name="nama_unit" id="nama_unit" class="form-control" value="<?php echo @$unit["nama_unit"] ?>" required>
       </div>
   </div>

@@ -12,9 +12,9 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-5">
-            <label>Unit :</label>
+            <label>Bagian :</label>
             <select id="unit" class="form-control select2 col-md-12" onchange="sub_unit()" readonly="true">
-              <option value="">Semua Unit</option>
+              <option value="">Semua Bagian</option>
               <?php foreach ($unit as $value): ?>
                 <option value="<?php echo $value->nama_unit; ?>"
                   <?php if ($_SESSION['unit'] == $value->nama_unit): ?>selected<?php endif; ?>
@@ -23,9 +23,9 @@
             </select>
           </div>
           <div class="col-md-5">
-            <label>Sub Unit :</label>
+            <label>Sub Bagian :</label>
             <select id="sub_unit" class="form-control select2 col-md-12" required onchange="search()">
-              <option value="">Semua Sub Unit</option>
+              <option value="">Semua Sub Bagian</option>
             </select>
           </div>
           <div class="col-md-2">
@@ -43,7 +43,7 @@
                         <th>Nama Kegiatan</th>
                         <th>Tanggal</th>
                         <th>Jam Mulai</th>
-                        <th>Unit</th>
+                        <th>Bagian</th>
                         <th>PIC</th>
                         <th>Opsi</th>
                       </tr>

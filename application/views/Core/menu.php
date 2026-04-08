@@ -264,7 +264,7 @@
     <?php if (@$Menu_Roles['Unit']): ?>
       <li <?php if ($this->uri->segment(1) == 'Unit'): ?>class="active" <?php endif; ?>>
         <a href="<?php echo base_url() . 'Unit'; ?>">
-          <i class="fas fa-sitemap"></i><span class="hide-menu">Unit</span>
+          <i class="fas fa-sitemap"></i><span class="hide-menu">Bagian</span>
         </a>
       </li>
     <?php endif; ?>
@@ -278,7 +278,7 @@
     <?php if (@$Menu_Roles['Gedung']): ?>
       <li <?php if ($this->uri->segment(1) == 'Gedung'): ?>class="active" <?php endif; ?>>
         <a href="<?php echo base_url() . 'Gedung'; ?>">
-          <i class="fas fa-city"></i><span class="hide-menu">Gedung</span>
+          <i class="fas fa-city"></i><span class="hide-menu">Gedung/Ruangan</span>
         </a>
       </li>
     <?php endif; ?>

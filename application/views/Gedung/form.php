@@ -79,14 +79,14 @@ google.maps.event.addDomListener(window, 'load', initialize);
 </div>
 <div class="col-md-12">
   <br>
-  <label>Lokasi Gedung :</label>
+  <label>Lokasi Gedung/Ruangan :</label>
   <div id="myMap" style="width:100%; height:400px"></div>
   <br>
 </div>
 <div class="row">
   <div class="col-md-12">
       <div class="form-group">
-          <label>Nama Gedung :</label>
+          <label>Nama Gedung/Ruangan :</label>
           <input type="text" name="nama_gedung" class="form-control" value="<?php echo @$gedung["nama_gedung"] ?>" required>
       </div>
   </div>

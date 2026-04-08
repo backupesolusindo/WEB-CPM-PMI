@@ -4,7 +4,7 @@
       <div class="view view-cascade gradient-card-header blue-gradient narrower py-2 mx-4 mb-3 d-flex justify-content-between align-items-center">
         <div>
         </div>
-        <h3 class="white-text mx-3">Gedung</h3>
+        <h3 class="white-text mx-3">Gedung/Ruangan</h3>
         <div>
           <a href="<?php base_url(); ?>Gedung/input" class="float-right">
           <button type="button" class="btn btn-outline-white btn-rounded btn-sm px-2" data-toggle="tooltip" data-placement="top" data-original-title="Tambah Data Baru"><i class="fas fa-pencil-alt mt-0"></i></button>
@@ -22,8 +22,8 @@
                               <thead>
                                   <tr>
                                       <th width="10%">#</th>
-                                      <th>Nama Gedung</th>
-                                      <th>Nama Kampus</th>
+                                      <th>Nama Gedung/Ruangan</th>
+                                      <th>Nama Kantor</th>
                                       <th>Latitude</th>
                                       <th>Longtitude</th>
                                       <th>Opsi</th>
