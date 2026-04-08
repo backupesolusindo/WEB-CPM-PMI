@@ -16,7 +16,7 @@
         <div class="col-md-3">
           <label><b>Tahun Cuti</b> <span class="text-danger">*</span></label>
           <input type="number" name="tahun_cuti" class="form-control" required
-                 value="<?php echo date('Y'); ?>" min="2020" max="2099">
+            value="<?php echo date('Y'); ?>" min="2020" max="2099">
           <small class="text-muted">Tahun ini berlaku untuk semua pegawai yang dipilih</small>
         </div>
       </div>
@@ -42,30 +42,31 @@
                       <th width="5%">NO</th>
                       <th>NIP</th>
                       <th>Nama Pegawai</th>
-                      <th>Unit</th>
+                      <th>Bagian</th>
                       <th>Pilih</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $no = 0; foreach ($pegawai as $p): ?>
-                    <tr>
-                      <td><?php echo ++$no; ?></td>
-                      <td><?php echo $p->NIP; ?></td>
-                      <td>
-                        <?php echo $p->nama_pegawai; ?>
-                        <input type="hidden" id="nama-<?php echo $p->uuid; ?>" value="<?php echo $p->nama_pegawai; ?>">
-                        <input type="hidden" id="nip-<?php echo $p->uuid; ?>"  value="<?php echo $p->NIP; ?>">
-                        <input type="hidden" id="unit-<?php echo $p->uuid; ?>" value="<?php echo $p->unit; ?>">
-                      </td>
-                      <td><?php echo $p->unit; ?></td>
-                      <td>
-                        <a href="#" onclick='pilih("<?php echo $p->uuid; ?>")'
-                           class="btn btn-circle btn-sm btn-primary"
-                           data-toggle="tooltip" title="Pilih Pegawai">
-                          <i class="fas fa-user-plus"></i>
-                        </a>
-                      </td>
-                    </tr>
+                    <?php $no = 0;
+                    foreach ($pegawai as $p): ?>
+                      <tr>
+                        <td><?php echo ++$no; ?></td>
+                        <td><?php echo $p->NIP; ?></td>
+                        <td>
+                          <?php echo $p->nama_pegawai; ?>
+                          <input type="hidden" id="nama-<?php echo $p->uuid; ?>" value="<?php echo $p->nama_pegawai; ?>">
+                          <input type="hidden" id="nip-<?php echo $p->uuid; ?>" value="<?php echo $p->NIP; ?>">
+                          <input type="hidden" id="unit-<?php echo $p->uuid; ?>" value="<?php echo $p->unit; ?>">
+                        </td>
+                        <td><?php echo $p->unit; ?></td>
+                        <td>
+                          <a href="#" onclick='pilih("<?php echo $p->uuid; ?>")'
+                            class="btn btn-circle btn-sm btn-primary"
+                            data-toggle="tooltip" title="Pilih Pegawai">
+                            <i class="fas fa-user-plus"></i>
+                          </a>
+                        </td>
+                      </tr>
                     <?php endforeach; ?>
                   </tbody>
                 </table>
@@ -87,7 +88,7 @@
             <tr>
               <th>NIP</th>
               <th>Nama Pegawai</th>
-              <th>Unit</th>
+              <th>Bagian</th>
               <th width="160">Total Cuti (Hari)</th>
               <th>Opsi</th>
             </tr>
@@ -121,39 +122,39 @@
 <?php echo form_close(); ?>
 
 <script type="text/javascript">
-var pilih_kode = [];
+  var pilih_kode = [];
 
-function pilih(uuid) {
-  if (pilih_kode.indexOf(uuid) >= 0) {
-    alert("Pegawai ini sudah dipilih!");
-    return;
+  function pilih(uuid) {
+    if (pilih_kode.indexOf(uuid) >= 0) {
+      alert("Pegawai ini sudah dipilih!");
+      return;
+    }
+
+    var nama = $("#nama-" + uuid).val();
+    var nip = $("#nip-" + uuid).val();
+    var unit = $("#unit-" + uuid).val();
+
+    pilih_kode.push(uuid);
+
+    var row = "<tr id='row-" + uuid + "'>" +
+      "<td><input type='hidden' name='uuid[]' class='uuid_input' value='" + uuid + "'>" + nip + "</td>" +
+      "<td>" + nama + "</td>" +
+      "<td>" + unit + "</td>" +
+      "<td><input type='number' name='total_cuti[]' class='form-control form-control-sm' min='1' max='365' placeholder='Contoh: 12' required></td>" +
+      "<td><button type='button' onclick='hapus(\"" + uuid + "\")' class='btn btn-floating btn-danger'><i class='fas fa-user-slash'></i></button></td>" +
+      "</tr>";
+
+    $("#tbl_pilihan").append(row);
+    hitung();
   }
 
-  var nama = $("#nama-" + uuid).val();
-  var nip  = $("#nip-"  + uuid).val();
-  var unit = $("#unit-" + uuid).val();
+  function hapus(uuid) {
+    pilih_kode.splice($.inArray(uuid, pilih_kode), 1);
+    $("#row-" + uuid).remove();
+    hitung();
+  }
 
-  pilih_kode.push(uuid);
-
-  var row = "<tr id='row-" + uuid + "'>" +
-    "<td><input type='hidden' name='uuid[]' class='uuid_input' value='" + uuid + "'>" + nip + "</td>" +
-    "<td>" + nama + "</td>" +
-    "<td>" + unit + "</td>" +
-    "<td><input type='number' name='total_cuti[]' class='form-control form-control-sm' min='1' max='365' placeholder='Contoh: 12' required></td>" +
-    "<td><button type='button' onclick='hapus(\"" + uuid + "\")' class='btn btn-floating btn-danger'><i class='fas fa-user-slash'></i></button></td>" +
-    "</tr>";
-
-  $("#tbl_pilihan").append(row);
-  hitung();
-}
-
-function hapus(uuid) {
-  pilih_kode.splice($.inArray(uuid, pilih_kode), 1);
-  $("#row-" + uuid).remove();
-  hitung();
-}
-
-function hitung() {
-  $(".txt_jml_total").html(pilih_kode.length);
-}
+  function hitung() {
+    $(".txt_jml_total").html(pilih_kode.length);
+  }
 </script>
