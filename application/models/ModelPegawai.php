@@ -84,6 +84,11 @@ class ModelPegawai extends CI_Model
 
   function cek_pegawai($nip)
   {
+    // Validasi input tidak boleh kosong
+    if (empty($nip) || trim($nip) == "") {
+      return $this->db->where("1", "0")->get("pegawai"); // Return empty result
+    }
+    
     $this->db->where("NIP", $nip);
     $this->db->or_where("email", $nip);
     $this->db->or_where("NIK", $nip);

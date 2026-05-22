@@ -9,99 +9,137 @@ class Login extends CI_Controller
     $this->load->model("ModelPegawai");
     $this->load->model("ModelKampus");
     $this->load->model('ModelAuth');
-    $this->ModelAuth->verify_token();
+    // Jangan verify token di login endpoint
+    // $this->ModelAuth->verify_token();
   }
 
   public function aksi_login()
   {
+    try {
+      // Log request untuk debugging
+      log_message('info', 'Login attempt - POST data: ' . json_encode($this->input->post()));
 
-    $nip = $this->input->post('nip');
-    $password = $this->input->post('password');
-    $token = $this->input->post('token');
-    $data_session = array();
-    $mesage_respone = array();
-    $res = array();
-    $response = array();
-    // $nip = "admin";
-    // $password = "rahasiasby45";
-    $cek = $this->ModelPegawai->cek_pegawai($nip);
-    $res = array();
-    $data_pegawai = array(
-      'uuid'      => "",
-      'nip'      => "",
-      'pegawai'  => "",
-      'unit'  => "",
-      'spesial'  => 0,
-    );
-    if ($cek->num_rows() > 0) {
-      $data_login = $cek->row_array();
-      if ($data_login['NIP'] == null) {
-        $res = array(
-          'message' => "Maaf Anda Salah NIP/NIK/Email Dan Password",
-          'status' => 3
-        );
-      } else {
+      $nip = trim($this->input->post('nip'));
+      $password = $this->input->post('password');
+      $token = $this->input->post('token');
+      
+      // Validasi input - harus ada dan tidak boleh kosong
+      if (empty($nip) || empty($password) || $nip === '' || $password === '') {
+        echo json_encode(array(
+          'response' => array(
+            'uuid' => "",
+            'nip' => "",
+            'nama' => "",
+            'unit' => "",
+            'spesial' => 0,
+          ),
+          'message' => array(
+            'message' => "NIP/NIK/Email dan Password harus diisi",
+            'status' => 400
+          )
+        ));
+        return;
+      }
 
-        $pw_valid = $data_login['password'];
-        if (password_verify($password, $pw_valid)) {
-          $data_pegawai = array(
-            'uuid'      => $data_login['uuid'],
-            'nip'      => $data_login['NIP'],
-            'nama'  => $data_login['nama_pegawai'],
-            'unit'  => $data_login['unit'],
-            'token' => $token,
-            'spesial' => $data_login['spesial'],
+      $data_session = array();
+      $mesage_respone = array();
+      $res = array();
+      $response = array();
+      
+      // Cek pegawai berdasarkan NIP, Email, atau NIK
+      $cek = $this->ModelPegawai->cek_pegawai($nip);
+      $res = array();
+      $data_pegawai = array(
+        'uuid'      => "",
+        'nip'      => "",
+        'nama'  => "",
+        'unit'  => "",
+        'spesial'  => 0,
+      );
+      
+      if ($cek->num_rows() > 0) {
+        $data_login = $cek->row_array();
+        if ($data_login['NIP'] == null) {
+          $res = array(
+            'message' => "Maaf Anda Salah NIP/NIK/Email Dan Password",
+            'status' => 3
           );
+        } else {
 
-          $kampus = $this->ModelKampus->get_edit("1")->row_array();
-          $cek_kampus = $this->ModelKampus->get_kampus($data_login['unit']);
-          if ($cek_kampus->num_rows() > 0) {
-            $kampus = $cek_kampus->row_array();
-          }
-          if ($data_login['status_aktif'] == 0) {
-            $res = array(
-              'message' => "Maaf Akun Anda Tidak Aktif",
-              'kampus'  => $kampus,
-              'status' => 500
+          $pw_valid = $data_login['password'];
+          if (password_verify($password, $pw_valid)) {
+            $data_pegawai = array(
+              'uuid'      => $data_login['uuid'],
+              'nip'      => $data_login['NIP'],
+              'nama'  => $data_login['nama_pegawai'],
+              'unit'  => $data_login['unit'],
+              'token' => $token,
+              'spesial' => $data_login['spesial'],
             );
-          } else {
-            if ($data_login['status_login'] == 0) {
-              $this->db->where("NIP", $nip);
-              $this->db->update("pegawai", array('status_login' => "1", 'token' => $token));
+
+            $kampus = $this->ModelKampus->get_edit("1")->row_array();
+            $cek_kampus = $this->ModelKampus->get_kampus($data_login['unit']);
+            if ($cek_kampus->num_rows() > 0) {
+              $kampus = $cek_kampus->row_array();
+            }
+            
+            if ($data_login['status_aktif'] == 0) {
               $res = array(
-                'message' => "Berhasil Login",
-                'kampus'  => $kampus,
-                'status' => 200
-              );
-            } else {
-              $res = array(
-                'message' => "Anda Sudah Login Dengan Device lain",
+                'message' => "Maaf Akun Anda Tidak Aktif",
                 'kampus'  => $kampus,
                 'status' => 500
               );
+            } else {
+              if ($data_login['status_login'] == 0) {
+                // Update berdasarkan UUID, bukan NIP
+                // Karena user bisa login dengan NIP/NIK/Email
+                $this->db->where("uuid", $data_login['uuid']);
+                $this->db->update("pegawai", array('status_login' => "1", 'token' => $token));
+                $res = array(
+                  'message' => "Berhasil Login",
+                  'kampus'  => $kampus,
+                  'status' => 200
+                );
+              } else {
+                $res = array(
+                  'message' => "Anda Sudah Login Dengan Device lain",
+                  'kampus'  => $kampus,
+                  'status' => 500
+                );
+              }
             }
+          } else {
+            $res = array(
+              'message' => "Maaf Anda Salah Password",
+              'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
+              'status' => 501
+            );
           }
-        } else {
-          $res = array(
-            'message' => "Maaf Anda Salah Password",
-            'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
-            'status' => 501
-          );
         }
+      } else {
+        $res = array(
+          'message' => "Maaf NIP/NIK/Email tidak ditemukan",
+          'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
+          'status' => 502
+        );
       }
-    } else {
-      $res = array(
-        'message' => "Maaf Anda Salah NIP / Email Dan Password",
-        'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
-        'status' => 502
-      );
+      
+      echo json_encode(array(
+        'response' => $data_pegawai,
+        'message' => $res,
+        'post'    => $this->input->post()
+      ));
+    } catch (Exception $e) {
+      log_message('error', 'Login error: ' . $e->getMessage());
+      http_response_code(500);
+      echo json_encode(array(
+        'response' => array(),
+        'message' => array(
+          'message' => 'Internal Server Error: ' . $e->getMessage(),
+          'status' => 500
+        )
+      ));
     }
-    // echo json_encode($data_pegawai);
-    echo json_encode(array(
-      'response' => $data_pegawai,
-      'message' => $res,
-      'post'    => $this->input->post()
-    ));
   }
 
 
@@ -198,7 +236,7 @@ class Login extends CI_Controller
     $this->db->where("uuid", $uuid);
     if ($this->db->update("pegawai", array('password' => $pass))) {
       $res = array(
-        'message' => "Resep Password Berhasil",
+        'message' => "Reset Password Berhasil",
         'status' => 200
       );
     } else {
@@ -224,8 +262,8 @@ class Login extends CI_Controller
     $mesage_respone = array();
     $res = array();
     $response = array();
-    // $nip = "admin";
-    // $password = "rahasiasby45";
+    
+    // Cek pegawai berdasarkan NIP, Email, atau NIK
     $cek = $this->ModelPegawai->cek_pegawai($nip);
     $res = array();
     $data_pegawai = array();
@@ -235,11 +273,12 @@ class Login extends CI_Controller
       'pegawai'  => "",
       'unit'      => ""
     );
+    
     if ($cek->num_rows() > 0) {
       $data_login = $cek->row_array();
       if ($data_login['NIP'] == null) {
         $res = array(
-          'message' => "Maaf Anda Salah nip Dan Password",
+          'message' => "Maaf Anda Salah NIP/NIK/Email Dan Password",
           'status' => 3
         );
       } else {
@@ -271,11 +310,11 @@ class Login extends CI_Controller
       }
     } else {
       $res = array(
-        'message' => "Maaf Anda Salah nip Dan Password",
+        'message' => "Maaf NIP/NIK/Email tidak ditemukan",
         'status' => 502
       );
     }
-    // echo json_encode($data_pegawai);
+    
     echo json_encode(array('response' => $data_pegawai, 'message' => $res));
   }
 
