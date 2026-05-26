@@ -93,19 +93,23 @@
             }
 
             $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
-            $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
-            $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
-            $diff           = $pulang - $jam_jadwal;
-            if ($s_tepat == 1 && $diff >= 0) {
-              $tepat += 1;
-            }else {
-              if ($diff > 0 && $s_terlambat == 1) {
-                $tidak_valid += 1;
-              }else if ($s_terlambat == 1) {
-                $terlambat += 1;
-              }else if ($diff < 0) {
-                 $pulang_awal += 1;
+            if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
+              $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
+              $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
+              $diff           = $pulang - $jam_jadwal;
+              if ($s_tepat == 1 && $diff >= 0) {
+                $tepat += 1;
+              }else {
+                if ($diff > 0 && $s_terlambat == 1) {
+                  $tidak_valid += 1;
+                }else if ($s_terlambat == 1) {
+                  $terlambat += 1;
+                }else if ($diff < 0) {
+                   $pulang_awal += 1;
+                }
               }
+            }else {
+              $tidak_valid += 1;
             }
 
             $datang = date_create($value->waktu);
@@ -284,19 +288,23 @@
               }
 
               $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
-              $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
-              $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
-              $diff           = $pulang - $jam_jadwal;
-              if ($s_tepat == 1) {
-                $tepat += 1;
-              }else {
-                if ($diff > 0 && $s_terlambat == 1) {
-                  $tidak_valid += 1;
-                }else if ($s_terlambat == 1) {
-                  $terlambat += 1;
-                }else if ($diff > 0) {
-                   $pulang_awal += 1;
+              if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
+                $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
+                $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
+                $diff           = $pulang - $jam_jadwal;
+                if ($s_tepat == 1) {
+                  $tepat += 1;
+                }else {
+                  if ($diff > 0 && $s_terlambat == 1) {
+                    $tidak_valid += 1;
+                  }else if ($s_terlambat == 1) {
+                    $terlambat += 1;
+                  }else if ($diff > 0) {
+                     $pulang_awal += 1;
+                  }
                 }
+              }else {
+                $tidak_valid += 1;
               }
 
               $datang = date_create($value->waktu);
@@ -350,9 +358,9 @@
     <br>
     <br>
     <br>
-    <?php echo $ttd['nama_pegawai'] ?>
+    <?php echo !empty($ttd) && isset($ttd['nama_pegawai']) ? $ttd['nama_pegawai'] : '-' ?>
     <br>
-    <?php echo $ttd['NIP'] ?>
+    <?php echo !empty($ttd) && isset($ttd['NIP']) ? $ttd['NIP'] : '-' ?>
   </div>
 </div>
 
