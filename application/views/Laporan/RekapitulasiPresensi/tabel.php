@@ -347,9 +347,9 @@
     <br>
     <br>
     <br>
-    <?php echo $ttd['nama_pegawai'] ?>
+    <?php echo isset($ttd['nama_pegawai']) ? $ttd['nama_pegawai'] : '-' ?>
     <br>
-    <?php echo $ttd['NIP'] ?>
+    <?php echo isset($ttd['NIP']) ? $ttd['NIP'] : '-' ?>
   </div>
 </div>
 
