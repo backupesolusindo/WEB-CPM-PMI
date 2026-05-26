@@ -65,9 +65,16 @@ header("Content-Disposition: attachment; filename=Rekapitulasi_Cuti_" . date('Y-
                 $no = 1;
                 foreach ($data as $row):
                     // Hitung durasi
-                    $tanggal_mulai = strtotime($row->tanggal_mulai);
-                    $tanggal_selesai = strtotime($row->tanggal_selesai);
-                    $durasi = ceil(($tanggal_selesai - $tanggal_mulai) / (60 * 60 * 24)) + 1;
+                    $durasi = '-';
+                    if (isset($row->tanggal_mulai) && isset($row->tanggal_selesai)) {
+                        $tanggal_mulai = strtotime($row->tanggal_mulai);
+                        $tanggal_selesai = strtotime($row->tanggal_selesai);
+                        $durasi = ceil(($tanggal_selesai - $tanggal_mulai) / (60 * 60 * 24)) + 1;
+                    } elseif (isset($row->tanggal_mulai) && isset($row->tanggal_akhir)) {
+                        $tanggal_mulai = strtotime($row->tanggal_mulai);
+                        $tanggal_akhir = strtotime($row->tanggal_akhir);
+                        $durasi = ceil(($tanggal_akhir - $tanggal_mulai) / (60 * 60 * 24)) + 1;
+                    }
 
                     // Status
                     $status_text = '';
@@ -85,11 +92,11 @@ header("Content-Disposition: attachment; filename=Rekapitulasi_Cuti_" . date('Y-
                         <td><?php echo $row->nama_pegawai; ?></td>
                         <td><?php echo $row->unit ?? '-'; ?></td>
                         <td><?php echo $row->jenis_izin ?? 'Cuti'; ?></td>
-                        <td class="text-center"><?php echo date('d-m-Y', strtotime($row->tanggal_mulai)); ?></td>
-                        <td class="text-center"><?php echo date('d-m-Y', strtotime($row->tanggal_selesai)); ?></td>
+                        <td class="text-center"><?php echo isset($row->tanggal_mulai) ? date('d-m-Y', strtotime($row->tanggal_mulai)) : '-'; ?></td>
+                        <td class="text-center"><?php echo isset($row->tanggal_selesai) ? date('d-m-Y', strtotime($row->tanggal_selesai)) : (isset($row->tanggal_akhir) ? date('d-m-Y', strtotime($row->tanggal_akhir)) : '-'); ?></td>
                         <td class="text-center"><?php echo $durasi; ?></td>
                         <td class="text-center"><?php echo $status_text; ?></td>
-                        <td><?php echo $row->keterangan ?? '-'; ?></td>
+                        <td><?php echo $row->keterangan ?? $row->alasan ?? '-'; ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

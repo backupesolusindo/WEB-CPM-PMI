@@ -242,7 +242,7 @@
         var sub_unit = $('#sub_unit').val();
         var status = $('#status').val();
 
-        var url = "<?php echo base_url(); ?>Dashboard/export_rekapitulasi_cuti?";
+        var url = "<?php echo base_url(); ?>Laporan/export_rekapitulasi_cuti?";
         url += "start=" + tgl_mulai;
         url += "&end=" + tgl_akhir;
         url += "&unit=" + unit;
