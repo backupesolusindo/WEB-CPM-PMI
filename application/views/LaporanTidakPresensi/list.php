@@ -44,6 +44,17 @@ function search() {
         dom: 'Bfrtip',
         buttons: ['excel'],
       });
+      
+      // Setup print button handler
+      $("#print").off('click').on('click', function() {
+        var mode = 'iframe'; //popup
+        var close = mode == "popup";
+        var options = {
+          mode: mode,
+          popClose: close
+        };
+        $("div.printableArea").printArea(options);
+      });
       // alert(data);  //as a debugging message.
     },
     error: function(e) {

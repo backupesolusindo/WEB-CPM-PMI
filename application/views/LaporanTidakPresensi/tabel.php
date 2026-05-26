@@ -78,21 +78,3 @@
         <?php echo $ttd['NIP'] ?>
       </div> -->
     </div>
-
-    <script type="text/javascript">
-      $(document).ready(function(){
-        // $(".txtTW").html("<?php echo $txtTW; ?>");
-        // $(".txtTO").html("<?php echo $txtTO; ?>");
-        // $(".txtTE").html("<?php echo $txtTE; ?>");
-
-        $("#print").click(function() {
-          var mode = 'iframe'; //popup
-          var close = mode == "popup";
-          var options = {
-            mode: mode,
-            popClose: close
-          };
-          $("div.printableArea").printArea(options);
-        });
-      });
-    </script>
