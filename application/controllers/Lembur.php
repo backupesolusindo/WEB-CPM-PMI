@@ -118,10 +118,18 @@ class Lembur extends CI_Controller
     $pegawai    = $this->input->post("uuid");
     $jam_mulai  = $this->input->post("jam_mulai");
     $jam_selesai = $this->input->post("jam_selesai");
+    
+    // Validasi input
+    if (!is_array($pegawai) || empty($pegawai)) {
+      $this->session->set_flashdata('notifJS', $this->core->NotifError("Mohon pilih minimal 1 peserta"));
+      redirect(base_url() . 'Lembur/peserta/' . $idlembur);
+      return;
+    }
+    
     $data = array();
     $this->db->where("lembur_idlembur", $idlembur);
     if ($this->db->delete("peserta_lembur")) {
-      for ($i = 0; $i < sizeof($pegawai); $i++) {
+      for ($i = 0; $i < count($pegawai); $i++) {
         $ar = array(
           'lembur_idlembur' => $idlembur,
           'pegawai_uuid'    => $pegawai[$i],
@@ -132,7 +140,7 @@ class Lembur extends CI_Controller
       }
       // echo json_encode($data);
       if ($this->db->insert_batch("peserta_lembur", $data)) {
-        for ($i = 0; $i < sizeof($pegawai); $i++) {
+        for ($i = 0; $i < count($pegawai); $i++) {
           $lembur = $this->ModelLembur->get_data($idlembur)->row_array();
           $da = $this->ModelPegawai->edit($pegawai[$i])->row_array();
           @$this->core->curlNotif(
