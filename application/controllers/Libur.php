@@ -44,10 +44,10 @@ class Libur extends CI_Controller{
       'keterangan'    => $this->input->post('keterangan'),
     );
     if ($this->db->insert('tanggal_libur', $data)) {
-      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Tambah Data Berhasil","type" => "success" ));
+      $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Tambah Data Berhasil"));
       redirect(base_url().'Libur');
     } else {
-      $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Tambah Ulang","type" => "danger" ));
+      $this->session->set_flashdata('notifJS', $this->core->NotifError("Mohon Untuk Melakukan Tambah Ulang"));
       redirect(base_url().'Libur');
     }
   }
@@ -55,11 +55,11 @@ class Libur extends CI_Controller{
   function delete($id)
   {
     $this->db->where("idtanggal_libur",$id);
-    if ($this->db->insert('tanggal_libur')) {
-      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Tambah Data Berhasil","type" => "success" ));
+    if ($this->db->delete('tanggal_libur')) {
+      $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Hapus Data Berhasil"));
       redirect(base_url().'Libur');
     } else {
-      $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Tambah Ulang","type" => "danger" ));
+      $this->session->set_flashdata('notifJS', $this->core->NotifError("Mohon Untuk Melakukan Hapus Ulang"));
       redirect(base_url().'Libur');
     }
   }
