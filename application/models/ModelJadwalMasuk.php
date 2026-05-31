@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class ModelJadwalMasuk extends CI_Model{
+class ModelJadwalMasuk extends CI_Model
+{
 
   public function __construct()
   {
@@ -11,13 +12,13 @@ class ModelJadwalMasuk extends CI_Model{
 
   public function get_all_jadwalmasuk()
   {
-    $this->db->join("jabatan","jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
+    $this->db->join("jabatan", "jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
     return $this->db->get('jadwal_masuk');
   }
 
   public function get_jadwalmasuk($idjabatan = null, $jenis = 1)
   {
-    $this->db->join("jabatan","jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
+    $this->db->join("jabatan", "jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
     if ($idjabatan != null || $idjabatan != "") {
       $this->db->where("jabatan_idjabatan", $idjabatan);
     }
@@ -28,7 +29,7 @@ class ModelJadwalMasuk extends CI_Model{
   public function get_edit($idjadwal_masuk)
   {
     $this->db->where("idjadwal_masuk", $idjadwal_masuk);
-    $this->db->join("jabatan","jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
+    $this->db->join("jabatan", "jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
     return $this->db->get("jadwal_masuk");
   }
 
@@ -39,5 +40,12 @@ class ModelJadwalMasuk extends CI_Model{
     return $this->db->get("jadwal_masuk");
   }
 
-
+  public function get_pegawai_by_jabatan($idjabatan)
+  {
+    $this->db->select("uuid, nama_pegawai");
+    $this->db->where("jab_struktur", $idjabatan);
+    $this->db->where("status_aktif", "1");
+    $this->db->order_by("nama_pegawai", "ASC");
+    return $this->db->get("pegawai");
+  }
 }

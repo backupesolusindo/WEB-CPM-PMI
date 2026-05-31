@@ -18,6 +18,7 @@ class JadwalMasuk extends CI_Controller
       'title'         => 'JADWAL MASUK',
       'body'          => 'JadwalMasuk/list',
       'jadwalmasuk'   => $this->ModelJadwalMasuk->get_all_jadwalmasuk()->result(),
+      'jabatan'       => $this->ModelJabatan->get_data()->result(),
     );
     $this->load->view('index', $data);
   }
@@ -124,5 +125,12 @@ class JadwalMasuk extends CI_Controller
       $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Hapus Ulang", "type" => "danger"));
       redirect(base_url() . 'JadwalMasuk');
     }
+  }
+
+  function get_pegawai_by_jabatan()
+  {
+    $idjabatan = $this->input->post('idjabatan');
+    $pegawai = $this->ModelJadwalMasuk->get_pegawai_by_jabatan($idjabatan)->result();
+    echo json_encode($pegawai);
   }
 }
