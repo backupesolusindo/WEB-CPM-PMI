@@ -50,6 +50,7 @@
                         <th width="5%">#</th>
                         <th width="5%">Jenis</th>
                         <th>Jabatan</th>
+                        <th>Pegawai</th>
                         <th>Nama Jadwal</th>
                         <th>Jam Masuk</th>
                         <th>Jam Pulang</th>
@@ -75,6 +76,15 @@
                             <?php endif; ?>
                           </td>
                           <td><?php echo $value->namajabatan ?? $value->jabatan_idjabatan ?></td>
+                          <td>
+                            <?php if (!empty($value->pegawai_assigned)): ?>
+                              <?php foreach ($value->pegawai_assigned as $peg): ?>
+                                <span class="badge badge-info mr-1"><?php echo $peg->nama_pegawai ?></span>
+                              <?php endforeach; ?>
+                            <?php else: ?>
+                              <span class="text-muted"><i>Semua Pegawai</i></span>
+                            <?php endif; ?>
+                          </td>
                           <td><?php echo $value->nama ?></td>
                           <td><?php echo $value->jam_masuk ?></td>
                           <td><?php echo $value->jam_pulang ?></td>
@@ -120,7 +130,7 @@
         return;
       }
 
-      // Filter tabel berdasarkan jabatan
+      // Filter tabel berdasarkan jabatan (column index 2)
       var jabatanText = $('#filter_jabatan option:selected').text();
       table.column(2).search(jabatanText).draw();
 
@@ -138,7 +148,7 @@
           var options = '<option value="">-- Semua Pegawai (Jabatan Ini) --</option>';
           if (data.length > 0) {
             $.each(data, function(i, pegawai) {
-              options += '<option value="' + pegawai.uuid + '">' + pegawai.nama_pegawai + '</option>';
+              options += '<option value="' + pegawai.uuid + '" data-nama="' + pegawai.nama_pegawai + '">' + pegawai.nama_pegawai + '</option>';
             });
             $('#wrap_filter_pegawai').show();
           } else {
@@ -153,9 +163,25 @@
       });
     });
 
+    // Saat pegawai dipilih — filter tabel kolom Pegawai (column index 3)
+    $('#filter_pegawai').on('change', function() {
+      var nama = $('#filter_pegawai option:selected').data('nama') || '';
+      if ($(this).val() === '') {
+        // Kembali ke filter jabatan saja
+        var jabatanText = $('#filter_jabatan option:selected').text();
+        table.column(2).search(jabatanText).column(3).search('').draw();
+      } else {
+        table.column(3).search(nama).draw();
+      }
+    });
+
     // Reset filter
     $('#btn_reset_filter').on('click', function() {
+      table.column(2).search('').column(3).search('').draw();
       $('#filter_jabatan').val('').trigger('change');
+      $('#filter_jabatan, #filter_pegawai').val(null).trigger('change.select2');
+      $('#wrap_filter_pegawai').hide();
+      $('#btn_reset_filter').hide();
     });
   });
 </script>
