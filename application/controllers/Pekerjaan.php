@@ -28,7 +28,7 @@ class Pekerjaan extends CI_Controller
         $this->load->view('index', $data);
     }
 
-   
+
 
     // Form tambah pekerjaan
     public function input()
@@ -39,7 +39,7 @@ class Pekerjaan extends CI_Controller
             'body' => 'Pekerjaan/ListPekerjaan/input',
             'jabatan' => $this->ModelJabatan->get_data()->result()
         );
-        
+
         $this->load->view('index', $data);
     }
 
@@ -53,7 +53,7 @@ class Pekerjaan extends CI_Controller
             'point' => $this->input->post('point'),
             'tipe_pekerjaan' => $this->input->post('tipe_pekerjaan'),
         );
-        
+
         if ($this->ModelPekerjaan->insert($input_data)) {
             $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Data pekerjaan berhasil ditambahkan."));
         } else {
@@ -80,30 +80,30 @@ class Pekerjaan extends CI_Controller
         }
         redirect(base_url('/Pekerjaan/ListPekerjaan'));
     }
-   
+
     // Form edit pekerjaan
     function edit($id)
     {
-      $data = array(
-        'title'        => 'EDIT PEKERJAAN',
-        'form'         =>'Pekerjaan/ListPekerjaan/tambah',
-        'body'         => 'Pekerjaan/ListPekerjaan/edit' ,
-        'pekerjaan'  => $this->ModelPekerjaan->get_edit($id),
-        'jabatan'      => $this->ModelJabatan->get_data()->result()
-      );
-      $this->load->view('index', $data);
+        $data = array(
+            'title'        => 'EDIT PEKERJAAN',
+            'form'         => 'Pekerjaan/ListPekerjaan/tambah',
+            'body'         => 'Pekerjaan/ListPekerjaan/edit',
+            'pekerjaan'  => $this->ModelPekerjaan->get_edit($id),
+            'jabatan'      => $this->ModelJabatan->get_data()->result()
+        );
+        $this->load->view('index', $data);
     }
-    
+
     // Form hapus pekerjaan
     function delete($id)
     {
         $this->db->where("id_pekerjaan", $id);
         if ($this->db->delete('pekerjaan')) {
             $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Data pekerjaan berhasil dihapus."));
-            redirect(base_url().'Pekerjaan/ListPekerjaan');
+            redirect(base_url() . 'Pekerjaan/ListPekerjaan');
         } else {
             $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal menghapus data pekerjaan."));
-            redirect(base_url().'Pekerjaan/ListPekerjaan');
+            redirect(base_url() . 'Pekerjaan/ListPekerjaan');
         }
     }
 
@@ -112,22 +112,18 @@ class Pekerjaan extends CI_Controller
     public function RiwayatPekerjaan()
     {
         $this->auto_approve_old_tasks();
-        
-        // Rest of your existing code...
-        $data['jabatan'] = $this->db->get('jabatan')->result();
+
         $this->load->model('ModelRiwayatPekerjaan');
-        $this->load->model('ModelJabatan'); // Assuming you have this model for jabatan
-        
-        // Get jabatan data for the filter
-        $jabatan = $this->ModelJabatan->get_jabatan_with_pekerjaan();
-        
+        $this->load->model('ModelJabatan');
+
         // Get all data (you might want to filter out pending status)
         $listpekerjaan = $this->ModelRiwayatPekerjaan->get_all_except_pending();
-        
+
         $data = array(
             'title' => 'Riwayat Pekerjaan',
             'body' => 'Pekerjaan/RiwayatPekerjaan/index',
             'jabatan' => $this->ModelJabatan->get_data()->result(),
+            'pegawai' => $this->db->get('pegawai')->result(),
             'listpekerjaan' => $listpekerjaan
         );
 
@@ -138,21 +134,21 @@ class Pekerjaan extends CI_Controller
     {
         $id_riwayatpekerjaan = $this->input->post('id_riwayatpekerjaan');
         $status = $this->input->post('status');
-    
+
         // Validate input
         if (empty($id_riwayatpekerjaan) || empty($status)) {
             echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap']);
             return;
         }
-        
+
         // Only allow approved/rejected status updates
         if (!in_array($status, ['approve', 'reject'])) {
             echo json_encode(['status' => 'error', 'message' => 'Status tidak valid']);
             return;
         }
-        
+
         $update = $this->ModelRiwayatPekerjaan->update_status($id_riwayatpekerjaan, $status);
-    
+
         if ($update) {
             $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Status berhasil diperbarui"));
             echo json_encode(['status' => 'success', 'message' => 'Status berhasil diperbarui']);
@@ -170,13 +166,13 @@ class Pekerjaan extends CI_Controller
         // Get all complete tasks that haven't been approved/rejected yet
         $this->db->where('status', 'complete');
         $pendingTasks = $this->db->get('riwayat_pekerjaan')->result_array();
-        
+
         $updated = 0;
         $sevenDaysAgo = date('Y-m-d', strtotime('-7 days'));
-        
+
         foreach ($pendingTasks as $task) {
             $taskDate = date('Y-m-d', strtotime($task['updated_at']));
-            
+
             // Check if the task is older than 7 days
             if ($taskDate <= $sevenDaysAgo) {
                 // Update the status to approve
@@ -185,10 +181,10 @@ class Pekerjaan extends CI_Controller
                 $updated++;
             }
         }
-        
+
         // Now auto-reject old pending tasks
         $rejectedCount = $this->ModelRiwayatPekerjaan->auto_reject_old_pending_tasks();
-        
+
         return ['approved' => $updated, 'rejected' => $rejectedCount];
     }
 
@@ -200,7 +196,7 @@ class Pekerjaan extends CI_Controller
     {
         // Process auto approval and rejection
         $result = $this->auto_approve_old_tasks();
-        
+
         // Get list of tasks that were just auto-approved
         $sevenDaysAgo = date('Y-m-d', strtotime('-7 days'));
         $this->db->select('id_riwayatpekerjaan');
@@ -208,7 +204,7 @@ class Pekerjaan extends CI_Controller
         $this->db->where('updated_at <=', $sevenDaysAgo);
         $this->db->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-5 minutes'))); // Check for recently updated
         $autoApprovedTasks = $this->db->get('riwayat_pekerjaan')->result_array();
-        
+
         // Get list of tasks that were just auto-rejected
         $oneDayAgo = date('Y-m-d', strtotime('-1 day'));
         $this->db->select('id_riwayatpekerjaan');
@@ -216,15 +212,15 @@ class Pekerjaan extends CI_Controller
         $this->db->where('created_at <=', $oneDayAgo);
         $this->db->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-5 minutes'))); // Check for recently updated
         $autoRejectedTasks = $this->db->get('riwayat_pekerjaan')->result_array();
-        
+
         $approvedTaskIds = array_column($autoApprovedTasks, 'id_riwayatpekerjaan');
         $rejectedTaskIds = array_column($autoRejectedTasks, 'id_riwayatpekerjaan');
-        
+
         $response = [
             'auto_approved_tasks' => $approvedTaskIds,
             'auto_rejected_tasks' => $rejectedTaskIds
         ];
-        
+
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -240,7 +236,7 @@ class Pekerjaan extends CI_Controller
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('end_date');
         $limit = $this->input->post('limit') ? $this->input->post('limit') : 10;
-        
+
         // Properly format dates for database query (handle dd-mm-yyyy format)
         if (!empty($start_date)) {
             $start_date_parts = explode('-', $start_date);
@@ -249,7 +245,7 @@ class Pekerjaan extends CI_Controller
                 $start_date = $start_date_parts[2] . '-' . $start_date_parts[1] . '-' . $start_date_parts[0];
             }
         }
-        
+
         if (!empty($end_date)) {
             $end_date_parts = explode('-', $end_date);
             if (count($end_date_parts) === 3 && strlen($end_date_parts[0]) === 2) {
@@ -257,17 +253,17 @@ class Pekerjaan extends CI_Controller
                 $end_date = $end_date_parts[2] . '-' . $end_date_parts[1] . '-' . $end_date_parts[0];
             }
         }
-        
+
         // Log for debugging
         error_log("Searching with params - Employee: $pegawai_idpegawai, Start: $start_date, End: $end_date");
-        
+
         // Get filtered data based on approve status and updated_at date
         $total_poin_pegawai = $this->ModelTotalPoint->get_rekap_pekerjaan($pegawai_idpegawai, $limit, $start_date, $end_date);
-        
+
         $data = array(
             'total_poin_pegawai' => $total_poin_pegawai
         );
-        
+
         if ($this->input->is_ajax_request()) {
             // If Ajax request, send result as JSON
             echo json_encode([
@@ -280,17 +276,18 @@ class Pekerjaan extends CI_Controller
             $data['title'] = 'Rekap Pekerjaan';
             $data['body'] = 'Pekerjaan/RekapPekerjaan/index';
             $data['pegawai'] = $this->db->get('pegawai')->result();
-            
+
             $this->load->view('index', $data);
         }
     }
 
-    public function RefreshTotalPoin() {
+    public function RefreshTotalPoin()
+    {
         $pegawai_idpegawai = $this->input->post('pegawai_idpegawai');
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('end_date');
         $limit = $this->input->post('limit') ? $this->input->post('limit') : 10;
-        
+
         // Properly format dates for database query (handle dd-mm-yyyy format)
         if (!empty($start_date)) {
             $start_date_parts = explode('-', $start_date);
@@ -299,7 +296,7 @@ class Pekerjaan extends CI_Controller
                 $start_date = $start_date_parts[2] . '-' . $start_date_parts[1] . '-' . $start_date_parts[0];
             }
         }
-        
+
         if (!empty($end_date)) {
             $end_date_parts = explode('-', $end_date);
             if (count($end_date_parts) === 3 && strlen($end_date_parts[0]) === 2) {
@@ -307,13 +304,13 @@ class Pekerjaan extends CI_Controller
                 $end_date = $end_date_parts[2] . '-' . $end_date_parts[1] . '-' . $end_date_parts[0];
             }
         }
-        
+
         // Log for debugging
         error_log("Refreshing with params - Employee: $pegawai_idpegawai, Start: $start_date, End: $end_date");
-        
+
         if (!empty($pegawai_idpegawai)) {
             // Calculate total points for a specific employee (only with approve status)
-            $result = $this->ModelTotalPoint->get_total_poin($pegawai_idpegawai, $limit, $start_date, $end_date);        
+            $result = $this->ModelTotalPoint->get_total_poin($pegawai_idpegawai, $limit, $start_date, $end_date);
             $data = array(
                 'total_poin_pegawai' => $this->ModelTotalPoint->get_rekap_pekerjaan($pegawai_idpegawai, $limit, $start_date, $end_date)
             );
@@ -324,7 +321,7 @@ class Pekerjaan extends CI_Controller
                 'total_poin_pegawai' => $this->ModelTotalPoint->get_rekap_pekerjaan(null, $limit, $start_date, $end_date)
             );
         }
-        
+
         if ($this->input->is_ajax_request()) {
             // If Ajax request, send result as JSON
             echo json_encode([
@@ -344,16 +341,17 @@ class Pekerjaan extends CI_Controller
     }
 
     // Update the RekapPekerjaan method
-    public function RekapPekerjaan() {
+    public function RekapPekerjaan()
+    {
         $pegawai_idpegawai = $this->input->post('pegawai_idpegawai');
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('end_date');
         $limit = $this->input->post('limit') ? $this->input->post('limit') : 10;
-        
+
         // Convert date format if needed
         $start_date = $start_date ? date('Y-m-d', strtotime(str_replace('-', '/', $start_date))) : null;
         $end_date = $end_date ? date('Y-m-d', strtotime(str_replace('-', '/', $end_date))) : null;
-        
+
         // Tambahkan data yang diperlukan untuk view
         $data = array(
             'title' => 'Rekap Pekerjaan',
@@ -377,43 +375,44 @@ class Pekerjaan extends CI_Controller
     //     );
     //     $data['jabatan'] = $this->db->get('jabatan')->result();
     //     $data['pegawai'] = $this->db->get('pegawai')->result();
-        
+
     //     // Load view
 
     //     $this->load->view('index', $data);
     // }
-    public function Dashboard() {
+    public function Dashboard()
+    {
         $this->load->model('ModelRiwayatPekerjaan');
-            $data = array(
-                'title' => 'Dashboard',
-                'body' => 'Pekerjaan/Dashboard/index',
-                'Dashboard' => $this->ModelRiwayatPekerjaan->get_all()
-            );
+        $data = array(
+            'title' => 'Dashboard',
+            'body' => 'Pekerjaan/Dashboard/index',
+            'Dashboard' => $this->ModelRiwayatPekerjaan->get_all()
+        );
         // Get jabatan directly from pekerjaan table
         $data['jabatan'] = $this->ModelRiwayatPekerjaan->get_jabatan_from_pekerjaan();
-        
+
         // Get pegawai directly from riwayat_pekerjaan table
         $data['pegawai'] = $this->ModelRiwayatPekerjaan->get_pegawai_from_riwayat();
-        
-      
+
+
         $this->load->view('index', $data);
-      
     }
-    
-    public function get_dashboard_data() {
+
+    public function get_dashboard_data()
+    {
         // Get filter parameters
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('end_date');
         $jabatan = $this->input->post('jabatan');
         $pegawai = $this->input->post('pegawai');
-        
+
         // Get counts for different status
         $total = $this->ModelRiwayatPekerjaan->count_total($start_date, $end_date, $jabatan, $pegawai);
         $pending = $this->ModelRiwayatPekerjaan->count_by_status('Pending', $start_date, $end_date, $jabatan, $pegawai);
         $complete = $this->ModelRiwayatPekerjaan->count_by_status('Complete', $start_date, $end_date, $jabatan, $pegawai);
         $reject = $this->ModelRiwayatPekerjaan->count_by_status('Reject', $start_date, $end_date, $jabatan, $pegawai);
         $approve = $this->ModelRiwayatPekerjaan->count_by_status('Approve', $start_date, $end_date, $jabatan, $pegawai);
-        
+
         // Calculate percentages for chart
         $percentages = array();
         if ($total > 0) {
@@ -424,10 +423,10 @@ class Pekerjaan extends CI_Controller
                 array('status' => 'Approve', 'value' => round(($approve / $total) * 100, 2))
             );
         }
-        
+
         // Calculate approve percentage
         $approve_percentage = ($total > 0) ? round(($approve / $total) * 100, 2) : 0;
-        
+
         // Get today's tasks
         $today_tasks = $this->ModelRiwayatPekerjaan->get_riwayat_pekerjaan($start_date, $end_date, $jabatan, $pegawai);
         // Prepare response
@@ -441,7 +440,7 @@ class Pekerjaan extends CI_Controller
             'percentages' => $percentages,
             'today_tasks' => $today_tasks
         );
-        
+
         echo json_encode($response);
     }
 }

@@ -41,9 +41,8 @@ class Pegawai extends CI_Controller
   function insert()
   {
     $data = array(
-      'uuid'              => $this->input->post('nip'),
       'NIP'               => $this->input->post('nip'),
-      'NIK'               => $this->input->post('nip'),
+      'NIK'               => $this->input->post('nik'),
       'nama_pegawai'      => $this->input->post('nama_pegawai'),
       'email'             => $this->input->post('email'),
       'jab_struktur'      => $this->input->post('jabatan'),
@@ -87,7 +86,7 @@ class Pegawai extends CI_Controller
     $id = $this->input->post('id');
     $data = array(
       'NIP'               => $this->input->post('nip'),
-      'NIK'               => $this->input->post('nip'),
+      'NIK'               => $this->input->post('nik'),
       'nama_pegawai'      => $this->input->post('nama_pegawai'),
       'email'             => $this->input->post('email'),
       'jab_struktur'      => $this->input->post('jabatan'),
@@ -125,92 +124,5 @@ class Pegawai extends CI_Controller
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gaga Reset Password"));
       redirect('Pegawai');
     }
-  }
-
-  function sinkron()
-  {
-    $credentials = $this->core->getAccessApi();
-
-    $param = array(
-      "informations"      => false,
-      "with_informations" => false,
-    );
-    $curl = curl_init("http://api.polije.ac.id/resources/kepegawaian/pegawai" . "?" . http_build_query($param));
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $credentials['accessToken'], "User-Agent: " . strtolower($_SERVER['HTTP_USER_AGENT'])));
-
-    $json_response = curl_exec($curl);
-    curl_close($curl);
-
-    $data = array(
-      'size' => sizeof(json_decode($json_response)),
-      'res'  => json_decode($json_response)
-    );
-    // echo json_encode($data);
-    foreach (json_decode($json_response) as $apiPegawai) {
-      $arUpdate = array(
-        'NIP'              => $apiPegawai->nip,
-        'NIK'              => $apiPegawai->no_ktp,
-        'nama_asli'        => $apiPegawai->nama_lengkap,
-        'nama_pegawai'     => $apiPegawai->gelar_depan . "" . $apiPegawai->nama_lengkap . ", " . $apiPegawai->gelar_belakang,
-        'tipe_pegawai'     => $apiPegawai->tipe_pegawai,
-        'email'            => $apiPegawai->email,
-        'unit'             => $apiPegawai->unit,
-        'jenis_unit'       => $apiPegawai->jenis_unit,
-        'jab_struktur'     => $apiPegawai->jab_struktur,
-      );
-      $jml_uuid = $this->db->get_where("pegawai", array('uuid' => $apiPegawai->uuid))->num_rows();
-      if ($jml_uuid > 0) {
-        $this->db->where("uuid", $apiPegawai->uuid);
-        $this->db->update("pegawai", $arUpdate);
-      } else {
-        if ($apiPegawai->nip != "-") {
-          $this->db->where("NIP", $apiPegawai->nip);
-          $this->db->update("pegawai", $arUpdate);
-        }
-      }
-      // echo $value->uuid;
-      $this->db->where("namajabatan", $apiPegawai->jab_struktur);
-      if ($this->db->get("jabatan")->num_rows() < 1) {
-        $this->db->insert(
-          "jabatan",
-          array(
-            'idjabatan' => trim($apiPegawai->jab_struktur),
-            'namajabatan' => $apiPegawai->jab_struktur,
-            'tampil'    => "1"
-          )
-        );
-      }
-    }
-    $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Sinkronisasi Data Pegawai "));
-    redirect('Pegawai');
-  }
-
-  function belum()
-  {
-    $credentials = $this->core->getAccessApi();
-
-    $param = array(
-      "informations"      => false,
-      "with_informations" => false,
-    );
-    $curl = curl_init("http://api.polije.ac.id/resources/kepegawaian/pegawai" . "?" . http_build_query($param));
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $credentials['accessToken'], "User-Agent: " . strtolower($_SERVER['HTTP_USER_AGENT'])));
-
-    $json_response = curl_exec($curl);
-    curl_close($curl);
-
-    $array = array(
-      'title'       => "Pegawai",
-      'body'        => "Pegawai/list_belum",
-      'Pegawai'     => json_decode($json_response)
-    );
-
-    $this->load->view('index', $array);
   }
 }

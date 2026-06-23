@@ -18,7 +18,8 @@ class Kampus extends CI_Controller
   function get_list($pegawai_uuid = "", $cari = "")
   {
     $cari = urldecode($cari);
-    $kantor = $this->ModelKampus->get_kampus($cari)->result();
+    // Hanya ambil kantor yang berstatus aktif
+    $kantor = $this->ModelKampus->get_kampus_aktif($cari)->result();
     // $kantor = array();
     // $pegawai = $this->ModelPegawai->edit($pegawai_uuid)->row_array();
     // $hari_lokasi = $this->ModelJadwalLokasi->get_jadwalpegawai($pegawai_uuid, date("D"));

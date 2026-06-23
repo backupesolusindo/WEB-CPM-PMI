@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Kampus extends CI_Controller{
+class Kampus extends CI_Controller
+{
 
   public function __construct()
   {
@@ -13,10 +14,10 @@ class Kampus extends CI_Controller{
   function index()
   {
     $data = array(
-    'title'  => 'KAMPUS',
-    'body'   => 'Kampus/list' ,
-    'kampus'   => $this->ModelKampus->get_kampus()->result(),
-  );
+      'title'  => 'KAMPUS',
+      'body'   => 'Kampus/list',
+      'kampus'   => $this->ModelKampus->get_kampus()->result(),
+    );
     $this->load->view('index', $data);
   }
 
@@ -29,7 +30,7 @@ class Kampus extends CI_Controller{
   function input()
   {
     $data = array(
-      'title'=> 'FORM INPUT KAMPUS',
+      'title' => 'FORM INPUT KAMPUS',
       'form' => 'Kampus/form',
       'body' => 'Kampus/input',
     );
@@ -42,13 +43,15 @@ class Kampus extends CI_Controller{
       'nama_kampus'   => $this->input->post("nama_kampus"),
       'latitude'      => $this->input->post("latitude"),
       'longtitude'    => $this->input->post("longtitude"),
+      'radius'        => $this->input->post("radius"),
+      'status'        => 'aktif',
     );
     if ($this->db->insert('kampus', $data)) {
-      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Tambah Data Berhasil","type" => "success" ));
-      redirect(base_url().'Kampus');
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Tambah Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'Kampus');
     } else {
-      $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Tambah Ulang","type" => "danger" ));
-      redirect(base_url().'Kampus');
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Tambah Ulang", "type" => "danger"));
+      redirect(base_url() . 'Kampus');
     }
   }
 
@@ -57,7 +60,7 @@ class Kampus extends CI_Controller{
     $data = array(
       'title' => 'FORM EDIT KAMPUS',
       'form'  => 'Kampus/form',
-      'body'  => 'Kampus/edit' ,
+      'body'  => 'Kampus/edit',
       'kampus'  => $this->ModelKampus->get_edit($idkampus)->row_array(),
     );
     $this->load->view('index', $data);
@@ -69,27 +72,38 @@ class Kampus extends CI_Controller{
       'nama_kampus'   => $this->input->post("nama_kampus"),
       'latitude'      => $this->input->post("latitude"),
       'longtitude'    => $this->input->post("longtitude"),
+      'radius'        => $this->input->post("radius"),
+      'status'        => $this->input->post("status") ?: 'aktif',
     );
     $this->db->where("idkampus", $this->input->post("idkampus"));
     if ($this->db->update('kampus', $data)) {
-      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Edit Data Berhasil","type" => "success" ));
-      redirect(base_url().'Kampus');
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Edit Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'Kampus');
     } else {
-      $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Edit Ulang","type" => "danger" ));
-      redirect(base_url().'Kampus');
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Edit Ulang", "type" => "danger"));
+      redirect(base_url() . 'Kampus');
     }
+  }
+
+  function toggle_status($idkampus)
+  {
+    if ($this->ModelKampus->toggle_status($idkampus)) {
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Status Berhasil Diubah", "type" => "success"));
+    } else {
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Gagal Mengubah Status", "type" => "danger"));
+    }
+    redirect(base_url() . 'Kampus');
   }
 
   function hapus($idkampus)
   {
-      $this->db->where("idkampus", $idkampus);
-      if ($this->db->delete('kampus')) {
-        $this->session->set_flashdata('notifJS', array('heading' => "Berhasil",'text'=>"Hapus Data Berhasil","type" => "success" ));
-        redirect(base_url().'Kampus');
-      } else {
-        $this->session->set_flashdata('notifJS', array('heading' => "Gagal",'text'=>"Mohon Untuk Melakukan Hapus Ulang","type" => "danger" ));
-        redirect(base_url().'Kampus');
-      }
+    $this->db->where("idkampus", $idkampus);
+    if ($this->db->delete('kampus')) {
+      $this->session->set_flashdata('notifJS', array('heading' => "Berhasil", 'text' => "Hapus Data Berhasil", "type" => "success"));
+      redirect(base_url() . 'Kampus');
+    } else {
+      $this->session->set_flashdata('notifJS', array('heading' => "Gagal", 'text' => "Mohon Untuk Melakukan Hapus Ulang", "type" => "danger"));
+      redirect(base_url() . 'Kampus');
+    }
   }
-
 }

@@ -8,6 +8,13 @@
   </div>
   <div class="col-md-6">
     <div class="form-group ">
+      <input type="text" class="form-control" id="nik" name="nik" required value="<?php echo @$pegawai['NIK']; ?>">
+      <span class="bar"></span>
+      <label for="nik">NIK :</label>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group ">
       <input type="text" class="form-control" id="nama_pegawai" name="nama_pegawai" required value="<?php echo @$pegawai['nama_pegawai']; ?>">
       <span class="bar"></span>
       <label for="nama_pegawai">Nama Lengkap</label>
