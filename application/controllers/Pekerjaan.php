@@ -116,18 +116,93 @@ class Pekerjaan extends CI_Controller
         $this->load->model('ModelRiwayatPekerjaan');
         $this->load->model('ModelJabatan');
 
-        // Get all data (you might want to filter out pending status)
-        $listpekerjaan = $this->ModelRiwayatPekerjaan->get_all_except_pending();
-
         $data = array(
-            'title' => 'Riwayat Pekerjaan',
-            'body' => 'Pekerjaan/RiwayatPekerjaan/index',
+            'title'   => 'Riwayat Pekerjaan',
+            'body'    => 'Pekerjaan/RiwayatPekerjaan/index',
             'jabatan' => $this->ModelJabatan->get_data()->result(),
             'pegawai' => $this->db->get('pegawai')->result(),
-            'listpekerjaan' => $listpekerjaan
         );
 
         $this->load->view('index', $data);
+    }
+
+    /**
+     * AJAX endpoint untuk DataTable Riwayat Pekerjaan
+     */
+    public function get_riwayat_ajax()
+    {
+        $jabatan = $this->input->get('jabatan');
+        $pegawai = $this->input->get('pegawai');
+        $start   = $this->input->get('start');
+        $end     = $this->input->get('end');
+
+        $data = $this->ModelRiwayatPekerjaan->get_riwayat_ajax($jabatan, $pegawai, $start, $end);
+
+        $bulan = [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember',
+        ];
+
+        $rows = [];
+        $no   = 1;
+        foreach ($data as $row) {
+            $tanggal        = date('d-m-Y', strtotime($row['created_at']));
+            $parts          = explode('-', $tanggal);
+            $tanggalFormatted = $parts[0] . ' ' . $bulan[$parts[1]] . ' ' . $parts[2];
+            $status         = strtolower($row['status']);
+            $id             = $row['id_riwayatpekerjaan'];
+
+            // Kolom checkbox / nomor
+            if ($status === 'complete') {
+                $nomorCol = '<input type="checkbox" class="check row-check" id="check-' . $id . '" data-checkbox="icheckbox_flat-red" value="' . $id . '">
+                             <label for="check-' . $id . '">' . $no . '</label>';
+            } else {
+                $nomorCol = $no;
+            }
+
+            // Kolom status
+            if ($status === 'complete') {
+                $statusCol = '<div class="status-container-' . $id . '">
+                                <button class="btn btn-success btn-sm approve-btn" data-id="' . $id . '"><i class="fa fa-check"></i> Terima</button>
+                                <button class="btn btn-danger btn-sm reject-btn" data-id="' . $id . '"><i class="fa fa-times"></i> Tolak</button>
+                              </div>
+                              <div class="loading-indicator-' . $id . '" style="display:none;">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                              </div>';
+            } elseif ($status === 'approve') {
+                $statusCol = '<span class="badge bg-success">Disetujui</span>';
+            } elseif ($status === 'reject') {
+                $statusCol = '<span class="badge bg-danger">Ditolak</span>';
+            } else {
+                $statusCol = '<span class="badge bg-secondary">' . $row['status'] . '</span>';
+            }
+
+            $rows[] = [
+                'no'            => $nomorCol,
+                'tanggal'       => $tanggalFormatted,
+                'namajabatan'   => $row['namajabatan'],
+                'nama_pekerjaan' => $row['nama_pekerjaan'],
+                'nama_pegawai'  => $row['nama_pegawai'],
+                'jumlah'        => number_format($row['jumlah'], 0, ',', '.'),
+                'point'         => number_format($row['point'], 0, ',', '.'),
+                'total_point'   => number_format($row['total_point'], 0, ',', '.'),
+                'status'        => $statusCol,
+            ];
+            $no++;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['data' => $rows]);
     }
 
     public function update_status()

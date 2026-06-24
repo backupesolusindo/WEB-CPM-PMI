@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div class="me-3 mb-2 d-flex gap-2 align-items-center">
-                        <button type="button" class="btn btn-info btn-md" onclick="search()">
+                        <button type="button" class="btn btn-info btn-md" onclick="loadTable()">
                             <i class="fa fa-search"></i> Cari
                         </button>
                         <button type="button" class="btn btn-success btn-md" id="btn-approve-selected" onclick="approveSelected()" disabled>
@@ -47,16 +47,13 @@
                         </button>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="loader__figure" hidden="true"></div>
-                </div>
 
-                <table id="searchTable" class="table color-table table-hover table-striped">
+                <table id="searchTable" class="table color-table table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th width="5%">
+                            <th width="10%">
                                 <input type="checkbox" class="check" id="check-all" data-checkbox="icheckbox_flat-red">
-                                <label for="check-all">Pilih Semua</label>
+                                <label for="check-all">&nbsp;#</label>
                             </th>
                             <th>Tanggal</th>
                             <th>Jabatan</th>
@@ -68,80 +65,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php $no = 1;
-                        if (!empty($listpekerjaan)) {
-                            // DEBUG SEMENTARA - hapus setelah fix
-                            $debug_statuses = array_unique(array_column($listpekerjaan, 'status'));
-                            echo '<div class="alert alert-warning"><strong>DEBUG status:</strong> ' . implode(', ', array_map(function ($s) {
-                                return '"' . htmlspecialchars($s) . '"';
-                            }, $debug_statuses)) . '</div>';
-                            foreach ($listpekerjaan as $row):
-                                $bulan = [
-                                    '01' => 'Januari',
-                                    '02' => 'Februari',
-                                    '03' => 'Maret',
-                                    '04' => 'April',
-                                    '05' => 'Mei',
-                                    '06' => 'Juni',
-                                    '07' => 'Juli',
-                                    '08' => 'Agustus',
-                                    '09' => 'September',
-                                    '10' => 'Oktober',
-                                    '11' => 'November',
-                                    '12' => 'Desember'
-                                ];
-                                $tanggal = date('d-m-Y', strtotime($row['created_at']));
-                                $parts = explode('-', $tanggal);
-                                $tanggal_formatted = $parts[0] . ' ' . $bulan[$parts[1]] . ' ' . $parts[2];
-                        ?>
-                                <tr id="row-<?php echo $row['id_riwayatpekerjaan']; ?>">
-                                    <td>
-                                        <?php if (strtolower($row['status']) == 'complete'): ?>
-                                            <input type="checkbox" class="check row-check" id="check-<?php echo $row['id_riwayatpekerjaan']; ?>" value="<?php echo $row['id_riwayatpekerjaan']; ?>" data-checkbox="icheckbox_flat-red">
-                                            <label for="check-<?php echo $row['id_riwayatpekerjaan'] ?>"><?php echo $no; ?></label>
-                                        <?php else: ?>
-                                            <?php echo $no; ?>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?php echo $tanggal_formatted; ?></td>
-                                    <td><?php echo $row['jabatan_idjabatan']; ?></td>
-                                    <td><?php echo $row['nama_pekerjaan']; ?></td>
-                                    <td><?php echo $row['nama_pegawai']; ?></td>
-                                    <td><?php echo number_format($row['jumlah'], 0, ',', '.'); ?></td>
-                                    <td><?php echo number_format($row['point'], 0, ',', '.'); ?></td>
-                                    <td><?php echo number_format($row['total_point'], 0, ',', '.'); ?></td>
-                                    <td>
-                                        <div class="status-container-<?php echo $row['id_riwayatpekerjaan']; ?>">
-                                            <?php if (strtolower($row['status']) == 'complete'): ?>
-                                                <button class="btn btn-success btn-sm approve-btn" data-id="<?php echo $row['id_riwayatpekerjaan']; ?>">
-                                                    <i class="fa fa-check"></i> Terima
-                                                </button>
-                                                <button class="btn btn-danger btn-sm reject-btn" data-id="<?php echo $row['id_riwayatpekerjaan']; ?>">
-                                                    <i class="fa fa-times"></i> Tolak
-                                                </button>
-                                            <?php elseif (strtolower($row['status']) == 'approve'): ?>
-                                                <span class="badge bg-success">Disetujui</span>
-                                            <?php elseif (strtolower($row['status']) == 'reject'): ?>
-                                                <span class="badge bg-danger">Ditolak</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="loading-indicator-<?php echo $row['id_riwayatpekerjaan']; ?>" style="display:none;">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php
-                                $no++;
-                            endforeach;
-                        } else { ?>
-                            <tr>
-                                <td colspan="10" class="text-center">Data tidak ditemukan</td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
@@ -150,6 +74,8 @@
 
 
 <script>
+    var table;
+
     $(document).ready(function() {
         // Datepicker
         $('#date-range').datepicker({
@@ -159,85 +85,152 @@
             language: 'id'
         });
 
-        // Inisialisasi iCheck untuk semua checkbox di tabel (jika iCheck tersedia)
-        if ($.fn.iCheck) {
-            $('#searchTable .row-check, #check-all').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue'
-            });
-        }
+        // Init DataTable AJAX
+        table = $('#searchTable').DataTable({
+            processing: true,
+            serverSide: false,
+            ajax: {
+                url: '<?php echo base_url("Pekerjaan/get_riwayat_ajax"); ?>',
+                type: 'GET',
+                data: function(d) {
+                    d.jabatan = $('#jabatan').val();
+                    d.pegawai = $('#pegawai').val();
+                    d.start = $('#start').val();
+                    d.end = $('#end').val();
+                }
+            },
+            columns: [{
+                    data: 'no',
+                    orderable: false
+                },
+                {
+                    data: 'tanggal'
+                },
+                {
+                    data: 'namajabatan'
+                },
+                {
+                    data: 'nama_pekerjaan'
+                },
+                {
+                    data: 'nama_pegawai'
+                },
+                {
+                    data: 'jumlah'
+                },
+                {
+                    data: 'point'
+                },
+                {
+                    data: 'total_point'
+                },
+                {
+                    data: 'status',
+                    orderable: false
+                }
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+            },
+            drawCallback: function() {
+                // Init iCheck pada checkbox baris yang baru dirender
+                if ($.fn.iCheck) {
+                    $('#searchTable tbody .row-check').iCheck({
+                        checkboxClass: 'icheckbox_flat-red'
+                    });
+                    // Re-init check-all juga
+                    $('#check-all').iCheck({
+                        checkboxClass: 'icheckbox_flat-red'
+                    });
+                }
+                bindActionButtons();
+                updateSelectedCount();
+            }
+        });
 
-        // Handle approve button click (per baris)
-        $(document).on('click', '.approve-btn', function() {
+        // Checkbox "pilih semua" — native change
+        $(document).on('change', '#check-all', function() {
+            var checked = $(this).is(':checked');
+            $('#searchTable tbody .row-check').prop('checked', checked);
+            // iCheck sync
+            if ($.fn.iCheck) {
+                checked
+                    ?
+                    $('#searchTable tbody .row-check').iCheck('check') :
+                    $('#searchTable tbody .row-check').iCheck('uncheck');
+            }
+            updateSelectedCount();
+        });
+
+        // iCheck event untuk check-all
+        $(document).on('ifChecked ifUnchecked', '#check-all', function(e) {
+            var checked = (e.type === 'ifChecked');
+            if ($.fn.iCheck) {
+                checked
+                    ?
+                    $('#searchTable tbody .row-check').iCheck('check') :
+                    $('#searchTable tbody .row-check').iCheck('uncheck');
+            } else {
+                $('#searchTable tbody .row-check').prop('checked', checked);
+            }
+            updateSelectedCount();
+        });
+
+        // Tiap checkbox baris — native
+        $(document).on('change', '#searchTable tbody .row-check', function() {
+            syncCheckAll();
+            updateSelectedCount();
+        });
+
+        // iCheck event untuk row-check
+        $(document).on('ifChecked ifUnchecked', '#searchTable tbody .row-check', function() {
+            syncCheckAll();
+            updateSelectedCount();
+        });
+    });
+
+    function bindActionButtons() {
+        // Approve per baris
+        $('#searchTable tbody').off('click', '.approve-btn').on('click', '.approve-btn', function() {
             var id = $(this).data('id');
             updateStatus(id, 'approve');
         });
 
-        // Handle reject button click (per baris)
-        $(document).on('click', '.reject-btn', function() {
+        // Reject per baris
+        $('#searchTable tbody').off('click', '.reject-btn').on('click', '.reject-btn', function() {
             var id = $(this).data('id');
             updateStatus(id, 'reject');
         });
-
-        // Checkbox "pilih semua" — hanya centang baris complete yang terlihat
-        $(document).on('change', '#check-all', function() {
-            var checked = $(this).is(':checked');
-            $('#searchTable tbody tr:visible .row-check').prop('checked', checked);
-            // iCheck support
-            if (checked) {
-                $('#searchTable tbody tr:visible .row-check').iCheck('check');
-            } else {
-                $('#searchTable tbody tr:visible .row-check').iCheck('uncheck');
-            }
-            updateSelectedCount();
-        });
-
-        // iCheck: pilih semua
-        $(document).on('ifChecked ifUnchecked', '#check-all', function(e) {
-            var checked = (e.type === 'ifChecked');
-            if (checked) {
-                $('#searchTable tbody tr:visible .row-check').iCheck('check');
-            } else {
-                $('#searchTable tbody tr:visible .row-check').iCheck('uncheck');
-            }
-            updateSelectedCount();
-        });
-
-        // Tiap checkbox baris diubah — native change
-        $(document).on('change', '.row-check', function() {
-            syncCheckAll();
-            updateSelectedCount();
-        });
-
-        // Tiap checkbox baris diubah — iCheck events
-        $(document).on('ifChecked ifUnchecked', '.row-check', function() {
-            syncCheckAll();
-            updateSelectedCount();
-        });
-
-        // Reset checkbox saat filter jabatan berubah
-        $('#jabatan').on('change', function() {
-            resetCheckboxes();
-        });
-    });
-
-    // Sinkron state check-all berdasarkan baris yang terlihat
-    function syncCheckAll() {
-        var total = $('#searchTable tbody tr:visible .row-check').length;
-        var totalChecked = $('#searchTable tbody tr:visible .row-check:checked').length;
-        $('#check-all').prop('indeterminate', totalChecked > 0 && totalChecked < total);
-        $('#check-all').prop('checked', total > 0 && totalChecked === total);
     }
 
-    // Update jumlah yang dipilih dan state tombol Setujui
-    function updateSelectedCount() {
-        // Hitung checkbox yang checked (support native + iCheck)
-        var count = 0;
-        $('#searchTable tbody tr:visible .row-check').each(function() {
-            if ($(this).is(':checked') || $(this).prop('checked')) {
-                count++;
+    function loadTable() {
+        table.ajax.reload(function() {
+            updateSelectedCount();
+        }, false);
+    }
+
+    function syncCheckAll() {
+        var total = $('#searchTable tbody .row-check').length;
+        var checked = $('#searchTable tbody .row-check:checked').length;
+        var isAll = total > 0 && checked === total;
+        var isIndet = checked > 0 && checked < total;
+
+        $('#check-all')
+            .prop('indeterminate', isIndet)
+            .prop('checked', isAll);
+
+        // Sync tampilan iCheck
+        if ($.fn.iCheck) {
+            if (isAll) {
+                $('#check-all').iCheck('check');
+            } else {
+                $('#check-all').iCheck('uncheck');
             }
-        });
+        }
+    }
+
+    function updateSelectedCount() {
+        var count = $('#searchTable tbody .row-check:checked').length;
         if (count > 0) {
             $('#btn-approve-selected').prop('disabled', false);
             $('#selected-count').text(count).show();
@@ -245,16 +238,6 @@
             $('#btn-approve-selected').prop('disabled', true);
             $('#selected-count').hide();
         }
-    }
-
-    function resetCheckboxes() {
-        $('.row-check').prop('checked', false).prop('indeterminate', false);
-        $('#check-all').prop('checked', false).prop('indeterminate', false);
-        // iCheck reset jika tersedia
-        if ($.fn.iCheck) {
-            $('.row-check, #check-all').iCheck('uncheck');
-        }
-        updateSelectedCount();
     }
 
     function updateStatus(id, status, callback) {
@@ -272,23 +255,17 @@
             success: function(response) {
                 $('.loading-indicator-' + id).hide();
 
-                if (response.status == 'success') {
-                    var newStatusHtml = '';
-                    if (status == 'approve') {
-                        newStatusHtml = '<span class="badge bg-success">Disetujui</span>';
-                    } else if (status == 'reject') {
-                        newStatusHtml = '<span class="badge bg-danger">Ditolak</span>';
+                if (response.status === 'success') {
+                    if (!callback) {
+                        alert(response.message);
+                        loadTable();
                     }
-                    $('.status-container-' + id).html(newStatusHtml).show();
-                    // Hapus checkbox karena sudah tidak perlu
-                    $('#row-' + id + ' .row-check').remove();
-                    if (!callback) alert(response.message);
                 } else {
                     if (!callback) alert('Error: ' + response.message);
                     $('.status-container-' + id).show();
                 }
 
-                if (callback) callback(response.status == 'success');
+                if (callback) callback(response.status === 'success');
             },
             error: function() {
                 $('.loading-indicator-' + id).hide();
@@ -299,13 +276,10 @@
         });
     }
 
-    // Setujui data yang dicentang
     function approveSelected() {
         var selectedIds = [];
-        $('#searchTable tbody tr:visible .row-check').each(function() {
-            if ($(this).is(':checked') || $(this).prop('checked')) {
-                selectedIds.push($(this).attr('value')); // pakai attr() bukan val() agar iCheck tidak mengembalikan "on"
-            }
+        $('#searchTable tbody .row-check:checked').each(function() {
+            selectedIds.push($(this).attr('value'));
         });
 
         if (selectedIds.length === 0) {
@@ -313,11 +287,8 @@
             return;
         }
 
-        if (!confirm('Setujui ' + selectedIds.length + ' data yang dipilih?')) {
-            return;
-        }
+        if (!confirm('Setujui ' + selectedIds.length + ' data yang dipilih?')) return;
 
-        // Nonaktifkan kontrol selama proses
         $('#btn-approve-selected').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Memproses...');
         $('#check-all').prop('disabled', true);
 
@@ -325,100 +296,21 @@
         var failed = 0;
 
         $.each(selectedIds, function(index, id) {
-            updateStatus(selectedIds[index], 'approve', function(success) {
+            updateStatus(id, 'approve', function(success) {
                 if (!success) failed++;
                 processed++;
 
                 if (processed === selectedIds.length) {
-                    // Selesai semua — refresh halaman agar data terupdate
                     var msg = (selectedIds.length - failed) + ' data berhasil disetujui.';
                     if (failed > 0) msg += ' ' + failed + ' data gagal.';
                     alert(msg);
-                    location.reload();
+
+                    // Reset tombol lalu reload tabel
+                    $('#btn-approve-selected').html('<i class="fa fa-check"></i> Setujui <span id="selected-count" class="badge ms-1" style="display:none;">0</span>');
+                    $('#check-all').prop('disabled', false).prop('checked', false);
+                    loadTable();
                 }
             });
-        });
-    }
-
-    // Filter tabel
-    function search() {
-        var jabatan = $('#jabatan').val();
-        var pegawai = $('#pegawai').val();
-        var start = $('#start').val();
-        var end = $('#end').val();
-
-        var startDate = new Date(start.split('-').reverse().join('-'));
-        var endDate = new Date(end.split('-').reverse().join('-'));
-
-        $('.loader__figure').show();
-        $('#no-data-row').remove();
-        resetCheckboxes();
-
-        $('#searchTable tbody tr').each(function() {
-            var row = $(this);
-            var showRow = true;
-
-            var rowJabatan = row.find('td:eq(3)').text().trim();
-            var rowPegawai = row.find('td:eq(5)').text().trim();
-            var dateText = row.find('td:eq(2)').text().trim();
-            var dateParts = parseIndonesianDate(dateText);
-            var rowDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
-
-            if (jabatan && jabatan !== '') {
-                if (rowJabatan !== jabatan) showRow = false;
-            }
-
-            if (pegawai && pegawai !== '') {
-                if (rowPegawai !== pegawai) showRow = false;
-            }
-
-            if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-                if (rowDate < startDate || rowDate > endDate) showRow = false;
-            }
-
-            showRow ? row.show() : row.hide();
-        });
-
-        $('.loader__figure').hide();
-
-        if ($('#searchTable tbody tr:visible').length === 0) {
-            $('#searchTable tbody').append('<tr id="no-data-row"><td colspan="10" class="text-center">Data tidak ditemukan</td></tr>');
-        }
-    }
-
-    function parseIndonesianDate(dateString) {
-        var months = {
-            'Januari': 1,
-            'Februari': 2,
-            'Maret': 3,
-            'April': 4,
-            'Mei': 5,
-            'Juni': 6,
-            'Juli': 7,
-            'Agustus': 8,
-            'September': 9,
-            'Oktober': 10,
-            'November': 11,
-            'Desember': 12
-        };
-        var parts = dateString.split(' ');
-        return [parseInt(parts[0], 10), months[parts[1]], parseInt(parts[2], 10)];
-    }
-
-    function checkAutoApproveTasks() {
-        $.ajax({
-            url: '<?php echo base_url("Pekerjaan/check_auto_approve_tasks"); ?>',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                if (response.auto_approved_tasks && response.auto_approved_tasks.length > 0) {
-                    $.each(response.auto_approved_tasks, function(index, taskId) {
-                        $('.status-container-' + taskId).html('<span class="badge bg-success">Disetujui</span>').show();
-                        $('#row-' + taskId + ' .row-check').remove();
-                    });
-                    updateSelectedCount();
-                }
-            }
         });
     }
 </script>

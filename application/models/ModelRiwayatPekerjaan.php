@@ -17,12 +17,6 @@ class ModelRiwayatPekerjaan extends CI_Model
         return $this->db->get_where($this->table, ['id_riwayatpekerjaan' => $id])->row();
     }
 
-
-
-    // public function insert($data)
-    // {
-    //     return $this->db->insert($this->table, $data);
-    // }
     public function is_duplicate_today($pekerjaan_id, $pegawai_id)
     {
         $this->db->where('pekerjaan_idpekerjaan', $pekerjaan_id);
@@ -50,6 +44,48 @@ class ModelRiwayatPekerjaan extends CI_Model
     }
 
 
+    /**
+     * Ambil data riwayat pekerjaan dengan filter untuk AJAX DataTable
+     */
+    public function get_riwayat_ajax($jabatan = '', $pegawai = '', $start = '', $end = '')
+    {
+        $this->db->select('
+            riwayat_pekerjaan.id_riwayatpekerjaan,
+            riwayat_pekerjaan.jumlah,
+            riwayat_pekerjaan.status,
+            riwayat_pekerjaan.created_at,
+            pekerjaan.nama_pekerjaan,
+            pekerjaan.point,
+            (riwayat_pekerjaan.jumlah * pekerjaan.point) as total_point,
+            pegawai.nama_pegawai,
+            jabatan.namajabatan
+        ');
+        $this->db->from('riwayat_pekerjaan');
+        $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
+        $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
+        $this->db->join('jabatan', 'jabatan.idjabatan = pegawai.jab_struktur', 'left');
+        $this->db->where_not_in('riwayat_pekerjaan.status', ['Pending']);
+
+        if (!empty($jabatan)) {
+            $this->db->where('jabatan.namajabatan', $jabatan);
+        }
+
+        if (!empty($pegawai)) {
+            $this->db->where('pegawai.nama_pegawai', $pegawai);
+        }
+
+        if (!empty($start) && !empty($end)) {
+            // Format masuk: dd-mm-yyyy → konversi ke Y-m-d
+            $startFormatted = date('Y-m-d', strtotime(str_replace('-', '/', implode('/', array_reverse(explode('-', $start))))));
+            $endFormatted   = date('Y-m-d', strtotime(str_replace('-', '/', implode('/', array_reverse(explode('-', $end))))));
+            $this->db->where('DATE(riwayat_pekerjaan.created_at) >=', $startFormatted);
+            $this->db->where('DATE(riwayat_pekerjaan.created_at) <=', $endFormatted);
+        }
+
+        $this->db->order_by('riwayat_pekerjaan.created_at', 'DESC');
+        return $this->db->get()->result_array();
+    }
+
     public function get_all_except_pending()
     {
         $this->db->select('
@@ -59,11 +95,13 @@ class ModelRiwayatPekerjaan extends CI_Model
         pekerjaan.point,
         DATE(riwayat_pekerjaan.created_at) as tanggal,
         (riwayat_pekerjaan.jumlah * pekerjaan.point) as total_point,
-        pegawai.nama_pegawai
+        pegawai.nama_pegawai,
+        jabatan.namajabatan
     ');
         $this->db->from('riwayat_pekerjaan');
         $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
         $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai');
+        $this->db->join('jabatan', 'jabatan.idjabatan = pegawai.jab_struktur', 'left');
         $this->db->where_not_in('riwayat_pekerjaan.status', ['Pending']);
         $query = $this->db->get();
 
@@ -108,147 +146,151 @@ class ModelRiwayatPekerjaan extends CI_Model
         return $query->result_array();
     }
     public function auto_reject_old_pending_tasks()
-{
-    $oneDayAgo = date('Y-m-d H:i:s', strtotime('-1 day'));
-    
-    // Find all pending tasks older than 1 day
-    $this->db->where('status', 'Pending');
-    $this->db->where('created_at <', $oneDayAgo);
-    $pendingTasks = $this->db->get($this->table)->result_array();
-    
-    $updated = 0;
-    
-    foreach ($pendingTasks as $task) {
-        // Update the status to reject
-        $this->db->where('id_riwayatpekerjaan', $task['id_riwayatpekerjaan']);
-        $this->db->update($this->table, ['status' => 'reject']);
-        $updated++;
-    }
-    
-    return $updated;
-}
+    {
+        $oneDayAgo = date('Y-m-d H:i:s', strtotime('-1 day'));
 
-//batas dhasbord
+        // Find all pending tasks older than 1 day
+        $this->db->where('status', 'Pending');
+        $this->db->where('created_at <', $oneDayAgo);
+        $pendingTasks = $this->db->get($this->table)->result_array();
 
-public function get_riwayat_pekerjaan($start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
-    $this->db->select('riwayat_pekerjaan.*, pekerjaan.nama_pekerjaan, pekerjaan.tipe_pekerjaan, pekerjaan.point, pegawai.nama_pegawai, jabatan.namajabatan');
-    $this->db->from('riwayat_pekerjaan');
-    $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
-    $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
-    $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
-    
-    // Apply date filter if provided
-    if ($start_date && $end_date) {
-        $this->db->where('DATE(riwayat_pekerjaan.created_at) >=', date('Y-m-d', strtotime($start_date)));
-        $this->db->where('DATE(riwayat_pekerjaan.created_at) <=', date('Y-m-d', strtotime($end_date)));
-    }
-    
-    // Apply jabatan filter if provided
-    if ($jabatan) {
-        $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
-    }
-    
-    // Apply pegawai filter if provided
-    if ($pegawai) {
-        $this->db->where('riwayat_pekerjaan.pegawai_idpegawai', $pegawai);
-    }
-    
-    return $this->db->get()->result();
-}
+        $updated = 0;
 
-// Count work by status
-public function count_by_status($status, $start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
-    $this->db->select('COUNT(*) as total');
-    $this->db->from('riwayat_pekerjaan');
-    $this->db->where('status', $status);
-    
-    // Apply date filter if provided
-    if ($start_date && $end_date) {
-        $this->db->where('DATE(created_at) >=', date('Y-m-d', strtotime($start_date)));
-        $this->db->where('DATE(created_at) <=', date('Y-m-d', strtotime($end_date)));
+        foreach ($pendingTasks as $task) {
+            // Update the status to reject
+            $this->db->where('id_riwayatpekerjaan', $task['id_riwayatpekerjaan']);
+            $this->db->update($this->table, ['status' => 'reject']);
+            $updated++;
+        }
+
+        return $updated;
     }
-    
-    // Apply jabatan filter if provided
-    if ($jabatan) {
+
+    //batas dhasbord
+
+    public function get_riwayat_pekerjaan($start_date = null, $end_date = null, $jabatan = null, $pegawai = null)
+    {
+        $this->db->select('riwayat_pekerjaan.*, pekerjaan.nama_pekerjaan, pekerjaan.tipe_pekerjaan, pekerjaan.point, pegawai.nama_pegawai, jabatan.namajabatan');
+        $this->db->from('riwayat_pekerjaan');
         $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
-        $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
-    }
-    
-    // Apply pegawai filter if provided
-    if ($pegawai) {
-        $this->db->where('pegawai_idpegawai', $pegawai);
-    }
-    
-    return $this->db->get()->row()->total;
-}
+        $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
+        $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
 
-// Get total count
-public function count_total($start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
-    $this->db->select('COUNT(*) as total');
-    $this->db->from('riwayat_pekerjaan');
-    
-    // Apply date filter if provided
-    if ($start_date && $end_date) {
-        $this->db->where('DATE(created_at) >=', date('Y-m-d', strtotime($start_date)));
-        $this->db->where('DATE(created_at) <=', date('Y-m-d', strtotime($end_date)));
-    }
-    
-    // Apply jabatan filter if provided
-    if ($jabatan) {
-        $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
-        $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
-    }
-    
-    // Apply pegawai filter if provided
-    if ($pegawai) {
-        $this->db->where('pegawai_idpegawai', $pegawai);
-    }
-    
-    return $this->db->get()->row()->total;
-}
+        // Apply date filter if provided
+        if ($start_date && $end_date) {
+            $this->db->where('DATE(riwayat_pekerjaan.created_at) >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('DATE(riwayat_pekerjaan.created_at) <=', date('Y-m-d', strtotime($end_date)));
+        }
 
-// Get today's tasks with pagination
-// public function get_today_tasks($start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
-//     $this->db->select('
-//         riwayat_pekerjaan.pegawai_idpegawai, 
-//         riwayat_pekerjaan.pekerjaan_idpekerjaan, 
-//         riwayat_pekerjaan.status,
-//         pekerjaan.jabatan_idjabatan, 
-//         pekerjaan.tipe_pekerjaan, 
-//         pekerjaan.point,
-//         pekerjaan.nama_pekerjaan,
-//         pegawai.nama_pegawai,
-//         jabatan.namajabatan
-//     ');
-//     $this->db->from('riwayat_pekerjaan');
-//     $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
-//     $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
-//     $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
-    
-//     // Filter by today's date if no date range is provided
-//     if (!$start_date && !$end_date) {
-//         $this->db->where('DATE(riwayat_pekerjaan.created_at)', date('Y-m-d'));
-//     } else {
-//         // Apply date filter if provided
-//         $this->db->where('DATE(riwayat_pekerjaan.created_at) >=', date('Y-m-d', strtotime($start_date)));
-//         $this->db->where('DATE(riwayat_pekerjaan.created_at) <=', date('Y-m-d', strtotime($end_date)));
-//     }
-    
-//     // Apply jabatan filter if provided
-//     if ($jabatan) {
-//         $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
-//     }
-    
-//     // Apply pegawai filter if provided
-//     if ($pegawai) {
-//         $this->db->where('riwayat_pekerjaan.pegawai_idpegawai', $pegawai);
-//     }
+        // Apply jabatan filter if provided
+        if ($jabatan) {
+            $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
+        }
 
-    
-//     return $this->db->get()->result();
-// }
+        // Apply pegawai filter if provided
+        if ($pegawai) {
+            $this->db->where('riwayat_pekerjaan.pegawai_idpegawai', $pegawai);
+        }
 
-    public function get_today_tasks($start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
+        return $this->db->get()->result();
+    }
+
+    // Count work by status
+    public function count_by_status($status, $start_date = null, $end_date = null, $jabatan = null, $pegawai = null)
+    {
+        $this->db->select('COUNT(*) as total');
+        $this->db->from('riwayat_pekerjaan');
+        $this->db->where('status', $status);
+
+        // Apply date filter if provided
+        if ($start_date && $end_date) {
+            $this->db->where('DATE(created_at) >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('DATE(created_at) <=', date('Y-m-d', strtotime($end_date)));
+        }
+
+        // Apply jabatan filter if provided
+        if ($jabatan) {
+            $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
+            $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
+        }
+
+        // Apply pegawai filter if provided
+        if ($pegawai) {
+            $this->db->where('pegawai_idpegawai', $pegawai);
+        }
+
+        return $this->db->get()->row()->total;
+    }
+
+    // Get total count
+    public function count_total($start_date = null, $end_date = null, $jabatan = null, $pegawai = null)
+    {
+        $this->db->select('COUNT(*) as total');
+        $this->db->from('riwayat_pekerjaan');
+
+        // Apply date filter if provided
+        if ($start_date && $end_date) {
+            $this->db->where('DATE(created_at) >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('DATE(created_at) <=', date('Y-m-d', strtotime($end_date)));
+        }
+
+        // Apply jabatan filter if provided
+        if ($jabatan) {
+            $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
+            $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
+        }
+
+        // Apply pegawai filter if provided
+        if ($pegawai) {
+            $this->db->where('pegawai_idpegawai', $pegawai);
+        }
+
+        return $this->db->get()->row()->total;
+    }
+
+    // Get today's tasks with pagination
+    // public function get_today_tasks($start_date = null, $end_date = null, $jabatan = null, $pegawai = null) {
+    //     $this->db->select('
+    //         riwayat_pekerjaan.pegawai_idpegawai, 
+    //         riwayat_pekerjaan.pekerjaan_idpekerjaan, 
+    //         riwayat_pekerjaan.status,
+    //         pekerjaan.jabatan_idjabatan, 
+    //         pekerjaan.tipe_pekerjaan, 
+    //         pekerjaan.point,
+    //         pekerjaan.nama_pekerjaan,
+    //         pegawai.nama_pegawai,
+    //         jabatan.namajabatan
+    //     ');
+    //     $this->db->from('riwayat_pekerjaan');
+    //     $this->db->join('pekerjaan', 'pekerjaan.id_pekerjaan = riwayat_pekerjaan.pekerjaan_idpekerjaan', 'left');
+    //     $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
+    //     $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
+
+    //     // Filter by today's date if no date range is provided
+    //     if (!$start_date && !$end_date) {
+    //         $this->db->where('DATE(riwayat_pekerjaan.created_at)', date('Y-m-d'));
+    //     } else {
+    //         // Apply date filter if provided
+    //         $this->db->where('DATE(riwayat_pekerjaan.created_at) >=', date('Y-m-d', strtotime($start_date)));
+    //         $this->db->where('DATE(riwayat_pekerjaan.created_at) <=', date('Y-m-d', strtotime($end_date)));
+    //     }
+
+    //     // Apply jabatan filter if provided
+    //     if ($jabatan) {
+    //         $this->db->where('pekerjaan.jabatan_idjabatan', $jabatan);
+    //     }
+
+    //     // Apply pegawai filter if provided
+    //     if ($pegawai) {
+    //         $this->db->where('riwayat_pekerjaan.pegawai_idpegawai', $pegawai);
+    //     }
+
+
+    //     return $this->db->get()->result();
+    // }
+
+    public function get_today_tasks($start_date = null, $end_date = null, $jabatan = null, $pegawai = null)
+    {
         $this->db->select('
             rp.*,
             p.nama_pekerjaan,
@@ -261,7 +303,7 @@ public function count_total($start_date = null, $end_date = null, $jabatan = nul
         $this->db->join('pekerjaan p', 'p.id_pekerjaan = rp.pekerjaan_idpekerjaan', 'left');
         $this->db->join('pegawai pg', 'pg.uuid = rp.pegawai_idpegawai', 'left');
         $this->db->join('jabatan j', 'j.idjabatan = p.jabatan_idjabatan', 'left');
-        
+
         // Filter tanggal
         if ($start_date && $end_date) {
             $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $start_date)));
@@ -271,37 +313,38 @@ public function count_total($start_date = null, $end_date = null, $jabatan = nul
         } else {
             $this->db->where('DATE(rp.created_at)', date('Y-m-d'));
         }
-        
+
         // Filter jabatan
         if ($jabatan) {
             $this->db->where('j.namajabatan', $jabatan);
         }
-        
+
         // Filter pegawai
         if ($pegawai) {
             $this->db->where('rp.pegawai_idpegawai', $pegawai);
         }
-        
+
         $this->db->order_by('rp.created_at', 'DESC');
         return $this->db->get()->result();
     }
 
-// Get unique jabatan from pekerjaan table
-public function get_jabatan_from_pekerjaan() {
-    $this->db->select('DISTINCT(pekerjaan.jabatan_idjabatan) as id_jabatan, jabatan.namajabatan');
-    $this->db->from('pekerjaan');
-    $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
-    $this->db->order_by('jabatan.namajabatan', 'ASC');
-    return $this->db->get()->result();
-}
+    // Get unique jabatan from pekerjaan table
+    public function get_jabatan_from_pekerjaan()
+    {
+        $this->db->select('DISTINCT(pekerjaan.jabatan_idjabatan) as id_jabatan, jabatan.namajabatan');
+        $this->db->from('pekerjaan');
+        $this->db->join('jabatan', 'jabatan.idjabatan = pekerjaan.jabatan_idjabatan', 'left');
+        $this->db->order_by('jabatan.namajabatan', 'ASC');
+        return $this->db->get()->result();
+    }
 
-// Get unique pegawai from riwayat_pekerjaan table
-public function get_pegawai_from_riwayat() {
-    $this->db->select('DISTINCT(riwayat_pekerjaan.pegawai_idpegawai) as uuid, pegawai.nama_pegawai');
-    $this->db->from('riwayat_pekerjaan');
-    $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
-    $this->db->order_by('pegawai.nama_pegawai', 'ASC');
-    return $this->db->get()->result();
+    // Get unique pegawai from riwayat_pekerjaan table
+    public function get_pegawai_from_riwayat()
+    {
+        $this->db->select('DISTINCT(riwayat_pekerjaan.pegawai_idpegawai) as uuid, pegawai.nama_pegawai');
+        $this->db->from('riwayat_pekerjaan');
+        $this->db->join('pegawai', 'pegawai.uuid = riwayat_pekerjaan.pegawai_idpegawai', 'left');
+        $this->db->order_by('pegawai.nama_pegawai', 'ASC');
+        return $this->db->get()->result();
+    }
 }
-}
-
