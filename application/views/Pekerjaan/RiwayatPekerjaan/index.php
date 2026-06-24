@@ -43,7 +43,7 @@
                             <i class="fa fa-search"></i> Cari
                         </button>
                         <button type="button" class="btn btn-success btn-md" id="btn-approve-selected" onclick="approveSelected()" disabled>
-                            <i class="fa fa-check"></i> Setujui <span id="selected-count" class="badge bg-white text-success ms-1" style="display:none;">0</span>
+                            <i class="fa fa-check"></i> Setujui <span id="selected-count" class="badge ms-1" style="display:none;">0</span>
                         </button>
                     </div>
                 </div>
@@ -54,11 +54,10 @@
                 <table id="searchTable" class="table color-table table-hover table-striped">
                     <thead>
                         <tr>
-                            <th width="3%">
-                                <!-- Checkbox pilih semua (hanya baris complete yang terlihat) -->
-                                <input type="checkbox" id="check-all" title="Pilih semua">
+                            <th width="5%">
+                                <input type="checkbox" class="check" id="check-all" data-checkbox="icheckbox_flat-red">
+                                <label for="check-all">Pilih Semua</label>
                             </th>
-                            <th width="5%">#</th>
                             <th>Tanggal</th>
                             <th>Jabatan</th>
                             <th>Nama Pekerjaan</th>
@@ -99,10 +98,12 @@
                                 <tr id="row-<?php echo $row['id_riwayatpekerjaan']; ?>">
                                     <td>
                                         <?php if (strtolower($row['status']) == 'complete'): ?>
-                                            <input type="checkbox" class="row-check" value="<?php echo $row['id_riwayatpekerjaan']; ?>">
+                                            <input type="checkbox" class="check row-check" id="check-<?php echo $row['id_riwayatpekerjaan']; ?>" value="<?php echo $row['id_riwayatpekerjaan']; ?>" data-checkbox="icheckbox_flat-red">
+                                            <label for="check-<?php echo $row['id_riwayatpekerjaan'] ?>"><?php echo $no; ?></label>
+                                        <?php else: ?>
+                                            <?php echo $no; ?>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?php echo $no; ?></td>
                                     <td><?php echo $tanggal_formatted; ?></td>
                                     <td><?php echo $row['jabatan_idjabatan']; ?></td>
                                     <td><?php echo $row['nama_pekerjaan']; ?></td>
@@ -158,6 +159,14 @@
             language: 'id'
         });
 
+        // Inisialisasi iCheck untuk semua checkbox di tabel (jika iCheck tersedia)
+        if ($.fn.iCheck) {
+            $('#searchTable .row-check, #check-all').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue'
+            });
+        }
+
         // Handle approve button click (per baris)
         $(document).on('click', '.approve-btn', function() {
             var id = $(this).data('id');
@@ -174,16 +183,35 @@
         $(document).on('change', '#check-all', function() {
             var checked = $(this).is(':checked');
             $('#searchTable tbody tr:visible .row-check').prop('checked', checked);
+            // iCheck support
+            if (checked) {
+                $('#searchTable tbody tr:visible .row-check').iCheck('check');
+            } else {
+                $('#searchTable tbody tr:visible .row-check').iCheck('uncheck');
+            }
             updateSelectedCount();
         });
 
-        // Tiap checkbox baris diubah
+        // iCheck: pilih semua
+        $(document).on('ifChecked ifUnchecked', '#check-all', function(e) {
+            var checked = (e.type === 'ifChecked');
+            if (checked) {
+                $('#searchTable tbody tr:visible .row-check').iCheck('check');
+            } else {
+                $('#searchTable tbody tr:visible .row-check').iCheck('uncheck');
+            }
+            updateSelectedCount();
+        });
+
+        // Tiap checkbox baris diubah — native change
         $(document).on('change', '.row-check', function() {
-            // Sinkron state check-all
-            var total = $('#searchTable tbody tr:visible .row-check').length;
-            var totalChecked = $('#searchTable tbody tr:visible .row-check:checked').length;
-            $('#check-all').prop('indeterminate', totalChecked > 0 && totalChecked < total);
-            $('#check-all').prop('checked', total > 0 && totalChecked === total);
+            syncCheckAll();
+            updateSelectedCount();
+        });
+
+        // Tiap checkbox baris diubah — iCheck events
+        $(document).on('ifChecked ifUnchecked', '.row-check', function() {
+            syncCheckAll();
             updateSelectedCount();
         });
 
@@ -193,9 +221,23 @@
         });
     });
 
+    // Sinkron state check-all berdasarkan baris yang terlihat
+    function syncCheckAll() {
+        var total = $('#searchTable tbody tr:visible .row-check').length;
+        var totalChecked = $('#searchTable tbody tr:visible .row-check:checked').length;
+        $('#check-all').prop('indeterminate', totalChecked > 0 && totalChecked < total);
+        $('#check-all').prop('checked', total > 0 && totalChecked === total);
+    }
+
     // Update jumlah yang dipilih dan state tombol Setujui
     function updateSelectedCount() {
-        var count = $('#searchTable tbody tr:visible .row-check:checked').length;
+        // Hitung checkbox yang checked (support native + iCheck)
+        var count = 0;
+        $('#searchTable tbody tr:visible .row-check').each(function() {
+            if ($(this).is(':checked') || $(this).prop('checked')) {
+                count++;
+            }
+        });
         if (count > 0) {
             $('#btn-approve-selected').prop('disabled', false);
             $('#selected-count').text(count).show();
@@ -206,7 +248,12 @@
     }
 
     function resetCheckboxes() {
-        $('.row-check, #check-all').prop('checked', false).prop('indeterminate', false);
+        $('.row-check').prop('checked', false).prop('indeterminate', false);
+        $('#check-all').prop('checked', false).prop('indeterminate', false);
+        // iCheck reset jika tersedia
+        if ($.fn.iCheck) {
+            $('.row-check, #check-all').iCheck('uncheck');
+        }
         updateSelectedCount();
     }
 
@@ -255,8 +302,10 @@
     // Setujui data yang dicentang
     function approveSelected() {
         var selectedIds = [];
-        $('#searchTable tbody tr:visible .row-check:checked').each(function() {
-            selectedIds.push($(this).val());
+        $('#searchTable tbody tr:visible .row-check').each(function() {
+            if ($(this).is(':checked') || $(this).prop('checked')) {
+                selectedIds.push($(this).attr('value')); // pakai attr() bukan val() agar iCheck tidak mengembalikan "on"
+            }
         });
 
         if (selectedIds.length === 0) {
@@ -276,19 +325,16 @@
         var failed = 0;
 
         $.each(selectedIds, function(index, id) {
-            updateStatus(id, 'approve', function(success) {
+            updateStatus(selectedIds[index], 'approve', function(success) {
                 if (!success) failed++;
                 processed++;
 
                 if (processed === selectedIds.length) {
-                    // Selesai semua
-                    $('#check-all').prop('disabled', false).prop('checked', false).prop('indeterminate', false);
-                    $('#btn-approve-selected').html('<i class="fa fa-check"></i> Setujui <span id="selected-count" class="badge bg-white text-success ms-1" style="display:none;">0</span>');
-                    updateSelectedCount();
-
+                    // Selesai semua — refresh halaman agar data terupdate
                     var msg = (selectedIds.length - failed) + ' data berhasil disetujui.';
                     if (failed > 0) msg += ' ' + failed + ' data gagal.';
                     alert(msg);
+                    location.reload();
                 }
             });
         });
