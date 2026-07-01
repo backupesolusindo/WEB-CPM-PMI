@@ -25,6 +25,34 @@ class Dash extends CI_Controller
     $this->ModelAuth->verify_token();
   }
 
+  function cek_token()
+  {
+    $uuid = $this->input->post("uuid");
+    $token = $this->input->post("token");
+    $peg = $this->ModelPegawai->edit($uuid);
+    if ($peg->num_rows() > 0) {
+      $pegawai = $peg->row_array();
+      // die(json_encode($pegawai)); 
+      if ($pegawai['token'] != $token) {
+        $res = array(
+          'message' => "Akun Anda sudah login di device lain, akun ini akan otomatis logout",
+          'status' => 401
+        );
+      } else {
+        $res = array(
+          'message' => "Token Sesuai",
+          'status' => 200
+        );
+      }
+    } else {
+      $res = array(
+        'message' => "Maaf Tidak Bisa Ambil Data, Mohon Cek Koneksi Anda",
+        'status' => 500
+      );
+    }
+    echo json_encode(array('message' => $res));
+  }
+
   function get_dash($uuid)
   {
     $peg = $this->ModelPegawai->edit($uuid);
