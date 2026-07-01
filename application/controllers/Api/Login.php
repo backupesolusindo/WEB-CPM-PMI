@@ -22,7 +22,7 @@ class Login extends CI_Controller
       $nip = trim($this->input->post('nip'));
       $password = $this->input->post('password');
       $token = $this->input->post('token');
-      
+
       // Validasi input - harus ada dan tidak boleh kosong
       if (empty($nip) || empty($password) || $nip === '' || $password === '') {
         echo json_encode(array(
@@ -45,7 +45,7 @@ class Login extends CI_Controller
       $mesage_respone = array();
       $res = array();
       $response = array();
-      
+
       // Cek pegawai berdasarkan NIP, Email, atau NIK
       $cek = $this->ModelPegawai->cek_pegawai($nip);
       $res = array();
@@ -56,7 +56,7 @@ class Login extends CI_Controller
         'unit'  => "",
         'spesial'  => 0,
       );
-      
+
       if ($cek->num_rows() > 0) {
         $data_login = $cek->row_array();
         if ($data_login['NIP'] == null) {
@@ -82,7 +82,7 @@ class Login extends CI_Controller
             if ($cek_kampus->num_rows() > 0) {
               $kampus = $cek_kampus->row_array();
             }
-            
+
             if ($data_login['status_aktif'] == 0) {
               $res = array(
                 'message' => "Maaf Akun Anda Tidak Aktif",
@@ -90,7 +90,8 @@ class Login extends CI_Controller
                 'status' => 500
               );
             } else {
-              if ($data_login['status_login'] == 0) {
+              // uuid 123123 id reviewer
+              if ($data_login['status_login'] == 0 || $data_login['uuid'] == "123123") {
                 // Update berdasarkan UUID, bukan NIP
                 // Karena user bisa login dengan NIP/NIK/Email
                 $this->db->where("uuid", $data_login['uuid']);
@@ -123,7 +124,7 @@ class Login extends CI_Controller
           'status' => 502
         );
       }
-      
+
       echo json_encode(array(
         'response' => $data_pegawai,
         'message' => $res,
@@ -262,7 +263,7 @@ class Login extends CI_Controller
     $mesage_respone = array();
     $res = array();
     $response = array();
-    
+
     // Cek pegawai berdasarkan NIP, Email, atau NIK
     $cek = $this->ModelPegawai->cek_pegawai($nip);
     $res = array();
@@ -273,7 +274,7 @@ class Login extends CI_Controller
       'pegawai'  => "",
       'unit'      => ""
     );
-    
+
     if ($cek->num_rows() > 0) {
       $data_login = $cek->row_array();
       if ($data_login['NIP'] == null) {
@@ -314,7 +315,7 @@ class Login extends CI_Controller
         'status' => 502
       );
     }
-    
+
     echo json_encode(array('response' => $data_pegawai, 'message' => $res));
   }
 
