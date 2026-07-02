@@ -40,7 +40,24 @@ class Pegawai extends CI_Controller
 
   function insert()
   {
+    // Generate UUID v4 yang unik (cek duplikat di tabel pegawai)
+    do {
+      $uuid = sprintf(
+        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff)
+      );
+      $existing = $this->db->where('uuid', $uuid)->count_all_results('pegawai');
+    } while ($existing > 0);
+
     $data = array(
+      'uuid'              => $uuid,
       'NIP'               => $this->input->post('nip'),
       'NIK'               => $this->input->post('nik'),
       'nama_pegawai'      => $this->input->post('nama_pegawai'),
