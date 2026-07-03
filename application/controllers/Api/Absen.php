@@ -41,8 +41,21 @@ class Absen extends CI_Controller
       $idjadwal
     );
     if ($cek_presensi->num_rows() > 0) {
-      $boleh_presensis = 0;
-      $pesan_presensi = "Anda Sudah Melakukan Presensi Hari Ini. Mohon Cek Di Riwayat Presensi Anda";
+      $cek_pegawai = $this->ModelPegawai->edit($this->input->post("id"))->row_array();
+      $jabatan = $this->db->where("idjabatan", $cek_pegawai['jab_struktur'])->get("jabatan")->row_array();
+      if ($jabatan['lintas_hari'] == "1") {
+        $idmasuk = $cek_presensi->row_array()['idabsensi'];
+        $cek_pulang = $this->ModelAbsensi->get_AbsensiPulang($idmasuk);
+        if ($cek_pulang->num_rows() > 0) {
+          $boleh_presensis = 1;
+        } else {
+          $boleh_presensis = 0;
+          $pesan_presensi = "Silakan Presensi Pulang Dahulu Untuk Melakukan Presensi Masuk Berikutnya!";
+        }
+      } else {
+        $boleh_presensis = 0;
+        $pesan_presensi = "Anda Sudah Melakukan Presensi Hari Ini. Mohon Cek Di Riwayat Presensi Anda";
+      }
     } else {
       $cek_pegawai_aktif = $this->ModelPegawai->cek_pegawai_aktif($this->input->post("id"));
       if ($cek_pegawai_aktif->num_rows() <= 0) {
