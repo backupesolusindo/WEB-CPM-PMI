@@ -72,7 +72,7 @@
             } else {
               $jam_toleransi = $value->jam_toleransi;
               if ($jam_toleransi == null || $jam_toleransi == "") {
-                $jam_toleransi = $jadwal_masuk['toleransi_kedatangan'];
+                $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
               }
               $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
               if ($diff <= $toleransi) {
@@ -83,7 +83,7 @@
             }
 
             // Cek pulang awal
-            $jam_jadwal_pulang = strtotime($jadwal_masuk['jam_pulang']);
+            $jam_jadwal_pulang = ($jadwal_masuk != null && $jadwal_masuk['jam_pulang'] != null) ? strtotime($jadwal_masuk['jam_pulang']) : 0;
             $pulang = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
             $diff_pulang = $pulang - $jam_jadwal_pulang;
 
@@ -109,8 +109,8 @@
             $total_detik += $durasi_kerja_detik;
 
             // Hitung jam kerja sesuai jadwal (untuk perhitungan overtime)
-            $jam_jadwal_masuk_time = strtotime($jadwal_masuk['jam_masuk']);
-            $jam_jadwal_pulang_time = strtotime($jadwal_masuk['jam_pulang']);
+            $jam_jadwal_masuk_time  = ($jadwal_masuk != null && $jadwal_masuk['jam_masuk'] != null) ? strtotime($jadwal_masuk['jam_masuk']) : 0;
+            $jam_jadwal_pulang_time = ($jadwal_masuk != null && $jadwal_masuk['jam_pulang'] != null) ? strtotime($jadwal_masuk['jam_pulang']) : 0;
             $durasi_jadwal_detik = $jam_jadwal_pulang_time - $jam_jadwal_masuk_time;
 
             // Kurangi 1 jam istirahat

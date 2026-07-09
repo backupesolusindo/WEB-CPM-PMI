@@ -35,6 +35,15 @@ class Absen extends CI_Controller
     $idkampus = @$this->input->post("idkampus");
     $idjadwal = $this->input->post("idjadwal");
 
+    if (empty($idjadwal)) {
+      $res = array(
+        'message' => "Jadwal belum dipilih, silakan pilih jadwal terlebih dahulu",
+        'status' => 502
+      );
+      echo json_encode(array('response' => $data, 'message' => $res));
+      return;
+    }
+
     $cek_presensi = $this->ModelAbsensi->cek_Absensi(
       $this->input->post("id"),
       date("Y-m-d"),

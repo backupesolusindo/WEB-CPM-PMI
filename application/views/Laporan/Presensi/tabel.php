@@ -49,7 +49,7 @@
       <th>NIP</th>
       <th>Nama</th>
       <th>Tanggal</th>
-      <th>Waktu Datang</th>
+      <th>Waktu Datang / Toleransi</th>
       <th>Waktu Pulang</th>
       <th>Status Datang</th>
       <th>Lokasi Presensi</th>
@@ -96,7 +96,10 @@
             <td><?php echo $value->NIP; ?></td>
             <td><?php echo $value->nama_pegawai; ?></td>
             <td class="text-center"><?php echo date("d-m-Y", strtotime($value->waktu)); ?></td>
-            <td class="text-center"><?php echo date("H:i:s", strtotime($value->waktu)) . "<br>"; ?></td>
+            <td class="text-center">
+              <?php echo date("H:i:s", strtotime($value->waktu)); ?>
+              <small>/<?php echo $jam_toleransi ?? "-"; ?></small>
+            </td>
             <td class="text-center">
               <?php
               $cek_pulang = $this->ModelAbsensi->get_AbsensiPulang($value->idabsensi);
