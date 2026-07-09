@@ -138,7 +138,7 @@
           <td><?php echo $no++ ?></td>
           <td><?php echo $data->NIP ?></td>
           <td><?php echo $data->nama_pegawai ?></td>
-          <td><?php echo $data->jab_struktur ?></td>
+          <td><?php echo $data->namajabatan ?></td>
           <td><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
           <td><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
           <td><?php echo $tepat ?></td>

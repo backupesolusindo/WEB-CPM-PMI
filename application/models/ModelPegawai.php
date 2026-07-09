@@ -88,7 +88,7 @@ class ModelPegawai extends CI_Model
     if (empty($nip) || trim($nip) == "") {
       return $this->db->where("1", "0")->get("pegawai"); // Return empty result
     }
-    
+
     $this->db->where("NIP", $nip);
     $this->db->or_where("email", $nip);
     $this->db->or_where("NIK", $nip);
@@ -111,6 +111,7 @@ class ModelPegawai extends CI_Model
   function get_UnitPegawai($unit = null, $sub_unit = null, $tipe_pegawai = null, $jabatan = null)
   {
     $this->db->join("unit", "unit.nama_unit LIKE pegawai.unit");
+    $this->db->join("jabatan", "jabatan.idjabatan = pegawai.jab_struktur");
     $this->db->where("pegawai.status_aktif", "1");
     if ($tipe_pegawai != null || $tipe_pegawai != "") {
       $this->db->where("tipe_pegawai", $tipe_pegawai);
@@ -229,9 +230,4 @@ class ModelPegawai extends CI_Model
   {
     return password_verify($password, $hashed_password);
   }
-
-
-
-
-  
 }

@@ -65,29 +65,37 @@
       <?php $no = 1;
       foreach ($presensi->result() as $value): ?>
         <?php
+        $data_jadwal = @$this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
         $jam_jadwal  = strtotime($value->jam_jadwal);
         $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
         $diff  = $masuk - $jam_jadwal;
         $status_presensi = 1;
         $text_status = "";
+        $jam_toleransi = $value->jam_toleransi ?? null;
+        if ($jam_toleransi == null || $jam_toleransi == "") {
+          $jam_toleransi = ($data_jadwal != null) ? @$data_jadwal['toleransi_kedatangan'] : null;
+        }
         if ($diff <= 0) {
           $text_status = '<span class="badge bg-success">Tepat Waktu</span>';
           $txtTW += 1;
           $status_presensi = 1;
         } else {
-          $jam_toleransi = $value->jam_toleransi;
           if ($jam_toleransi == null || $jam_toleransi == "") {
-            $jam_toleransi = @$this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-          }
-          $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-          if ($diff <= $toleransi) {
-            $text_status = '<span class="badge bg-warning">Toleransi</span>';
-            $txtTO += 1;
-            $status_presensi = 2;
-          } else {
+            // Tidak ada toleransi, langsung terlambat
             $text_status = '<span class="badge bg-danger">Terlambat</span>';
             $txtTE += 1;
             $status_presensi = 3;
+          } else {
+            $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
+            if ($diff <= $toleransi) {
+              $text_status = '<span class="badge bg-warning">Toleransi</span>';
+              $txtTO += 1;
+              $status_presensi = 2;
+            } else {
+              $text_status = '<span class="badge bg-danger">Terlambat</span>';
+              $txtTE += 1;
+              $status_presensi = 3;
+            }
           }
         } ?>
         <?php if ($status_filter == $status_presensi || $status_filter == ""): ?>
@@ -95,10 +103,14 @@
             <td><?php echo $no++; ?></td>
             <td><?php echo $value->NIP; ?></td>
             <td><?php echo $value->nama_pegawai; ?></td>
-            <td class="text-center"><?php echo date("d-m-Y", strtotime($value->waktu)); ?></td>
+            <td class="text-center">
+              <?php echo date("d-m-Y", strtotime($value->waktu)); ?>
+              <br>
+              <small><?php echo $data_jadwal['nama'] ?? "Jadwal Kosong" ?></small>
+            </td>
             <td class="text-center">
               <?php echo date("H:i:s", strtotime($value->waktu)); ?>
-              <small>/<?php echo $jam_toleransi ?? "-"; ?></small>
+              <small>/<?php echo $jam_toleransi ? date("H:i", (strtotime($jam_toleransi))) : "-"; ?></small>
             </td>
             <td class="text-center">
               <?php
