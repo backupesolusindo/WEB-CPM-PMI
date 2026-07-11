@@ -67,19 +67,20 @@
             $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
             $diff  = $masuk - $jam_jadwal;
 
+            $jam_toleransi = $value->jam_toleransi;
+            if ($jam_toleransi == null || $jam_toleransi == "") {
+              $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+            }
+
             if ($diff <= 0) {
+              // Masuk sebelum atau tepat jam jadwal
+              $s_tepat = 1;
+            } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
+              // Masuk setelah jam jadwal tapi masih dalam batas jam toleransi
               $s_tepat = 1;
             } else {
-              $jam_toleransi = $value->jam_toleransi;
-              if ($jam_toleransi == null || $jam_toleransi == "") {
-                $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
-              }
-              $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-              if ($diff <= $toleransi) {
-                $s_tepat = 1;
-              } else {
-                $s_terlambat = 1;
-              }
+              // Melebihi jam toleransi atau tidak ada toleransi
+              $s_terlambat = 1;
             }
 
             // Cek pulang awal
@@ -266,19 +267,20 @@
                 $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
                 $diff  = $masuk - $jam_jadwal;
 
+                $jam_toleransi = $value->jam_toleransi;
+                if ($jam_toleransi == null || $jam_toleransi == "") {
+                  $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+                }
+
                 if ($diff <= 0) {
+                  // Masuk sebelum atau tepat jam jadwal
+                  $s_tepat = 1;
+                } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
+                  // Masuk setelah jam jadwal tapi masih dalam batas jam toleransi
                   $s_tepat = 1;
                 } else {
-                  $jam_toleransi = $value->jam_toleransi;
-                  if ($jam_toleransi == null || $jam_toleransi == "") {
-                    $jam_toleransi = $jadwal_masuk['toleransi_kedatangan'];
-                  }
-                  $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                  if ($diff <= $toleransi) {
-                    $s_tepat = 1;
-                  } else {
-                    $s_terlambat = 1;
-                  }
+                  // Melebihi jam toleransi atau tidak ada toleransi
+                  $s_terlambat = 1;
                 }
 
                 // Cek pulang awal

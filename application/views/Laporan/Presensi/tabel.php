@@ -76,31 +76,26 @@
           $jam_toleransi = ($data_jadwal != null) ? @$data_jadwal['toleransi_kedatangan'] : null;
         }
         if ($diff <= 0) {
+          // Masuk sebelum atau tepat jam jadwal
           $text_status = '<span class="badge bg-success">Tepat Waktu</span>';
           $txtTW += 1;
           $status_presensi = 1;
+        } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
+          // Masuk setelah jam jadwal tapi masih dalam batas jam toleransi
+          $text_status = '<span class="badge bg-warning">Toleransi</span>';
+          $txtTO += 1;
+          $status_presensi = 2;
         } else {
-          if ($jam_toleransi == null || $jam_toleransi == "") {
-            // Tidak ada toleransi, langsung terlambat
-            $text_status = '<span class="badge bg-danger">Terlambat</span>';
-            $txtTE += 1;
-            $status_presensi = 3;
-          } else {
-            $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-            if ($diff <= $toleransi) {
-              $text_status = '<span class="badge bg-warning">Toleransi</span>';
-              $txtTO += 1;
-              $status_presensi = 2;
-            } else {
-              $text_status = '<span class="badge bg-danger">Terlambat</span>';
-              $txtTE += 1;
-              $status_presensi = 3;
-            }
-          }
+          // Melebihi jam toleransi atau tidak ada toleransi
+          $text_status = '<span class="badge bg-danger">Terlambat</span>';
+          $txtTE += 1;
+          $status_presensi = 3;
         } ?>
         <?php if ($status_filter == $status_presensi || $status_filter == ""): ?>
           <tr>
-            <td><?php echo $no++; ?></td>
+            <td>
+              <?php echo $no++; ?>
+            </td>
             <td><?php echo $value->NIP; ?></td>
             <td><?php echo $value->nama_pegawai; ?></td>
             <td class="text-center">
@@ -203,18 +198,20 @@
                 <td class="text-center"><?php echo date("d-m-Y", strtotime($value->waktu)); ?></td>
                 <td class="text-center"><?php echo date("H:i:s", strtotime($value->waktu)) . "<br>"; ?></td>
                 <td><?php
-                    $jam_jadwal  = strtotime($value->jam_jadwal);
-                    $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                    $diff  = $masuk - $jam_jadwal;
-                    if ($diff <= 0) {
+                    $jam_jadwal_print  = strtotime($value->jam_jadwal);
+                    $masuk_print       = strtotime(date("H:i:s", strtotime($value->waktu)));
+                    $diff_print        = $masuk_print - $jam_jadwal_print;
+                    $jam_tol_print     = $value->jam_toleransi ?? null;
+                    if ($jam_tol_print == null || $jam_tol_print == "") {
+                      $jadwal_print = @$this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
+                      $jam_tol_print = ($jadwal_print != null) ? @$jadwal_print['toleransi_kedatangan'] : null;
+                    }
+                    if ($diff_print <= 0) {
                       echo '<span class="badge bg-success">Tepat Waktu</span>';
+                    } elseif ($jam_tol_print != null && $jam_tol_print != "" && $masuk_print <= strtotime($jam_tol_print)) {
+                      echo '<span class="badge bg-warning">Toleransi</span>';
                     } else {
-                      $toleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                      if ($diff <= $toleransi) {
-                        echo '<span class="badge bg-warning">Toleransi</span>';
-                      } else {
-                        echo '<span class="badge bg-danger">Terlambat</span>';
-                      }
+                      echo '<span class="badge bg-danger">Terlambat</span>';
                     } ?></td>
                 <td>
                   <?php if ($value->jenis_tempat == 1): ?>
