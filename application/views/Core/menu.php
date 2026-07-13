@@ -291,9 +291,18 @@
     <?php endif; ?>
     <?php if (@$Menu_Roles['Libur']): ?>
       <li <?php if ($this->uri->segment(1) == 'Libur'): ?>class="active" <?php endif; ?>>
-        <a href="<?php echo base_url() . 'Libur'; ?>">
-          <i class="fas fa-calendar-times"></i><span class="hide-menu">Libur</span>
+        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+          <i class="fas fa-calendar-times"></i>
+          <span class="hide-menu">Libur</span>
         </a>
+        <ul aria-expanded="false" class="collapse">
+          <li <?php if ($this->uri->segment(1) == 'Libur' && $this->uri->segment(2) == ''): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Libur'; ?>"><i class="fa fa-flag mr-1 text-danger"></i> Libur Nasional</a>
+          </li>
+          <li <?php if ($this->uri->segment(1) == 'Libur' && $this->uri->segment(2) == 'kalender'): ?>class="active" <?php endif; ?>>
+            <a href="<?php echo base_url() . 'Libur/kalender'; ?>"><i class="fa fa-calendar-alt mr-1 text-orange"></i> Libur Pegawai</a>
+          </li>
+        </ul>
       </li>
     <?php endif; ?>
     <?php if (@$Menu_Roles['JenisPerizinan']): ?>

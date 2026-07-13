@@ -97,11 +97,42 @@ class Laporan extends CI_Controller
     $sub_unit  = $this->input->post("sub_unit");
     $status_filter  = $this->input->post("status");
     $absenharian = $this->ModelRiwayat->RiwayatHarianMonitoring($unit, null, $tgl_mulai, $tgl_akhir, $sub_unit);
+
+    // Ambil data libur pegawai dalam rentang tanggal yang dipilih
+    // Buat lookup array: ['uuid-tanggal'] => data libur
+    $libur_pegawai_raw = $this->db
+      ->select('libur_pegawai.*, pegawai.nama_pegawai, pegawai.NIP, pegawai.unit')
+      ->join('pegawai', 'pegawai.uuid = libur_pegawai.pegawai_uuid', 'left')
+      ->where('libur_pegawai.tanggal >=', $tgl_mulai)
+      ->where('libur_pegawai.tanggal <=', $tgl_akhir)
+      ->order_by('libur_pegawai.tanggal', 'ASC')
+      ->order_by('pegawai.nama_pegawai', 'ASC')
+      ->get('libur_pegawai');
+
+    // Filter berdasarkan unit jika dipilih
+    $libur_pegawai_list = array();
+    foreach ($libur_pegawai_raw->result() as $row) {
+      if ($unit && $row->unit != $unit && strpos($row->unit, $unit) === false) {
+        continue;
+      }
+      $key = $row->pegawai_uuid . '_' . $row->tanggal;
+      $libur_pegawai_list[$key] = $row;
+    }
+
+    // Buat set UUID pegawai yang sudah hadir presensi per tanggal (untuk exclude dari libur)
+    $hadir_set = array();
+    foreach ($absenharian->result() as $ab) {
+      $tgl = date("Y-m-d", strtotime($ab->waktu));
+      $hadir_set[$ab->uuid . '_' . $tgl] = true;
+    }
+
     $data = array(
-      'presensi'        => $absenharian,
-      'tgl_mulai'       => $tgl_mulai,
-      'tgl_akhir'       => $tgl_akhir,
-      'status_filter'       => $status_filter,
+      'presensi'           => $absenharian,
+      'tgl_mulai'          => $tgl_mulai,
+      'tgl_akhir'          => $tgl_akhir,
+      'status_filter'      => $status_filter,
+      'libur_pegawai_list' => $libur_pegawai_list,
+      'hadir_set'          => $hadir_set,
     );
     $this->load->view('Laporan/Presensi/tabel', $data);
   }
