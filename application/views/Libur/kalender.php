@@ -434,13 +434,13 @@
                 html += '<tr ' + rowClass + ' data-nama="' + p.nama_pegawai.toLowerCase() + '" data-nip="' + (p.nip || '').toLowerCase() + '">';
                 html += '<td class="text-center">';
                 if (!p.sudah_libur) {
-                    html += '<input type="checkbox" class="checkbox-pegawai chkPegawai" value="' + p.uuid + '" ' + checkedAttr + ' onchange="updateCountChecked()">';
+                    html += '<input type="checkbox" id="checkboxPegawai-' + p.uuid + '" class="checkbox-pegawai chkPegawai" value="' + p.uuid + '" ' + checkedAttr + ' onchange="updateCountChecked()">';
                 } else {
                     html += '<i class="fa fa-check-circle text-warning"></i>';
                 }
                 html += '</td>';
-                html += '<td>' + p.nama_pegawai + '</td>';
-                html += '<td>' + (p.nip || '-') + '</td>';
+                html += '<td><label for="checkboxPegawai-' + p.uuid + '">' + p.nama_pegawai + '</label></td>';
+                html += '<td><label for="checkboxPegawai-' + p.uuid + '">' + (p.nip || '-') + '</label></td>';
                 html += '<td><small>' + (p.unit || '-') + '</small></td>';
                 html += '<td class="text-center">' + badgeStatus + '</td>';
                 html += '</tr>';
