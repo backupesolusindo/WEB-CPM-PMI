@@ -152,22 +152,13 @@
                                     <input type="text" id="inputKeterangan" class="form-control" placeholder="Contoh: Libur Khusus, Cuti Bersama, dll">
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label class="font-weight-bold">Filter Bagian :</label>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <select id="filterUnit" class="form-control select2" onchange="filterSubUnit()">
-                                                <option value="">Semua Bagian</option>
-                                                <?php if (!empty($unit)) foreach ($unit as $u): ?>
-                                                    <option value="<?= $u->nama_unit ?>"><?= $u->nama_unit ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="filterSubUnit" class="form-control" onchange="loadPegawaiList()">
-                                                <option value="">Semua Sub Bagian</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <label class="font-weight-bold">Filter Jabatan :</label>
+                                    <select id="filterJabatan" class="form-control select2" onchange="loadPegawaiList()">
+                                        <option value="">Semua Jabatan</option>
+                                        <?php if (!empty($jabatan)) foreach ($jabatan as $j): ?>
+                                            <option value="<?= $j->idjabatan ?>"><?= $j->namajabatan ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                                 <div class="form-group mb-2">
                                     <label class="font-weight-bold">Cari Pegawai :</label>
@@ -393,8 +384,7 @@
     }
 
     function loadPegawaiList() {
-        var unit = $('#filterUnit').val();
-        var sub_unit = $('#filterSubUnit').val();
+        var jabatan = $('#filterJabatan').val();
         var tanggal = tanggalDipilih;
 
         $('#tableBodyPegawai').html('<tr><td colspan="5" class="text-center"><i class="fa fa-spinner fa-spin"></i> Memuat...</td></tr>');
@@ -405,8 +395,7 @@
             type: "POST",
             url: "<?= base_url() ?>Libur/get_pegawai_list",
             data: {
-                unit: unit,
-                sub_unit: sub_unit,
+                jabatan: jabatan,
                 tanggal: tanggal
             },
             dataType: "json",
@@ -480,21 +469,6 @@
         } else {
             $('#checkAll').prop('indeterminate', true);
         }
-    }
-
-    function filterSubUnit() {
-        var unit = $('#filterUnit').val();
-        $.ajax({
-            type: 'POST',
-            url: '<?= base_url() ?>Laporan/sub_unit',
-            data: {
-                unit: unit
-            },
-            success: function(response) {
-                $('#filterSubUnit').html(response);
-                loadPegawaiList();
-            }
-        });
     }
 
     function simpanLiburPegawai() {
