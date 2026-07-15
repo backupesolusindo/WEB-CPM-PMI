@@ -51,6 +51,26 @@
     #pegawaiSearch {
         border-radius: 20px;
     }
+
+    .copy-pegawai-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 8px;
+        background: #f8f9fa;
+    }
+
+    .copy-pegawai-list .badge-copy-item {
+        display: inline-flex;
+        align-items: center;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 20px;
+        padding: 3px 10px;
+        margin: 3px;
+        font-size: 12px;
+    }
 </style>
 
 <div class="row">
@@ -205,9 +225,14 @@
                     <!-- Kanan: Daftar pegawai yang sudah libur hari itu -->
                     <div class="col-md-5">
                         <div class="card border-orange mb-3" style="border-color:#fd7e14 !important;">
-                            <div class="card-header bg-orange text-white py-2">
-                                <b><i class="fa fa-list mr-1"></i> Pegawai Libur Tanggal Ini</b>
-                                <span id="badgeJmlLibur" class="badge badge-light ml-2">0</span>
+                            <div class="card-header bg-orange text-white py-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b><i class="fa fa-list mr-1"></i> Pegawai Libur Tanggal Ini</b>
+                                    <span id="badgeJmlLibur" class="badge badge-primary ml-2">0</span>
+                                </div>
+                                <button type="button" id="btnCopyLibur" class="btn btn-sm btn-primary d-none" onclick="bukaCopyModal()" title="Copy libur ke tanggal lain">
+                                    <i class="fa fa-copy mr-1"></i> Copy ke Tanggal Lain
+                                </button>
                             </div>
                             <div class="card-body p-0">
                                 <div style="max-height:500px; overflow-y:auto;">
@@ -235,6 +260,64 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times mr-1"></i> Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL COPY LIBUR PEGAWAI ===== -->
+<div class="modal fade" id="modalCopyLibur" tabindex="-1" role="dialog" aria-labelledby="modalCopyLiburLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="modalCopyLiburLabel">
+                    <i class="fa fa-copy mr-2"></i>Copy Libur Pegawai
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="tutupCopyModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info py-2">
+                    <i class="fa fa-info-circle mr-1"></i>
+                    Menyalin data libur dari tanggal <strong id="lblTanggalCopySumber"></strong> ke tanggal tujuan.
+                </div>
+
+                <!-- Daftar pegawai yang akan dicopy -->
+                <div class="form-group">
+                    <label class="font-weight-bold">Pegawai yang akan dicopy <span id="lblJmlCopy" class="badge badge-warning">0</span> :</label>
+                    <div class="copy-pegawai-list" id="listCopyPegawai">
+                        <!-- diisi JS -->
+                    </div>
+                </div>
+
+                <!-- Input keterangan -->
+                <div class="form-group">
+                    <label class="font-weight-bold">Keterangan Libur :</label>
+                    <input type="text" id="copyKeterangan" class="form-control" placeholder="Keterangan libur untuk tanggal tujuan">
+                    <small class="text-muted">Kosongkan untuk menggunakan keterangan asli masing-masing pegawai</small>
+                </div>
+
+                <!-- Input tanggal tujuan -->
+                <div class="form-group mb-0">
+                    <label class="font-weight-bold">Tanggal Tujuan :</label>
+                    <input type="date" id="copyTanggalTujuan" class="form-control">
+                    <small class="text-muted">Pilih satu atau beberapa tanggal tujuan</small>
+                </div>
+
+                <!-- Tambah multi tanggal -->
+                <div id="extraTanggalWrapper" class="mt-2"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="tambahTanggalTujuan()">
+                    <i class="fa fa-plus mr-1"></i> Tambah Tanggal Lain
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="tutupCopyModal()">
+                    <i class="fa fa-times mr-1"></i> Batal
+                </button>
+                <button type="button" class="btn btn-warning text-dark" id="btnEksekusiCopy" onclick="eksekusiCopyLibur()">
+                    <i class="fa fa-copy mr-1"></i> Salin Sekarang
+                </button>
             </div>
         </div>
     </div>
@@ -364,6 +447,14 @@
 
     function renderTabelLibur(pegawaiLibur) {
         $('#badgeJmlLibur').text(pegawaiLibur.length);
+
+        // Tampilkan/sembunyikan tombol copy
+        if (pegawaiLibur.length > 0) {
+            $('#btnCopyLibur').removeClass('d-none');
+        } else {
+            $('#btnCopyLibur').addClass('d-none');
+        }
+
         var html = '';
         if (pegawaiLibur.length === 0) {
             html = '<tr><td colspan="4" class="text-center text-muted p-3">Belum ada pegawai libur</td></tr>';
@@ -374,8 +465,7 @@
                 html += '<td><small>' + (p.unit || '-') + '</small></td>';
                 html += '<td><small>' + (p.keterangan || '-') + '</small></td>';
                 html += '<td class="text-center">';
-                html += '<button class="btn btn-danger btn-sm btn-floating" onclick="hapusLiburPegawai(' + p.id + ')" title="Hapus">';
-                html += '<i class="fas fa-trash fa-sm"></i></button>';
+                html += '<i onclick="hapusLiburPegawai(' + p.id + ')" class="fas fa-trash fa-sm text-danger"></i>';
                 html += '</td>';
                 html += '</tr>';
             });
@@ -554,6 +644,140 @@
                         toastr.error('Terjadi kesalahan.');
                     }
                 });
+            }
+        });
+    }
+
+    // ===== COPY LIBUR PEGAWAI =====
+
+    var dataCopyPegawai = []; // menyimpan data pegawai libur sumber
+    var extraTanggalCount = 0;
+
+    function bukaCopyModal() {
+        // Ambil data pegawai libur di tanggal sumber dari tabel
+        dataCopyPegawai = [];
+        $('#tableBodyLibur tr').each(function() {
+            var nama = $(this).find('td:eq(0)').contents().filter(function() {
+                return this.nodeType === 3; // text node
+            }).text().trim();
+            var keterangan = $(this).find('td:eq(2) small').text().trim();
+            if (nama) {
+                dataCopyPegawai.push({
+                    nama: nama,
+                    keterangan: keterangan
+                });
+            }
+        });
+
+        // Format tanggal sumber
+        var d = new Date(tanggalDipilih + 'T00:00:00');
+        var opts = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        $('#lblTanggalCopySumber').text(d.toLocaleDateString('id-ID', opts));
+        $('#lblJmlCopy').text(dataCopyPegawai.length + ' pegawai');
+
+        // Render daftar nama pegawai
+        var html = '';
+        $.each(dataCopyPegawai, function(i, p) {
+            html += '<span class="badge-copy-item"><i class="fa fa-user mr-1 text-warning"></i>' + p.nama + '</span>';
+        });
+        $('#listCopyPegawai').html(html || '<span class="text-muted">Tidak ada data</span>');
+
+        // Reset input
+        $('#copyKeterangan').val('');
+        $('#copyTanggalTujuan').val('');
+        $('#extraTanggalWrapper').html('');
+        extraTanggalCount = 0;
+
+        // Buka modal copy (di atas modal utama)
+        $('#modalCopyLibur').modal('show');
+    }
+
+    function tutupCopyModal() {
+        $('#modalCopyLibur').modal('hide');
+    }
+
+    function tambahTanggalTujuan() {
+        extraTanggalCount++;
+        var idx = extraTanggalCount;
+        var html = '<div class="input-group mt-2" id="extraTanggal-' + idx + '">';
+        html += '<input type="date" class="form-control extra-tanggal-tujuan" placeholder="Tanggal tujuan tambahan">';
+        html += '<div class="input-group-append">';
+        html += '<button class="btn btn-outline-danger" type="button" onclick="hapusExtraTanggal(' + idx + ')" title="Hapus">';
+        html += '<i class="fa fa-times"></i>';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+        $('#extraTanggalWrapper').append(html);
+    }
+
+    function hapusExtraTanggal(idx) {
+        $('#extraTanggal-' + idx).remove();
+    }
+
+    function eksekusiCopyLibur() {
+        var tanggalSumber = tanggalDipilih;
+        var keterangan = $('#copyKeterangan').val().trim();
+
+        // Kumpulkan semua tanggal tujuan
+        var tanggalTujuanList = [];
+        var t1 = $('#copyTanggalTujuan').val();
+        if (t1) tanggalTujuanList.push(t1);
+
+        $('.extra-tanggal-tujuan').each(function() {
+            var v = $(this).val();
+            if (v) tanggalTujuanList.push(v);
+        });
+
+        // Hapus duplikat
+        tanggalTujuanList = [...new Set(tanggalTujuanList)];
+
+        if (tanggalTujuanList.length === 0) {
+            Swal.fire('Perhatian', 'Pilih minimal satu tanggal tujuan.', 'warning');
+            return;
+        }
+
+        // Validasi tidak boleh sama dengan tanggal sumber
+        if (tanggalTujuanList.indexOf(tanggalSumber) > -1) {
+            Swal.fire('Perhatian', 'Tanggal tujuan tidak boleh sama dengan tanggal sumber.', 'warning');
+            return;
+        }
+
+        $('#btnEksekusiCopy').prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-1"></i> Menyalin...');
+
+        $.ajax({
+            type: "POST",
+            url: "<?= base_url() ?>Libur/copy_libur_pegawai",
+            data: {
+                tanggal_sumber: tanggalSumber,
+                'tanggal_tujuan[]': tanggalTujuanList,
+                keterangan: keterangan
+            },
+            dataType: "json",
+            success: function(res) {
+                if (res.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        html: res.message,
+                        confirmButtonColor: '#28a745'
+                    }).then(function() {
+                        tutupCopyModal();
+                        calendarLibur.refetchEvents();
+                    });
+                } else {
+                    Swal.fire('Info', res.message, 'info');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Terjadi kesalahan saat menyalin data.', 'error');
+            },
+            complete: function() {
+                $('#btnEksekusiCopy').prop('disabled', false).html('<i class="fa fa-copy mr-1"></i> Salin Sekarang');
             }
         });
     }

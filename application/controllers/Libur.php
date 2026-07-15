@@ -202,6 +202,70 @@ class Libur extends CI_Controller
   }
 
   /**
+   * Copy libur pegawai dari satu tanggal ke tanggal lain (AJAX)
+   */
+  function copy_libur_pegawai()
+  {
+    $tanggal_sumber     = $this->input->post("tanggal_sumber");
+    $tanggal_tujuan_arr = $this->input->post("tanggal_tujuan"); // array
+    $keterangan_baru    = $this->input->post("keterangan");
+
+    if (!$tanggal_sumber || empty($tanggal_tujuan_arr)) {
+      echo json_encode(array('status' => 'error', 'message' => 'Tanggal sumber dan tanggal tujuan wajib diisi'));
+      return;
+    }
+
+    // Ambil semua pegawai libur di tanggal sumber
+    $libur_sumber = $this->ModelLibur->getLiburPegawaiByTanggal($tanggal_sumber);
+    $data_sumber  = $libur_sumber->result();
+
+    if (empty($data_sumber)) {
+      echo json_encode(array('status' => 'error', 'message' => 'Tidak ada data libur pegawai di tanggal sumber'));
+      return;
+    }
+
+    $total_berhasil = 0;
+    $total_skip     = 0;
+    $tgl_berhasil   = array();
+
+    foreach ($tanggal_tujuan_arr as $tgl_tujuan) {
+      $tgl_tujuan = date("Y-m-d", strtotime($tgl_tujuan));
+
+      // Jangan copy ke tanggal yang sama dengan sumber
+      if ($tgl_tujuan === date("Y-m-d", strtotime($tanggal_sumber))) {
+        continue;
+      }
+
+      $berhasil_per_tgl = 0;
+      foreach ($data_sumber as $row) {
+        // Gunakan keterangan baru jika diisi, atau keterangan asli
+        $ket = !empty($keterangan_baru) ? $keterangan_baru : $row->keterangan;
+        if ($this->ModelLibur->insertLiburPegawai($tgl_tujuan, $ket, $row->pegawai_uuid)) {
+          $berhasil_per_tgl++;
+        } else {
+          $total_skip++;
+        }
+      }
+
+      if ($berhasil_per_tgl > 0) {
+        $total_berhasil += $berhasil_per_tgl;
+        $tgl_berhasil[]  = date("d/m/Y", strtotime($tgl_tujuan));
+      }
+    }
+
+    if ($total_berhasil > 0) {
+      $msg  = '<b>' . $total_berhasil . ' data</b> berhasil disalin ke: ';
+      $msg .= implode(', ', $tgl_berhasil);
+      if ($total_skip > 0) {
+        $msg .= '<br><small class="text-muted">(' . $total_skip . ' data dilewati karena sudah ada)</small>';
+      }
+      echo json_encode(array('status' => 'success', 'message' => $msg));
+    } else {
+      echo json_encode(array('status' => 'info', 'message' => 'Semua data sudah ada di tanggal tujuan, tidak ada yang disalin'));
+    }
+  }
+
+  /**
    * Delete libur pegawai by ID (AJAX)
    */
   function delete_libur_pegawai($id)
