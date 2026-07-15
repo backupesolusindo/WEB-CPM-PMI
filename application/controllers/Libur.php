@@ -10,6 +10,7 @@ class Libur extends CI_Controller
     $this->load->model("ModelLibur");
     $this->load->model("ModelPegawai");
     $this->load->model("ModelUnit");
+    $this->load->model("ModelJabatan");
   }
 
   // ===================== LIBUR NASIONAL =====================
@@ -76,9 +77,9 @@ class Libur extends CI_Controller
   function kalender()
   {
     $data = array(
-      'title' => 'Libur Pegawai',
-      'body'  => 'Libur/kalender',
-      'unit'  => $this->ModelUnit->get_parent_unit()->result(),
+      'title'   => 'Libur Pegawai',
+      'body'    => 'Libur/kalender',
+      'jabatan' => $this->ModelJabatan->get_jabatan_aktif()->result(),
     );
     $this->load->view('index', $data);
   }
@@ -217,11 +218,10 @@ class Libur extends CI_Controller
    */
   function get_pegawai_list()
   {
-    $unit     = $this->input->post("unit");
-    $sub_unit = $this->input->post("sub_unit");
-    $tanggal  = $this->input->post("tanggal");
+    $jabatan = $this->input->post("jabatan");
+    $tanggal = $this->input->post("tanggal");
 
-    $pegawai_list = $this->ModelPegawai->get_TotalPegawai($unit, $sub_unit)->result();
+    $pegawai_list = $this->ModelPegawai->get_TotalPegawai(null, null, null, $jabatan ?: null)->result();
 
     // Tandai pegawai yang sudah libur di tanggal tersebut
     $sudah_libur = array();

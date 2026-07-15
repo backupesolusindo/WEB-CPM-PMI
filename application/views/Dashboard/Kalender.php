@@ -368,7 +368,7 @@
                         htmlPresensi += '<td>' + item.waktu + '</td>';
                         htmlPresensi += '<td>' + item.jam_jadwal + '</td>';
                         htmlPresensi += '<td><span class="badge badge-' + item.badge + '">' + item.status + '</span></td>';
-                        htmlPresensi += '<td><span class="badge badge-' + (item.lokasi == 'WFO' ? 'primary' : 'secondary') + '">' + item.lokasi + '</span></td>';
+                        htmlPresensi += '<td><span class="badge badge-' + (item.lokasi == 'WFO' ? 'primary' : (item.lokasi == 'WFH' ? 'secondary' : 'warning')) + '">' + item.lokasi + '</span></td>';
                         htmlPresensi += '</tr>';
                     });
                 } else {
