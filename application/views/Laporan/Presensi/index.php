@@ -1,4 +1,3 @@
-
 <div class="row">
   <div class="col-12">
     <div class="card card-cascade narrower z-depth-1">
@@ -18,11 +17,11 @@
         <div class="col-md-4">
           <label>Menurut Tanggal :</label>
           <div class="input-daterange input-group" id="date-range">
-            <input type="text" class="form-control" name="start" id="start" value="<?php echo date("d-m-Y") ?>" readonly/>
+            <input type="text" class="form-control" name="start" id="start" value="<?php echo date("d-m-Y") ?>" readonly />
             <div class="input-group-append">
               <span class="input-group-text bg-info b-0 text-white">S/D</span>
             </div>
-            <input type="text" class="form-control" name="end" id="end" value="<?php echo date("d-m-Y") ?>" readonly/>
+            <input type="text" class="form-control" name="end" id="end" value="<?php echo date("d-m-Y") ?>" readonly />
           </div>
           <br>
           <br>
@@ -49,6 +48,7 @@
             <option value="1">Tepat Waktu</option>
             <option value="2">Toleransi</option>
             <option value="3">Terlambat</option>
+            <option value="4">Libur Pegawai</option>
           </select>
         </div>
         <div class="col-md-2">
@@ -67,46 +67,54 @@
 </div>
 <script src="<?php echo base_url() ?>/desain/dist/js/pages/jquery.PrintArea.js" type="text/JavaScript"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-  search();
-});
+  $(document).ready(function() {
+    search();
+  });
 
-function sub_unit() {
-  var unit = $("#unit").val();
-  // alert(unit);
-  $.ajax({
-      type  : 'POST',
-      url   : '<?php echo base_url() ?>Laporan/sub_unit',
-      data  : {unit:unit},
-      success : function(response){
+  function sub_unit() {
+    var unit = $("#unit").val();
+    // alert(unit);
+    $.ajax({
+      type: 'POST',
+      url: '<?php echo base_url() ?>Laporan/sub_unit',
+      data: {
+        unit: unit
+      },
+      success: function(response) {
         // alert(response);
         $("#sub_unit").html(response);
       }
-  });
-}
+    });
+  }
 
-function search() {
-  var start  = $('#start').val();
-  var end  = $('#end').val();
-  var unit  = $('#unit').val();
-  var sub_unit  = $('#sub_unit').val();
-  var status  = $('#status').val();
-  $.ajax({
-    type: "POST",
-    url: "<?php echo base_url();?>Laporan/tabelPresensi",
-    data: {start: start, end:end, unit:unit, sub_unit:sub_unit, status:status},
-    success: function(data){
-      $('.hasilSearch').html(data);
-      $('#table-print').DataTable({
-        dom: 'Bfrtip',
-        buttons: ['excel'],
-      });
-      // alert(data);  //as a debugging message.
-    },
-    error: function(e) {
-      alert(e);
-    },
-  });
+  function search() {
+    var start = $('#start').val();
+    var end = $('#end').val();
+    var unit = $('#unit').val();
+    var sub_unit = $('#sub_unit').val();
+    var status = $('#status').val();
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>Laporan/tabelPresensi",
+      data: {
+        start: start,
+        end: end,
+        unit: unit,
+        sub_unit: sub_unit,
+        status: status
+      },
+      success: function(data) {
+        $('.hasilSearch').html(data);
+        $('#table-print').DataTable({
+          dom: 'Bfrtip',
+          buttons: ['excel'],
+        });
+        // alert(data);  //as a debugging message.
+      },
+      error: function(e) {
+        alert(e);
+      },
+    });
 
-}
+  }
 </script>

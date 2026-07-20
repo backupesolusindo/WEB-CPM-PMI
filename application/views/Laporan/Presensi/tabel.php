@@ -172,17 +172,16 @@ if (!empty($libur_pegawai_list)) {
           <td><?php echo $lp->nama_pegawai; ?></td>
           <td class="text-center">
             <?php echo date("d-m-Y", strtotime($lp->tanggal)); ?>
-            <br><small>-</small>
           </td>
           <td class="text-center">-</td>
           <td class="text-center">-</td>
           <td>
             <span class="badge" style="background-color:#fd7e14;color:#fff;">
               <i class="fa fa-calendar-times mr-1"></i>Libur Pegawai
+              <?php if (!empty($lp->keterangan)): ?>
+                : <small class="text-white"><?php echo $lp->keterangan; ?></small>
+              <?php endif; ?>
             </span>
-            <?php if (!empty($lp->keterangan)): ?>
-              <br><small class="text-muted"><?php echo $lp->keterangan; ?></small>
-            <?php endif; ?>
           </td>
           <td>-</td>
           <td>-</td>
