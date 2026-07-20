@@ -87,6 +87,8 @@ class Dashboard extends CI_Controller
         $wfo += 1;
       } elseif ($value->jenis_tempat == 2) {
         $wfh += 1;
+      } elseif ($value->jenis_tempat == 3) {
+        $wfo += 1; // Mobile Unit dihitung sebagai hadir
       }
     }
     $cuti = $this->ModelPerizinan->get_riwayatMonitoring($unit, "1", $tgl_mulai, $tgl_akhir, $sub_unit)->num_rows();
@@ -362,7 +364,7 @@ class Dashboard extends CI_Controller
         'jam_jadwal' => $value->jam_jadwal,
         'status' => $status,
         'badge' => $badge,
-        'lokasi' => $value->jenis_tempat == 1 ? 'WFO' : 'WFH'
+        'lokasi' => $value->jenis_tempat == 1 ? 'WFO' : ($value->jenis_tempat == 2 ? 'WFH' : 'Mobile Unit')
       );
     }
 

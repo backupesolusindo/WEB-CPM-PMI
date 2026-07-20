@@ -71,8 +71,10 @@
                           <td>
                             <?php if ($value->jenis == 1): ?>
                               <span class="badge blue-gradient">WFO</span>
-                            <?php else: ?>
+                            <?php elseif ($value->jenis == 2): ?>
                               <span class="badge aqua-gradient">WFH</span>
+                            <?php else: ?>
+                              <span class="badge purple-gradient">Mobile Unit</span>
                             <?php endif; ?>
                           </td>
                           <td><?php echo $value->namajabatan ?? $value->jabatan_idjabatan ?></td>

@@ -194,6 +194,8 @@ class Dash extends CI_Controller
         $wfo += 1;
       } elseif ($value->jenis_tempat == 2) {
         $wfh += 1;
+      } elseif ($value->jenis_tempat == 3) {
+        $wfo += 1; // Mobile Unit dihitung sebagai hadir
       }
       $jam_jadwal   = strtotime($value->jam_jadwal);
       $masuk        = strtotime(date("H:i:s", strtotime($value->waktu)));
@@ -294,31 +296,36 @@ class Dash extends CI_Controller
     if ($peg->num_rows() > 0) {
       $pegawai          = $peg->row_array();
       $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tanggal)->row_array();
-      $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"]);
-      if ($jadwalmasuk->num_rows() > 0) {
-        $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"])->result();
-        if ($jabatan['lintas_hari'] == 1) {
-          if ($this->ModelAbsensi->get_Absensi($pegawai["idabsen"], date("Y-m-d"))->num_rows() < 1) {
-            $tgl_kemarin      = date('Y-m-d', strtotime('-1 days', strtotime($tanggal)));
-            $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
-          }
+
+      // Ambil jadwal: prioritas pegawai spesifik → jabatan → fallback (jenis WFO = 1)
+      $jadwalResult     = $this->ModelJadwalMasuk->get_jadwal_for_pegawai($pegawai["uuid"], $pegawai["jab_struktur"], 1);
+      $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
+
+      if (isset($jabatan['lintas_hari']) && $jabatan['lintas_hari'] == 1) {
+        if ($this->ModelAbsensi->get_Absensi($pegawai["idabsen"], date("Y-m-d"))->num_rows() < 1) {
+          $tgl_kemarin  = date('Y-m-d', strtotime('-1 days', strtotime($tanggal)));
+          $absen        = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
         }
-      } else {
-        $jabatan          = $this->ModelJabatan->get_data_edit("pegawai")->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk("pegawai")->result();
       }
+
+      $jadwalmasuk      = $jadwalResult->result();
       $absenpulang      = @$this->ModelAbsensi->get_AbsensiPulang($absen["idabsensi"])->row_array();
       $istirahat        = @$this->ModelAbsensi->get_Absensi_Istirahat($pegawai["idistirahat"], date("Y-m-d"))->row_array();
       $selesaiIstirahat = @$this->ModelAbsensi->get_Selesai_Istirahat($istirahat["idabsensi"])->row_array();
 
+      // Tambah nama_jenis ke setiap item jadwal
+      $jadwalmasuk = array_map(function ($j) {
+        $j->nama_jenis = ModelJadwalMasuk::nama_jenis($j->jenis);
+        return $j;
+      }, $jadwalmasuk);
+
       $data = array(
-        'pegawai'   => $pegawai,
-        'jadwal'    => $jadwalmasuk,
-        'absen'     => $absen,
-        'absensi_pulang' => $absenpulang,
-        'istirahat' => $istirahat,
-        // 'jabatan'   => $jabatan,
+        'pegawai'           => $pegawai,
+        'jadwal'            => $jadwalmasuk,
+        'absen'             => $absen,
+        'absensi_pulang'    => $absenpulang,
+        'istirahat'         => $istirahat,
+        // 'jabatan'        => $jabatan,
         'selesai_istirahat' => $selesaiIstirahat,
       );
       $res = array(
@@ -342,31 +349,36 @@ class Dash extends CI_Controller
     if ($peg->num_rows() > 0) {
       $pegawai          = $peg->row_array();
       $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tanggal)->row_array();
-      $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"], "2");
-      if ($jadwalmasuk->num_rows() > 0) {
-        $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk($pegawai["jab_struktur"], "2")->result();
-        if ($jabatan['lintas_hari'] == 1) {
-          if ($this->ModelAbsensi->get_Absensi($pegawai["idabsen"], date("Y-m-d"))->num_rows() < 1) {
-            $tgl_kemarin      = date('Y-m-d', strtotime('-1 days', strtotime($tanggal)));
-            $absen            = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
-          }
+
+      // Ambil jadwal: prioritas pegawai spesifik → jabatan → fallback (jenis WFH/Shift = 2)
+      $jadwalResult     = $this->ModelJadwalMasuk->get_jadwal_for_pegawai($pegawai["uuid"], $pegawai["jab_struktur"], 2);
+      $jabatan          = $this->ModelJabatan->get_data_edit($pegawai["jab_struktur"])->row_array();
+
+      if (isset($jabatan['lintas_hari']) && $jabatan['lintas_hari'] == 1) {
+        if ($this->ModelAbsensi->get_Absensi($pegawai["idabsen"], date("Y-m-d"))->num_rows() < 1) {
+          $tgl_kemarin  = date('Y-m-d', strtotime('-1 days', strtotime($tanggal)));
+          $absen        = $this->ModelAbsensi->get_Absensi($pegawai["idabsen"], $tgl_kemarin)->row_array();
         }
-      } else {
-        $jabatan          = $this->ModelJabatan->get_data_edit("pegawai")->row_array();
-        $jadwalmasuk      = $this->ModelJadwalMasuk->get_jadwalmasuk("pegawai", "2")->result();
       }
+
+      $jadwalmasuk      = $jadwalResult->result();
       $absenpulang      = @$this->ModelAbsensi->get_AbsensiPulang($absen["idabsensi"])->row_array();
       $istirahat        = @$this->ModelAbsensi->get_Absensi_Istirahat($pegawai["idistirahat"], date("Y-m-d"))->row_array();
       $selesaiIstirahat = @$this->ModelAbsensi->get_Selesai_Istirahat($istirahat["idabsensi"])->row_array();
 
+      // Tambah nama_jenis ke setiap item jadwal
+      $jadwalmasuk = array_map(function ($j) {
+        $j->nama_jenis = ModelJadwalMasuk::nama_jenis($j->jenis);
+        return $j;
+      }, $jadwalmasuk);
+
       $data = array(
-        'pegawai'   => $pegawai,
-        'jadwal'    => $jadwalmasuk,
-        'absen'     => $absen,
-        'absensi_pulang' => $absenpulang,
-        'istirahat' => $istirahat,
-        // 'jabatan'   => $jabatan,
+        'pegawai'           => $pegawai,
+        'jadwal'            => $jadwalmasuk,
+        'absen'             => $absen,
+        'absensi_pulang'    => $absenpulang,
+        'istirahat'         => $istirahat,
+        // 'jabatan'        => $jabatan,
         'selesai_istirahat' => $selesaiIstirahat,
       );
       $res = array(
@@ -435,13 +447,14 @@ class Dash extends CI_Controller
       $pulang = $this->ModelRiwayat->Pulang($row->idabsensi)->row();
 
       $data_presensi[$tanggal] = array(
-        'idabsensi' => $row->idabsensi,
-        'tanggal' => $tanggal,
-        'waktu_masuk' => date("H:i:s", strtotime($row->waktu)),
-        'waktu_pulang' => $pulang ? date("H:i:s", strtotime($pulang->waktu)) : null,
-        'jenis_tempat' => $row->jenis_tempat, // 1=WFO, 2=WFH
+        'idabsensi'      => $row->idabsensi,
+        'tanggal'        => $tanggal,
+        'waktu_masuk'    => date("H:i:s", strtotime($row->waktu)),
+        'waktu_pulang'   => $pulang ? date("H:i:s", strtotime($pulang->waktu)) : null,
+        'jenis_tempat'   => $row->jenis_tempat,
+        'nama_jenis'     => ModelJadwalMasuk::nama_jenis($row->jenis_tempat),
         'status_absensi' => $row->status_absensi,
-        'keterangan' => $row->keterangan ?? null
+        'keterangan'     => $row->keterangan ?? null
       );
     }
 

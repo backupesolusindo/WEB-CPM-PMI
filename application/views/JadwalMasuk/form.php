@@ -3,7 +3,8 @@
   <div class="col-12">
     <label>Jabatan :</label>
     <select name="jabatan_idjabatan" id="select_jabatan" class="form-control select2 col-md-12" required>
-      <option>...Pilih Jabatan...</option>
+      <option disabled selected> -- Pilih Jabatan -- </option>
+      <option value="0">Semua Jabatan</option>
       <?php foreach ($jabatan as $value): ?>
         <?php if ($value->idjabatan != "adminr"): ?>
           <option value="<?php echo $value->idjabatan; ?>"
@@ -17,7 +18,7 @@
   </div>
 
   <!-- Multi-select Pegawai Spesifik (opsional) -->
-  <div class="col-12" id="wrap_pegawai_spesifik" style="<?php echo empty($pegawai_list) ? 'display:none;' : ''; ?>">
+  <div class="col-12" id="wrap_pegawai_spesifik">
     <div class="form-group">
       <label>
         Pegawai Spesifik :
@@ -81,6 +82,7 @@
         <option>...Pilih Jenis Jadwal...</option>
         <option value="1" <?php if (@$jadwalmasuk["jenis"] == 1): ?>selected<?php endif; ?>>WFO</option>
         <option value="2" <?php if (@$jadwalmasuk["jenis"] == 2): ?>selected<?php endif; ?>>WFH</option>
+        <option value="3" <?php if (@$jadwalmasuk["jenis"] == 3): ?>selected<?php endif; ?>>Mobile Unit</option>
       </select>
     </div>
   </div>
@@ -184,14 +186,14 @@
       }
       $select.html('');
 
-      if (!idjabatan || idjabatan === '...Pilih Jabatan...') {
-        $wrap.hide();
-        $select.select2({
-          placeholder: "-- Pilih Pegawai (opsional) --",
-          allowClear: true
-        });
-        return;
-      }
+      // if (!idjabatan || idjabatan === '...Pilih Jabatan...') {
+      //   $wrap.hide();
+      //   $select.select2({
+      //     placeholder: "-- Pilih Pegawai (opsional) --",
+      //     allowClear: true
+      //   });
+      //   return;
+      // }
 
       $.ajax({
         url: '<?php echo base_url(); ?>JadwalMasuk/get_pegawai_by_jabatan',

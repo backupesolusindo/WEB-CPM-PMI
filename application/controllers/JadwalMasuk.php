@@ -25,7 +25,7 @@ class JadwalMasuk extends CI_Controller
       'title'       => 'JADWAL MASUK',
       'body'        => 'JadwalMasuk/list',
       'jadwalmasuk' => $jadwalmasuk,
-      'jabatan'     => $this->ModelJabatan->get_data()->result(),
+      'jabatan'     => $this->ModelJabatan->get_jabatan_aktif()->result(),
     );
     $this->load->view('index', $data);
   }
@@ -36,7 +36,7 @@ class JadwalMasuk extends CI_Controller
       'title'        => 'FORM INPUT JADWAL MASUK',
       'form'         => 'JadwalMasuk/form',
       'body'         => 'JadwalMasuk/input',
-      'jabatan'      => $this->ModelJabatan->get_data()->result(),
+      'jabatan'      => $this->ModelJabatan->get_jabatan_aktif()->result(),
       'pegawai_list' => array(),
       'selected_pegawai' => array(),
     );
@@ -112,7 +112,7 @@ class JadwalMasuk extends CI_Controller
       'form'             => 'JadwalMasuk/form',
       'body'             => 'JadwalMasuk/edit',
       'jadwalmasuk'      => $jadwalmasuk,
-      'jabatan'          => $this->ModelJabatan->get_data()->result(),
+      'jabatan'          => $this->ModelJabatan->get_jabatan_aktif()->result(),
       'pegawai_list'     => $pegawai_list,
       'selected_pegawai' => $selected_pegawai,
     );

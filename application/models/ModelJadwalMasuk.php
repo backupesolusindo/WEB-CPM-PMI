@@ -25,9 +25,14 @@ class ModelJadwalMasuk extends CI_Model
    */
   public function get_jadwalmasuk($idjabatan = null, $jenis = 1)
   {
-    $this->db->join("jabatan", "jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan");
+    $this->db->join("jabatan", "jabatan.idjabatan = jadwal_masuk.jabatan_idjabatan", "left");
     if (!empty($idjabatan)) {
       $this->db->where("jabatan_idjabatan", $idjabatan);
+    }
+    if ($jenis == 2) {
+      $this->db->where_in("jenis", array("2", "3"));
+    } elseif ($jenis == 1) {
+      $this->db->where("jenis", "1");
     }
     return $this->db->get('jadwal_masuk');
   }
@@ -55,10 +60,12 @@ class ModelJadwalMasuk extends CI_Model
   /**
    * Ambil daftar pegawai aktif berdasarkan jabatan
    */
-  public function get_pegawai_by_jabatan($idjabatan)
+  public function get_pegawai_by_jabatan($idjabatan = null)
   {
     $this->db->select("uuid, nama_pegawai");
-    $this->db->where("jab_struktur", $idjabatan);
+    if ($idjabatan != null && $idjabatan != '' && $idjabatan != 0) {
+      $this->db->where("jab_struktur", $idjabatan);
+    }
     $this->db->where("status_aktif", "1");
     $this->db->order_by("nama_pegawai", "ASC");
     return $this->db->get("pegawai");
@@ -129,6 +136,19 @@ class ModelJadwalMasuk extends CI_Model
   }
 
   /**
+   * Mapping nilai jenis ke label nama
+   */
+  public static function nama_jenis($jenis)
+  {
+    $map = array(
+      '1' => 'WFO',
+      '2' => 'WFH',
+      '3' => 'Mobile Unit',
+    );
+    return isset($map[(string)$jenis]) ? $map[(string)$jenis] : '-';
+  }
+
+  /**
    * Logika utama untuk API mobile (getNotif):
    *
    * 1. Jika $pegawai_uuid dikirim:
@@ -137,9 +157,20 @@ class ModelJadwalMasuk extends CI_Model
    * 2. Fallback: cari jadwal berdasarkan jabatan yang TIDAK punya
    *    pegawai spesifik (berlaku untuk semua pegawai jabatan)
    * 3. Fallback terakhir: jadwal apapun yang tersedia
+   *
+   * $jenis: null = semua, 1 = WFO, 2 = WFH/Shift (jenis IN 2,3)
    */
-  public function get_jadwal_for_pegawai($pegawai_uuid, $idjabatan = null)
+  public function get_jadwal_for_pegawai($pegawai_uuid, $idjabatan = null, $jenis = null)
   {
+    // Helper closure untuk apply filter jenis
+    $applyJenis = function ($jenis) {
+      if ($jenis == 2) {
+        $this->db->where_in("jm.jenis", array("2", "3"));
+      } elseif ($jenis == 1) {
+        $this->db->where("jm.jenis", "1");
+      }
+    };
+
     // Step 1: jadwal spesifik untuk pegawai ini
     if (!empty($pegawai_uuid)) {
       $this->db->select('jm.*, jab.namajabatan');
@@ -147,6 +178,7 @@ class ModelJadwalMasuk extends CI_Model
       $this->db->join('jabatan jab', 'jab.idjabatan = jm.jabatan_idjabatan');
       $this->db->join('jadwal_masuk_pegawai jmp', 'jmp.idjadwal_masuk = jm.idjadwal_masuk');
       $this->db->where('jmp.pegawai_uuid', $pegawai_uuid);
+      $applyJenis($jenis);
       $result = $this->db->get();
       if ($result->num_rows() > 0) {
         return $result;
@@ -160,6 +192,7 @@ class ModelJadwalMasuk extends CI_Model
       $this->db->join('jabatan jab', 'jab.idjabatan = jm.jabatan_idjabatan');
       $this->db->where('jm.jabatan_idjabatan', $idjabatan);
       $this->db->where("jm.idjadwal_masuk NOT IN (SELECT idjadwal_masuk FROM jadwal_masuk_pegawai)", null, false);
+      $applyJenis($jenis);
       $result = $this->db->get();
       if ($result->num_rows() > 0) {
         return $result;
@@ -171,6 +204,7 @@ class ModelJadwalMasuk extends CI_Model
     $this->db->from('jadwal_masuk jm');
     $this->db->join('jabatan jab', 'jab.idjabatan = jm.jabatan_idjabatan');
     $this->db->where("jm.idjadwal_masuk NOT IN (SELECT idjadwal_masuk FROM jadwal_masuk_pegawai)", null, false);
+    $applyJenis($jenis);
     return $this->db->get();
   }
 }

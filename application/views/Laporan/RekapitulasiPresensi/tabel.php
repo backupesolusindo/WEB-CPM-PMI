@@ -55,11 +55,13 @@
           }
 
           if ($kerja_libur) {
-            // Hitung WFO/WFH
+            // Hitung WFO/WFH/Mobile Unit
             if ($value->jenis_tempat == 1) {
               $wfo += 1;
             } elseif ($value->jenis_tempat == 2) {
               $wfh += 1;
+            } elseif ($value->jenis_tempat == 3) {
+              $wfo += 1; // Mobile Unit dihitung sebagai hadir
             }
 
             // Cek keterlambatan
@@ -134,32 +136,30 @@
 
       $jumlah_presensi = $wfo + $wfh;
       ?>
-      <?php if ($jumlah_presensi > 0 || $tidak_valid > 0): ?>
-        <tr>
-          <td><?php echo $no++ ?></td>
-          <td><?php echo $data->NIP ?></td>
-          <td><?php echo $data->nama_pegawai ?></td>
-          <td><?php echo $data->namajabatan ?></td>
-          <td><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
-          <td><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
-          <td><?php echo $tepat ?></td>
-          <td><?php echo $terlambat + $pulang_awal ?></td>
-          <td><?php echo $jumlah_presensi ?></td>
-          <td><?php echo $tidak_valid ?></td>
-          <td><?php echo $total_jam . " Jam " . $total_menit . " Menit"; ?></td>
-          <td><?php
-              // Tampilkan overtime jika ada, jika tidak tampilkan 0
-              if ($total_jam_over > 0 || $total_menit_over > 0) {
-                echo $total_jam_over . " Jam " . $total_menit_over . " Menit";
-              } else {
-                echo "0 Jam 0 Menit";
-              }
-              ?></td>
-          <td>
-            <a href="<?php echo base_url() ?>Laporan/DetailRekap/<?php echo $data->uuid; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL"><i class="fas fa-info-circle"></i></a>
-          </td>
-        </tr>
-      <?php endif; ?>
+      <tr>
+        <td><?php echo $no++ ?></td>
+        <td><?php echo $data->NIP ?></td>
+        <td><?php echo $data->nama_pegawai ?></td>
+        <td><?php echo $data->namajabatan ?></td>
+        <td><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
+        <td><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
+        <td><?php echo $tepat ?></td>
+        <td><?php echo $terlambat + $pulang_awal ?></td>
+        <td><?php echo $jumlah_presensi ?></td>
+        <td><?php echo $tidak_valid ?></td>
+        <td><?php echo $total_jam . " Jam " . $total_menit . " Menit"; ?></td>
+        <td><?php
+            // Tampilkan overtime jika ada, jika tidak tampilkan 0
+            if ($total_jam_over > 0 || $total_menit_over > 0) {
+              echo $total_jam_over . " Jam " . $total_menit_over . " Menit";
+            } else {
+              echo "0 Jam 0 Menit";
+            }
+            ?></td>
+        <td>
+          <a href="<?php echo base_url() ?>Laporan/DetailRekap/<?php echo $data->uuid; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL"><i class="fas fa-info-circle"></i></a>
+        </td>
+      </tr>
     <?php endforeach; ?>
   </tbody>
 </table>
@@ -255,11 +255,13 @@
               }
 
               if ($kerja_libur) {
-                // Hitung WFO/WFH
+                // Hitung WFO/WFH/Mobile Unit
                 if ($value->jenis_tempat == 1) {
                   $wfo += 1;
                 } elseif ($value->jenis_tempat == 2) {
                   $wfh += 1;
+                } elseif ($value->jenis_tempat == 3) {
+                  $wfo += 1; // Mobile Unit dihitung sebagai hadir
                 }
 
                 // Cek keterlambatan

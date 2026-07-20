@@ -110,7 +110,7 @@ class ModelPegawai extends CI_Model
 
   function get_UnitPegawai($unit = null, $sub_unit = null, $tipe_pegawai = null, $jabatan = null)
   {
-    $this->db->join("unit", "unit.nama_unit LIKE pegawai.unit");
+    $this->db->join("unit", "unit.nama_unit LIKE pegawai.unit", 'left');
     $this->db->join("jabatan", "jabatan.idjabatan = pegawai.jab_struktur", "left");
     $this->db->where("pegawai.status_aktif", "1");
     if ($tipe_pegawai != null || $tipe_pegawai != "") {

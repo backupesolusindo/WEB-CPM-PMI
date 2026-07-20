@@ -142,7 +142,11 @@ if (!empty($libur_pegawai_list)) {
           </td>
           <td><?php echo $text_status; ?></td>
           <td>
-            <?php echo ($value->jenis_tempat == 1) ? 'Dalam Kantor' : 'Luar Kantor'; ?>
+            <?php
+            if ($value->jenis_tempat == 1) echo 'Dalam Kantor';
+            elseif ($value->jenis_tempat == 2) echo 'Luar Kantor';
+            else echo 'Mobile Unit';
+            ?>
           </td>
           <td>
             <a href="<?php echo base_url(); ?>Laporan/DetailLaporanPresensi/<?php echo $value->idabsensi; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL">
@@ -273,7 +277,11 @@ if (!empty($libur_pegawai_list)) {
                     echo '<span class="badge bg-danger">Terlambat</span>';
                   }
                   ?></td>
-              <td><?php echo ($value->jenis_tempat == 1) ? 'Dalam Kantor' : 'Luar Kantor'; ?></td>
+              <td><?php
+                  if ($value->jenis_tempat == 1) echo 'Dalam Kantor';
+                  elseif ($value->jenis_tempat == 2) echo 'Luar Kantor';
+                  else echo 'Mobile Unit';
+                  ?></td>
             </tr>
           <?php endforeach; ?>
 

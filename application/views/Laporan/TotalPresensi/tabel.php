@@ -1,4 +1,4 @@
-<a class="float-left" >
+<a class="float-left">
   <button type="button" id="print" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Cetak Laporan"><i class="fas fa-print"></i> PRINT</button>
 </a>
 <table id="table-print" class="display nowrap table table-hover table-striped table-bordered">
@@ -16,59 +16,36 @@
     </tr>
   </thead>
   <tbody>
-    <?php $no=1; foreach ($pegawai->result() as $data): ?>
-        <?php
-        $total = 0;
-        $wfh=0; $wfo=0;
-        $terlambat = 0;
-        $tepat = 0;
-        $total_jam = 0;
-        $total_menit = 0;
-        $efektif_jam = 0;
-        $efektif_menit = 0;
-        $pulang_awal = 0;
-        $tidak_valid = 0;
-        foreach ($this->ModelLaporan->rekapPresensi($data->uuid,$tgl_mulai,$tgl_akhir)->result() as $value) {
-          $s_terlambat = 0;
-          $s_tepat = 0;
-          $hari = date("D", strtotime($value->waktu));
-          $presensi_pulang = $this->ModelAbsensi->get_AbsensiPulang($value->idabsensi)->row_array();
-          $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
+    <?php $no = 1;
+    foreach ($pegawai->result() as $data): ?>
+      <?php
+      $total = 0;
+      $wfh = 0;
+      $wfo = 0;
+      $terlambat = 0;
+      $tepat = 0;
+      $total_jam = 0;
+      $total_menit = 0;
+      $efektif_jam = 0;
+      $efektif_menit = 0;
+      $pulang_awal = 0;
+      $tidak_valid = 0;
+      foreach ($this->ModelLaporan->rekapPresensi($data->uuid, $tgl_mulai, $tgl_akhir)->result() as $value) {
+        $s_terlambat = 0;
+        $s_tepat = 0;
+        $hari = date("D", strtotime($value->waktu));
+        $presensi_pulang = $this->ModelAbsensi->get_AbsensiPulang($value->idabsensi)->row_array();
+        $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
 
-          if (@$presensi_pulang['waktu'] != null) {
-            if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
-              if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
-                if ($value->jenis_tempat == 1) {
-                  $wfo += 1;
-                }elseif ($value->jenis_tempat == 2) {
-                  $wfh += 1;
-                }
-                $jam_jadwal  = strtotime($value->jam_jadwal);
-                $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                $diff  = $masuk - $jam_jadwal;
-                if ($diff <= 0) {
-                  // $tepat += 1;
-                  $s_tepat = 1;
-                }else {
-                  $jam_toleransi = $value->jam_toleransi;
-                  if ($jam_toleransi == null || $jam_toleransi == "") {
-                    $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-                  }
-                  $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                  if ($diff <= $toleransi) {
-                    // $tepat += 1;
-                    $s_tepat = 1;
-                  }else {
-                    // $terlambat += 1;
-                    $s_terlambat = 1;
-                  }
-                }
-              }
-            }else {
+        if (@$presensi_pulang['waktu'] != null) {
+          if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
+            if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
               if ($value->jenis_tempat == 1) {
                 $wfo += 1;
-              }elseif ($value->jenis_tempat == 2) {
+              } elseif ($value->jenis_tempat == 2) {
                 $wfh += 1;
+              } elseif ($value->jenis_tempat == 3) {
+                $wfo += 1; // Mobile Unit dihitung sebagai hadir
               }
               $jam_jadwal  = strtotime($value->jam_jadwal);
               $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
@@ -76,7 +53,7 @@
               if ($diff <= 0) {
                 // $tepat += 1;
                 $s_tepat = 1;
-              }else {
+              } else {
                 $jam_toleransi = $value->jam_toleransi;
                 if ($jam_toleransi == null || $jam_toleransi == "") {
                   $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
@@ -85,73 +62,102 @@
                 if ($diff <= $toleransi) {
                   // $tepat += 1;
                   $s_tepat = 1;
-                }else {
+                } else {
                   // $terlambat += 1;
                   $s_terlambat = 1;
                 }
               }
             }
-
-            $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
-            if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
-              $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
-              $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
-              $diff           = $pulang - $jam_jadwal;
-              if ($s_tepat == 1 && $diff >= 0) {
-                $tepat += 1;
-              }else {
-                if ($diff > 0 && $s_terlambat == 1) {
-                  $tidak_valid += 1;
-                }else if ($s_terlambat == 1) {
-                  $terlambat += 1;
-                }else if ($diff < 0) {
-                   $pulang_awal += 1;
-                }
-              }
-            }else {
-              $tidak_valid += 1;
+          } else {
+            if ($value->jenis_tempat == 1) {
+              $wfo += 1;
+            } elseif ($value->jenis_tempat == 2) {
+              $wfh += 1;
+            } elseif ($value->jenis_tempat == 3) {
+              $wfo += 1; // Mobile Unit dihitung sebagai hadir
             }
-
-            $datang = date_create($value->waktu);
-            $pulang = date_create($presensi_pulang['waktu']);
-            $diff = date_diff($datang, $pulang );
-
-            if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
-              if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
-                $efektif_jam = $efektif_jam+$diff->h - 1;
-                $efektif_menit = $efektif_menit+$diff->i;
+            $jam_jadwal  = strtotime($value->jam_jadwal);
+            $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
+            $diff  = $masuk - $jam_jadwal;
+            if ($diff <= 0) {
+              // $tepat += 1;
+              $s_tepat = 1;
+            } else {
+              $jam_toleransi = $value->jam_toleransi;
+              if ($jam_toleransi == null || $jam_toleransi == "") {
+                $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
               }
-            }else {
-              $efektif_jam = $efektif_jam+$diff->h - 1;
-              $efektif_menit = $efektif_menit+$diff->i;
+              $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
+              if ($diff <= $toleransi) {
+                // $tepat += 1;
+                $s_tepat = 1;
+              } else {
+                // $terlambat += 1;
+                $s_terlambat = 1;
+              }
             }
-            $total_jam = $total_jam+$diff->h - 1;
-            $total_menit = $total_menit+$diff->i;
-          }else {
+          }
+
+          $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
+          if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
+            $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
+            $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
+            $diff           = $pulang - $jam_jadwal;
+            if ($s_tepat == 1 && $diff >= 0) {
+              $tepat += 1;
+            } else {
+              if ($diff > 0 && $s_terlambat == 1) {
+                $tidak_valid += 1;
+              } else if ($s_terlambat == 1) {
+                $terlambat += 1;
+              } else if ($diff < 0) {
+                $pulang_awal += 1;
+              }
+            }
+          } else {
             $tidak_valid += 1;
           }
+
+          $datang = date_create($value->waktu);
+          $pulang = date_create($presensi_pulang['waktu']);
+          $diff = date_diff($datang, $pulang);
+
+          if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
+            if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
+              $efektif_jam = $efektif_jam + $diff->h - 1;
+              $efektif_menit = $efektif_menit + $diff->i;
+            }
+          } else {
+            $efektif_jam = $efektif_jam + $diff->h - 1;
+            $efektif_menit = $efektif_menit + $diff->i;
+          }
+          $total_jam = $total_jam + $diff->h - 1;
+          $total_menit = $total_menit + $diff->i;
+        } else {
+          $tidak_valid += 1;
         }
-        $total_jam = $total_jam + floor($total_menit/60);
-        $total_menit = $total_menit % 60;
-        $efektif_jam = $efektif_jam + floor($efektif_menit/60);
-        $efektif_menit = $efektif_menit % 60;
-        $jumlah_presensi = $wfo+$wfh+$tidak_valid;
-        ?>
-        <?php if ($jumlah_presensi > 0): ?>
-          <tr>
-            <td><?php echo $no++ ?></td>
-            <td><?php echo $data->NIP ?></td>
-            <td><?php echo $data->nama_pegawai ?></td>
-            <td><?php echo $data->jab_struktur ?></td>
-            <td><?php echo $tepat?></td>
-            <td><?php echo $terlambat + $pulang_awal?></td>
-            <td><?php echo $tidak_valid?></td>
-            <td><?php echo $jumlah_presensi ?></td>
-            <td>
-              <a href="<?php echo base_url()?>Laporan/DetailRekap/<?php echo $data->uuid;?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL"><i class="fas fa-info-circle"></i></a>
-            </td>
-          </tr>
-        <?php endif; ?>
+      }
+      $total_jam = $total_jam + floor($total_menit / 60);
+      $total_menit = $total_menit % 60;
+      $efektif_jam = $efektif_jam + floor($efektif_menit / 60);
+      $efektif_menit = $efektif_menit % 60;
+      $jumlah_presensi = $wfo + $wfh + $tidak_valid;
+      ?>
+      <?php if ($jumlah_presensi > 0): ?>
+        <tr>
+          <td><?php echo $no++ ?></td>
+          <td><?php echo $data->NIP ?></td>
+          <td><?php echo $data->nama_pegawai ?></td>
+          <td><?php echo $data->jab_struktur ?></td>
+          <td><?php echo $tepat ?></td>
+          <td><?php echo $terlambat + $pulang_awal ?></td>
+          <td><?php echo $tidak_valid ?></td>
+          <td><?php echo $jumlah_presensi ?></td>
+          <td>
+            <a href="<?php echo base_url() ?>Laporan/DetailRekap/<?php echo $data->uuid; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL"><i class="fas fa-info-circle"></i></a>
+          </td>
+        </tr>
+      <?php endif; ?>
     <?php endforeach; ?>
   </tbody>
 </table>
@@ -159,7 +165,9 @@
 <div class="printableArea row" hidden>
   <table class="col-12" border="0">
     <tr>
-      <td align="center"><h1>Rekapitulasi Presensi Pegawai</h1></td>
+      <td align="center">
+        <h1>Rekapitulasi Presensi Pegawai</h1>
+      </td>
     </tr>
   </table>
   <div class="col-6">
@@ -211,10 +219,12 @@
         </tr>
       </thead>
       <tbody>
-        <?php $no=1; foreach ($pegawai->result() as $data): ?>
+        <?php $no = 1;
+        foreach ($pegawai->result() as $data): ?>
           <?php
           $total = 0;
-          $wfh=0; $wfo=0;
+          $wfh = 0;
+          $wfo = 0;
           $terlambat = 0;
           $tepat = 0;
           $total_jam = 0;
@@ -223,7 +233,7 @@
           $efektif_menit = 0;
           $pulang_awal = 0;
           $tidak_valid = 0;
-          foreach ($this->ModelLaporan->rekapPresensi($data->uuid,$tgl_mulai,$tgl_akhir)->result() as $value) {
+          foreach ($this->ModelLaporan->rekapPresensi($data->uuid, $tgl_mulai, $tgl_akhir)->result() as $value) {
             $s_terlambat = 0;
             $s_tepat = 0;
             $hari = date("D", strtotime($value->waktu));
@@ -235,8 +245,10 @@
                 if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
                   if ($value->jenis_tempat == 1) {
                     $wfo += 1;
-                  }elseif ($value->jenis_tempat == 2) {
+                  } elseif ($value->jenis_tempat == 2) {
                     $wfh += 1;
+                  } elseif ($value->jenis_tempat == 3) {
+                    $wfo += 1; // Mobile Unit dihitung sebagai hadir
                   }
                   $jam_jadwal  = strtotime($value->jam_jadwal);
                   $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
@@ -244,7 +256,7 @@
                   if ($diff <= 0) {
                     // $tepat += 1;
                     $s_tepat = 1;
-                  }else {
+                  } else {
                     $jam_toleransi = $value->jam_toleransi;
                     if ($jam_toleransi == null || $jam_toleransi == "") {
                       $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
@@ -253,17 +265,19 @@
                     if ($diff <= $toleransi) {
                       // $tepat += 1;
                       $s_tepat = 1;
-                    }else {
+                    } else {
                       // $terlambat += 1;
                       $s_terlambat = 1;
                     }
                   }
                 }
-              }else {
+              } else {
                 if ($value->jenis_tempat == 1) {
                   $wfo += 1;
-                }elseif ($value->jenis_tempat == 2) {
+                } elseif ($value->jenis_tempat == 2) {
                   $wfh += 1;
+                } elseif ($value->jenis_tempat == 3) {
+                  $wfo += 1; // Mobile Unit dihitung sebagai hadir
                 }
                 $jam_jadwal  = strtotime($value->jam_jadwal);
                 $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
@@ -271,7 +285,7 @@
                 if ($diff <= 0) {
                   // $tepat += 1;
                   $s_tepat = 1;
-                }else {
+                } else {
                   $jam_toleransi = $value->jam_toleransi;
                   if ($jam_toleransi == null || $jam_toleransi == "") {
                     $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
@@ -280,7 +294,7 @@
                   if ($diff <= $toleransi) {
                     // $tepat += 1;
                     $s_tepat = 1;
-                  }else {
+                  } else {
                     // $terlambat += 1;
                     $s_terlambat = 1;
                   }
@@ -294,43 +308,43 @@
                 $diff           = $pulang - $jam_jadwal;
                 if ($s_tepat == 1) {
                   $tepat += 1;
-                }else {
+                } else {
                   if ($diff > 0 && $s_terlambat == 1) {
                     $tidak_valid += 1;
-                  }else if ($s_terlambat == 1) {
+                  } else if ($s_terlambat == 1) {
                     $terlambat += 1;
-                  }else if ($diff > 0) {
-                     $pulang_awal += 1;
+                  } else if ($diff > 0) {
+                    $pulang_awal += 1;
                   }
                 }
-              }else {
+              } else {
                 $tidak_valid += 1;
               }
 
               $datang = date_create($value->waktu);
               $pulang = date_create($presensi_pulang['waktu']);
-              $diff = date_diff($datang, $pulang );
+              $diff = date_diff($datang, $pulang);
 
               if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
                 if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
-                  $efektif_jam = $efektif_jam+$diff->h - 1;
-                  $efektif_menit = $efektif_menit+$diff->i;
+                  $efektif_jam = $efektif_jam + $diff->h - 1;
+                  $efektif_menit = $efektif_menit + $diff->i;
                 }
-              }else {
-                $efektif_jam = $efektif_jam+$diff->h - 1;
-                $efektif_menit = $efektif_menit+$diff->i;
+              } else {
+                $efektif_jam = $efektif_jam + $diff->h - 1;
+                $efektif_menit = $efektif_menit + $diff->i;
               }
-              $total_jam = $total_jam+$diff->h - 1;
-              $total_menit = $total_menit+$diff->i;
-            }else {
+              $total_jam = $total_jam + $diff->h - 1;
+              $total_menit = $total_menit + $diff->i;
+            } else {
               $tidak_valid += 1;
             }
           }
-          $total_jam = $total_jam + floor($total_menit/60);
+          $total_jam = $total_jam + floor($total_menit / 60);
           $total_menit = $total_menit % 60;
-          $efektif_jam = $efektif_jam + floor($efektif_menit/60);
+          $efektif_jam = $efektif_jam + floor($efektif_menit / 60);
           $efektif_menit = $efektif_menit % 60;
-          $jumlah_presensi = $wfo+$wfh+$tidak_valid;
+          $jumlah_presensi = $wfo + $wfh + $tidak_valid;
           ?>
           <?php if ($jumlah_presensi > 0): ?>
             <tr>
@@ -338,9 +352,9 @@
               <td><?php echo $data->NIP ?></td>
               <td><?php echo $data->nama_pegawai ?></td>
               <td><?php echo $data->jab_struktur ?></td>
-              <td><?php echo $tepat?></td>
-              <td><?php echo $terlambat + $pulang_awal?></td>
-              <td><?php echo $tidak_valid?></td>
+              <td><?php echo $tepat ?></td>
+              <td><?php echo $terlambat + $pulang_awal ?></td>
+              <td><?php echo $tidak_valid ?></td>
               <td><?php echo $jumlah_presensi ?></td>
             </tr>
           <?php endif; ?>
@@ -365,7 +379,7 @@
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function(){
+  $(document).ready(function() {
     $("#print").click(function() {
       var mode = 'iframe'; //popup
       var close = mode == "popup";
