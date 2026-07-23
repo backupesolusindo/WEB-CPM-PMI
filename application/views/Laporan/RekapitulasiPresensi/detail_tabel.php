@@ -370,6 +370,7 @@
             <th>Tanggal</th>
             <th>Waktu</th>
             <th>Status Tepat Waktu</th>
+            <th>Status Approval</th>
           </tr>
         </thead>
         <tbody>
@@ -394,6 +395,15 @@
                         echo '<h5><span class="badge bg-danger">Terlambat</span></h5>';
                       }
                     } ?> </td>
+              <td class="text-center">
+                <?php if ($value->status_aproval == '1'): ?>
+                  <span class="badge bg-success">Disetujui</span>
+                <?php elseif ($value->status_aproval == '2'): ?>
+                  <span class="badge bg-danger">Ditolak</span>
+                <?php else: ?>
+                  <span class="badge bg-warning">Menunggu Approval</span>
+                <?php endif; ?>
+              </td>
             </tr>
           <?php endforeach; ?>
         </tbody>

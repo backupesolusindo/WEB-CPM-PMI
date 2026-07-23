@@ -228,7 +228,7 @@
                                   : '<span class="badge bg-danger">Terlambat</span>';
                               }
                               ?></td>
-                          <td id="approval-<?php echo $value->idabsen_kegiatan; ?>">
+                          <td id="approval-<?php echo $value->idabsen_kegiatan; ?>" class="text-center">
                             <?php if ($value->status_aproval == 1): ?>
                               <span class="badge bg-success">Disetujui</span>
                               <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
@@ -236,15 +236,11 @@
                               <?php endif; ?>
                             <?php elseif ($value->status_aproval == 2): ?>
                               <span class="badge bg-danger">Ditolak</span>
-                              <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
-                                <button class="btn btn-success btn-sm btn-approval mt-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
-                              <?php endif; ?>
+                              <button class="btn btn-success btn-sm btn-approval mt-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
                             <?php else: ?>
-                              <span class="badge bg-warning">Menunggu</span>
-                              <?php if ($_SESSION['jabatan'] == "adminr" || $_SESSION['jabatan'] == "admin"): ?>
-                                <button class="btn btn-success btn-sm btn-approval mr-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
-                                <button class="btn btn-danger btn-sm btn-approval btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="2"><i class='fa fa-ban'></i></button>
-                              <?php endif; ?>
+                              <span class="badge bg-warning">Menunggu</span><br>
+                              <button class="btn btn-success btn-sm btn-approval mr-1 btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="1"><i class='fa fa-check'></i></button>
+                              <button class="btn btn-danger btn-sm btn-approval btn-rounded" data-id="<?php echo $value->idabsen_kegiatan; ?>" data-status="2"><i class='fa fa-ban'></i></button>
                             <?php endif; ?>
                           </td>
                         </tr>
