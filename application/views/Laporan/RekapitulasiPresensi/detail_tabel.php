@@ -3,7 +3,78 @@
     <?php foreach ($luar_jam as $value): ?>
       getMaps("luar_jam<?php echo $value->idpresensi_lokasi ?>", <?php echo $value->latitude ?>, <?php echo $value->longtitude ?>);
     <?php endforeach; ?>
+
+    // Initialize iCheck for checkboxes
+    if ($.fn.iCheck) {
+      $('.check').iCheck({
+        checkboxClass: 'icheckbox_flat-red'
+      });
+
+      // Event handler untuk check-all
+      $(document).on('ifChecked ifUnchecked', '#check-all', function(e) {
+        var checked = (e.type === 'ifChecked');
+        if ($.fn.iCheck) {
+          checked ?
+            $('.row-check').iCheck('check') :
+            $('.row-check').iCheck('uncheck');
+        }
+        updateSelectedCount();
+      });
+
+      // Event handler untuk row-check
+      $(document).on('ifChecked ifUnchecked', '.row-check', function() {
+        syncCheckAll();
+        updateSelectedCount();
+      });
+    }
+
+    // Fallback untuk browser tanpa iCheck
+    $(document).on('change', '#check-all', function() {
+      var checked = $(this).is(':checked');
+      $('.row-check').prop('checked', checked);
+      updateSelectedCount();
+    });
+
+    $(document).on('change', '.row-check', function() {
+      syncCheckAll();
+      updateSelectedCount();
+    });
+
+    // Initial count update
+    updateSelectedCount();
   });
+
+  function syncCheckAll() {
+    var total = $('.row-check').length;
+    var checked = $('.row-check:checked').length;
+    var isAll = total > 0 && checked === total;
+
+    if ($.fn.iCheck) {
+      if (isAll) {
+        $('#check-all').iCheck('check');
+      } else {
+        $('#check-all').iCheck('uncheck');
+      }
+    } else {
+      $('#check-all').prop('checked', isAll);
+    }
+  }
+
+  function updateSelectedCount() {
+    var count = $('.row-check:checked').length;
+    if (count > 0) {
+      $('#btn-approve-selected').prop('disabled', false).removeClass('disabled');
+      $('#btn-approve-all').prop('disabled', false).removeClass('disabled');
+    } else {
+      $('#btn-approve-selected').prop('disabled', true).addClass('disabled');
+      // Approve all tetap bisa diclick walau tidak ada yang dicheck
+      var totalAvailable = $('.row-check').length;
+      if (totalAvailable === 0) {
+        $('#btn-approve-all').prop('disabled', true).addClass('disabled');
+      }
+    }
+  }
+</script>
 </script>
 <div class="vtabs">
   <ul class="nav nav-tabs tabs-vertical" role="tablist">
@@ -42,11 +113,22 @@
   <div class="tab-content">
     <div class="tab-pane active" id="presensi" role="tabpanel">
       <div class="p-20">
+        <div class="mb-3">
+          <button type="button" id="btn-approve-selected" class="btn btn-success btn-sm" onclick="approveSelected()">
+            <i class="fas fa-check-double"></i> Approve Terpilih
+          </button>
+          <button type="button" id="btn-approve-all" class="btn btn-info btn-sm" onclick="approveAll()">
+            <i class="fas fa-check-circle"></i> Approve Semua
+          </button>
+        </div>
         <div class="table-responsive">
           <table class="display nowrap table table-hover table-striped table-bordered table-print">
             <thead>
               <tr>
-                <th class="text-center">#</th>
+                <th class="text-center" width="5%">
+                  <input type="checkbox" class="check" id="check-all" data-checkbox="icheckbox_flat-red">
+                  <label for="check-all">#</label>
+                </th>
                 <th>Tanggal</th>
                 <th>Presensi Datang</th>
                 <th>Istirahat</th>
@@ -154,7 +236,12 @@
                 }
               ?>
                 <tr class="<?php if (@$absenpulang['waktu'] == null || $validpresensi == 0) echo 'juicy-peach-gradient'; ?>">
-                  <td class="text-center"><?php echo $no++ ?></td>
+                  <td class="text-center">
+                    <?php if ($value->status_absensi != 1): ?>
+                      <input type="checkbox" class="check row-check" value="<?php echo $value->idabsensi; ?>" data-uuid="<?php echo $value->pegawai_uuid; ?>" data-checkbox="icheckbox_flat-red">
+                      <label for="row-check-<?php echo $value->idabsensi; ?>"><?php echo $no++ ?></label>
+                    <?php endif; ?>
+                  </td>
                   <td><?php echo date("d-m-Y", strtotime($value->waktu)) ?></td>
                   <td><?php echo date("H:i:s", strtotime($value->waktu)) ?></td>
                   <td><?php echo $jam_istirahat ?></td>
@@ -165,33 +252,32 @@
                       echo date("H:i:s", strtotime($absenpulang['waktu']));
                     } ?>
                   </td>
-                  <td><?php
-                      $jam_jadwal = strtotime($value->jam_jadwal);
-                      $masuk = strtotime(date("H:i:s", strtotime($value->waktu)));
-                      $diff = $masuk - $jam_jadwal;
+                  <td class="text-center"><?php
+                                          $jam_jadwal = strtotime($value->jam_jadwal);
+                                          $masuk = strtotime(date("H:i:s", strtotime($value->waktu)));
+                                          $diff = $masuk - $jam_jadwal;
 
-                      if ($diff <= 0) {
-                        echo '<span class="badge bg-success">Tepat Waktu</span>';
-                      } else {
-                        $toleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                        if ($diff <= $toleransi) {
-                          echo '<span class="badge bg-warning">Toleransi</span>';
-                        } else {
-                          echo '<span class="badge bg-danger">Terlambat</span>';
-                        }
-                      }
-                      ?>
+                                          if ($diff <= 0) {
+                                            echo '<span class="badge bg-success">Tepat Waktu</span>';
+                                          } else {
+                                            $toleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
+                                            if ($diff <= $toleransi) {
+                                              echo '<span class="badge bg-warning">Toleransi</span>';
+                                            } else {
+                                              echo '<span class="badge bg-danger">Terlambat</span>';
+                                            }
+                                          }
+                                          ?>
                   </td>
-                  <td>
+                  <td class="text-center">
                     <?php if ($value->status_absensi == 1): ?>
                       <span class='badge bg-info'>Sudah Di Setujui</span>
                       <?php if (!empty($value->keterangan_approval)): ?>
                         <div class="mt-1"><small class="text-muted"><i>Keterangan: <?php echo $value->keterangan_approval; ?></i></small></div>
                       <?php endif; ?>
                       <div class="mt-2">
-                        <button class="btn btn-sm btn-danger" onclick="showModalTolak(<?php echo $value->idabsensi; ?>, '<?php echo $value->pegawai_uuid; ?>')">
-                          <i class="fas fa-times"></i> Tolak
-                        </button>
+                        <button class="btn btn-sm btn-danger btn-rounded" onclick="showModalTolak(<?php echo $value->idabsensi; ?>, '<?php echo $value->pegawai_uuid; ?>')">
+                          <i class="fas fa-times"></i> Tolak</button>
                       </div>
                     <?php else: ?>
                       <?php if ($value->status_absensi == 2): ?>
@@ -203,14 +289,13 @@
                         <span class='badge bg-warning'>Belum Di Setujui</span>
                       <?php endif; ?>
                       <div class="mt-2">
-                        <button class="btn btn-sm btn-info" onclick="showModalApproval(<?php echo $value->idabsensi; ?>, '<?php echo $value->pegawai_uuid; ?>')">
-                          <i class="fas fa-check"></i> Approval
-                        </button>
+                        <button class="btn btn-sm btn-info btn-rounded" onclick="showModalApproval(<?php echo $value->idabsensi; ?>, '<?php echo $value->pegawai_uuid; ?>')">
+                          <i class="fas fa-check"></i> Approval</button>
                       </div>
                     <?php endif; ?>
                   </td>
                   <td class="text-center">
-                    <a href="<?php echo base_url() ?>Laporan/DetailLaporanPresensi/<?php echo $value->idabsensi; ?>" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Detail">
+                    <a href="<?php echo base_url() ?>Laporan/DetailLaporanPresensi/<?php echo $value->idabsensi; ?>" class="btn btn-sm btn-primary btn-rounded" data-toggle="tooltip" data-placement="top" title="Detail">
                       <i class="fas fa-info-circle"></i>
                     </a>
                   </td>
@@ -361,7 +446,117 @@
         </div>
       </div>
     </div>
+
+    <!-- Printable Area Kegiatan -->
+    <div class="printablekegiatan row" hidden>
+      <table class="col-12" border="0">
+        <tr>
+          <td align="center">
+            <h1>Laporan Kegiatan Pegawai</h1>
+          </td>
+        </tr>
+      </table>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>NIP</td>
+            <td>: <?php echo $pegawai['NIP'] ?></td>
+          </tr>
+          <tr>
+            <td>Email SSO</td>
+            <td>: <?php echo $pegawai['email'] ?></td>
+          </tr>
+          <tr>
+            <td>Nama Pegawai</td>
+            <td>: <?php echo $pegawai['nama_pegawai'] ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>Tanggal Mulai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_mulai)) ?></td>
+          </tr>
+          <tr>
+            <td>Tanggal Selesai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_akhir)) ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-12">
+        <br><br>
+        <table class="display nowrap table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Foto</th>
+              <th>Tanggal</th>
+              <th>Waktu</th>
+              <th>Status Tepat Waktu</th>
+              <th>Status Approval</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $no = 1;
+            foreach ($kegiatan as $value): ?>
+              <tr>
+                <td><?php echo $no++; ?></td>
+                <td> <img src="<?php echo base_url() . $value->foto ?>" width="80px"> </td>
+                <td><?php echo date("d-m-Y", strtotime($value->jam_presensi)) ?></td>
+                <td><?php echo date("H:i:s", strtotime($value->jam_presensi)); ?></td>
+                <td> <?php
+                      $jam_jadwal  = strtotime($value->jam_mulai);
+                      $masuk       = strtotime(date("H:i:s", strtotime($value->jam_presensi)));
+                      $diff  = $masuk - $jam_jadwal;
+                      if ($diff <= 0) {
+                        echo 'Tepat Waktu';
+                      } else {
+                        $toleransi = strtotime(date("H:i:s", strtotime("00:30:00"))) - strtotime(date("H:i:s", strtotime("00:00:00")));
+                        if ($diff <= $toleransi) {
+                          echo 'Toleransi';
+                        } else {
+                          echo 'Terlambat';
+                        }
+                      } ?> </td>
+                <td class="text-center">
+                  <?php if ($value->status_aproval == '1'): ?>
+                    Disetujui
+                  <?php elseif ($value->status_aproval == '2'): ?>
+                    Ditolak
+                  <?php else: ?>
+                    Menunggu Approval
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-8">
+
+      </div>
+      <div class="col-4 text-center">
+        <br><br>
+        <?php $ttd = $this->ModelPegawai->get_kepala_kepegawaian()->row_array(); ?>
+        Kepala SUB BAGIAN KEPEGAWAIAN DAN TATA LAKSANA
+        <br>
+        <br>
+        <br>
+        <br>
+        <?php echo $ttd['nama_pegawai'] ?>
+        <br>
+        <?php echo $ttd['NIP'] ?>
+      </div>
+    </div>
+
     <div class="tab-pane p-20" id="kegiatan" role="tabpanel">
+      <div class="mb-3">
+        <button type="button" id="print_kegiatan" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cetak Laporan">
+          <i class="fas fa-print"></i> Print
+        </button>
+      </div>
+
       <table class="display nowrap table table-hover table-striped table-bordered table-print">
         <thead>
           <tr>
@@ -410,6 +605,12 @@
       </table>
     </div>
     <div class="tab-pane p-20" id="cuti" role="tabpanel">
+      <div class="mb-3">
+        <button type="button" id="print_cuti" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cetak Laporan">
+          <i class="fas fa-print"></i> Print
+        </button>
+      </div>
+
       <table class="display nowrap table table-hover table-striped table-bordered table-print">
         <thead>
           <tr>
@@ -448,7 +649,101 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Printable Area Cuti -->
+    <div class="printablecuti row" hidden>
+      <table class="col-12" border="0">
+        <tr>
+          <td align="center">
+            <h1>Laporan Cuti/Perizinan Pegawai</h1>
+          </td>
+        </tr>
+      </table>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>NIP</td>
+            <td>: <?php echo $pegawai['NIP'] ?></td>
+          </tr>
+          <tr>
+            <td>Email SSO</td>
+            <td>: <?php echo $pegawai['email'] ?></td>
+          </tr>
+          <tr>
+            <td>Nama Pegawai</td>
+            <td>: <?php echo $pegawai['nama_pegawai'] ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>Tanggal Mulai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_mulai)) ?></td>
+          </tr>
+          <tr>
+            <td>Tanggal Selesai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_akhir)) ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-12">
+        <br><br>
+        <table class="display nowrap table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tanggal Mulai</th>
+              <th>Tanggal Akhir</th>
+              <th>Jenis Cuti</th>
+              <th>Alasan Cuti</th>
+              <th>Status Cuti</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $no = 1;
+            foreach ($cuti as $value): ?>
+              <tr>
+                <td><?php echo $no++; ?></td>
+                <td><?php echo date("d-m-Y", strtotime($value->tanggal_mulai)) ?></td>
+                <td><?php echo date("d-m-Y", strtotime($value->tanggal_akhir)) ?></td>
+                <td><?php echo $value->jenis_izin ?></td>
+                <td><?php echo $value->alasan ?></td>
+                <td> <?php if ($value->status == 1): ?>
+                    Disetujui
+                  <?php else: ?>
+                    Di Tolak
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-8">
+
+      </div>
+      <div class="col-4 text-center">
+        <br><br>
+        <?php $ttd = $this->ModelPegawai->get_kepala_kepegawaian()->row_array(); ?>
+        Kepala SUB BAGIAN KEPEGAWAIAN DAN TATA LAKSANA
+        <br>
+        <br>
+        <br>
+        <br>
+        <?php echo $ttd['nama_pegawai'] ?>
+        <br>
+        <?php echo $ttd['NIP'] ?>
+      </div>
+    </div>
+
     <div class="tab-pane p-20" id="lembur" role="tabpanel">
+      <div class="mb-3">
+        <button type="button" id="print_lembur" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cetak Laporan">
+          <i class="fas fa-print"></i> Print
+        </button>
+      </div>
+
       <div class="table-responsive">
         <table class="display nowrap table table-hover table-striped table-bordered table-print">
           <thead>
@@ -515,6 +810,125 @@
         </table>
       </div>
     </div>
+
+    <!-- Printable Area Lembur -->
+    <div class="printablelembur row" hidden>
+      <table class="col-12" border="0">
+        <tr>
+          <td align="center">
+            <h1>Laporan Lembur Pegawai</h1>
+          </td>
+        </tr>
+      </table>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>NIP</td>
+            <td>: <?php echo $pegawai['NIP'] ?></td>
+          </tr>
+          <tr>
+            <td>Email SSO</td>
+            <td>: <?php echo $pegawai['email'] ?></td>
+          </tr>
+          <tr>
+            <td>Nama Pegawai</td>
+            <td>: <?php echo $pegawai['nama_pegawai'] ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-6">
+        <table width="100%" border="0">
+          <tr>
+            <td>Tanggal Mulai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_mulai)) ?></td>
+          </tr>
+          <tr>
+            <td>Tanggal Selesai</td>
+            <td>: <?php echo date("d-m-Y", strtotime($tgl_akhir)) ?></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-12">
+        <br><br>
+        <table class="display nowrap table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Status Approval</th>
+              <th>Foto</th>
+              <th>Jam Mulai</th>
+              <th>Jam Selesai</th>
+              <th>Durasi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $no = 1;
+            $totalDurasi_print = 0;
+            foreach ($lembur as $value):
+              $durasiMenit_print = strtotime($value->jam_presensi_selesai) - strtotime($value->jam_presensi);
+              if ($value->status_aproval == '1') {
+                $totalDurasi_print = $totalDurasi_print + $durasiMenit_print;
+              }
+            ?>
+              <tr>
+                <td><?php echo $no++; ?></td>
+                <td class="text-center">
+                  <?php if ($value->status_aproval == '1'): ?>
+                    Disetujui
+                  <?php elseif ($value->status_aproval == '2'): ?>
+                    Ditolak
+                  <?php else: ?>
+                    Menunggu Approval
+                  <?php endif; ?>
+                </td>
+                <td class="text-center">
+                  <img src="<?php echo base_url() . $value->foto ?>" width="80px">
+                </td>
+                <td>
+                  <?php echo date("H:i:s", strtotime($value->jam_presensi)) ?><br>
+                  <small><?php echo date("d-m-Y", strtotime($value->jam_presensi)) ?></small>
+                </td>
+                <td>
+                  <?php echo date("H:i:s", strtotime($value->jam_presensi_selesai)) ?><br>
+                  <small><?php echo date("d-m-Y", strtotime($value->jam_presensi_selesai)) ?></small>
+                </td>
+                <td>
+                  <?php
+                  $jam_p = floor($durasiMenit_print / 60);
+                  $menit_p = $durasiMenit_print % 60;
+                  echo $jam_p . " Jam " . $menit_p . " Menit"; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+            <tr>
+              <td colspan="3" class="text-center"><strong>Total Lembur (Disetujui)</strong></td>
+              <td colspan="3" class="text-center">
+                <strong><?php
+                        $jam_total = floor($totalDurasi_print / 60);
+                        $menit_total = $totalDurasi_print % 60;
+                        echo $jam_total . " Jam " . $menit_total . " Menit"; ?></strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-8">
+
+      </div>
+      <div class="col-4 text-center">
+        <br><br>
+        <?php $ttd = $this->ModelPegawai->get_kepala_kepegawaian()->row_array(); ?>
+        Kepala SUB BAGIAN KEPEGAWAIAN DAN TATA LAKSANA
+        <br>
+        <br>
+        <br>
+        <br>
+        <?php echo $ttd['nama_pegawai'] ?>
+        <br>
+        <?php echo $ttd['NIP'] ?>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -522,7 +936,6 @@
   $(document).ready(function() {
     $('.table-print').DataTable({
       dom: 'Bfrtip',
-      buttons: ['excel'],
     });
 
     $("#print_luarjam").click(function() {
@@ -534,7 +947,134 @@
       };
       $("div.printableluarjam").printArea(options);
     });
+
+    $("#print_kegiatan").click(function() {
+      var mode = 'iframe';
+      var close = mode == "popup";
+      var options = {
+        mode: mode,
+        popClose: close
+      };
+      $("div.printablekegiatan").printArea(options);
+    });
+
+    $("#print_cuti").click(function() {
+      var mode = 'iframe';
+      var close = mode == "popup";
+      var options = {
+        mode: mode,
+        popClose: close
+      };
+      $("div.printablecuti").printArea(options);
+    });
+
+    $("#print_lembur").click(function() {
+      var mode = 'iframe';
+      var close = mode == "popup";
+      var options = {
+        mode: mode,
+        popClose: close
+      };
+      $("div.printablelembur").printArea(options);
+    });
   });
+
+  // Toggle Check All - sudah tidak diperlukan karena menggunakan iCheck
+  // function toggleCheckAll() sudah digantikan dengan event handler iCheck di atas
+
+  // Approve Selected
+  function approveSelected() {
+    var checkboxes = $('.row-check:checked');
+    if (checkboxes.length === 0) {
+      alert('Silahkan pilih data yang akan di-approve terlebih dahulu!');
+      return;
+    }
+
+    if (!confirm('Apakah Anda yakin ingin approve ' + checkboxes.length + ' data presensi yang dipilih?')) {
+      return;
+    }
+
+    var approvalData = [];
+    checkboxes.each(function() {
+      approvalData.push({
+        idabsensi: $(this).val(),
+        uuid: $(this).attr('data-uuid')
+      });
+    });
+
+    // Disable button
+    $('#btn-approve-selected').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Memproses...');
+
+    // Kirim data ke server
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>Absensi/approve_multiple",
+      data: {
+        data: JSON.stringify(approvalData)
+      },
+      success: function(response) {
+        var result = JSON.parse(response);
+        if (result.status == 200) {
+          alert('Berhasil approve ' + result.count + ' data presensi!');
+          location.reload();
+        } else {
+          alert('Gagal melakukan approval: ' + result.message);
+          $('#btn-approve-selected').prop('disabled', false).html('<i class="fas fa-check-double"></i> Approve Terpilih');
+        }
+      },
+      error: function(e) {
+        alert('Terjadi kesalahan saat melakukan approval');
+        $('#btn-approve-selected').prop('disabled', false).html('<i class="fas fa-check-double"></i> Approve Terpilih');
+      }
+    });
+  }
+
+  // Approve All
+  function approveAll() {
+    var checkboxes = $('.row-check');
+    if (checkboxes.length === 0) {
+      alert('Tidak ada data presensi yang perlu di-approve!');
+      return;
+    }
+
+    if (!confirm('Apakah Anda yakin ingin approve SEMUA (' + checkboxes.length + ') data presensi yang belum di-approve?')) {
+      return;
+    }
+
+    var approvalData = [];
+    checkboxes.each(function() {
+      approvalData.push({
+        idabsensi: $(this).val(),
+        uuid: $(this).attr('data-uuid')
+      });
+    });
+
+    // Disable button
+    $('#btn-approve-all').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Memproses...');
+
+    // Kirim data ke server
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>Absensi/approve_multiple",
+      data: {
+        data: JSON.stringify(approvalData)
+      },
+      success: function(response) {
+        var result = JSON.parse(response);
+        if (result.status == 200) {
+          alert('Berhasil approve semua (' + result.count + ') data presensi!');
+          location.reload();
+        } else {
+          alert('Gagal melakukan approval: ' + result.message);
+          $('#btn-approve-all').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Approve Semua');
+        }
+      },
+      error: function(e) {
+        alert('Terjadi kesalahan saat melakukan approval');
+        $('#btn-approve-all').prop('disabled', false).html('<i class="fas fa-check-circle"></i> Approve Semua');
+      }
+    });
+  }
 </script>
 
 <!-- Modal Approval -->

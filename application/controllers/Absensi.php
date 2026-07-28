@@ -259,6 +259,52 @@ class Absensi extends CI_Controller
     redirect(base_url() . 'Laporan/DetailRekap/' . $uuid);
   }
 
+  function approve_multiple()
+  {
+    $data_json = $this->input->post('data');
+    $data_array = json_decode($data_json, true);
+
+    if (empty($data_array)) {
+      echo json_encode(array('status' => 400, 'message' => 'Data tidak valid'));
+      return;
+    }
+
+    $success_count = 0;
+    $failed_count = 0;
+
+    foreach ($data_array as $item) {
+      $idabsensi = $item['idabsensi'];
+
+      $update_data = array(
+        'status_absensi' => 1,
+        'keterangan_approval' => 'Approved via multiple selection',
+        'tanggal_approval' => date('Y-m-d H:i:s'),
+        'approval_by' => $this->session->userdata('uuid')
+      );
+
+      $this->db->where("idabsensi", $idabsensi);
+      if ($this->db->update("absensi", $update_data)) {
+        $success_count++;
+      } else {
+        $failed_count++;
+      }
+    }
+
+    if ($success_count > 0) {
+      echo json_encode(array(
+        'status' => 200,
+        'message' => 'Berhasil approve ' . $success_count . ' data',
+        'count' => $success_count,
+        'failed' => $failed_count
+      ));
+    } else {
+      echo json_encode(array(
+        'status' => 500,
+        'message' => 'Gagal melakukan approval'
+      ));
+    }
+  }
+
   function ditolak_with_note()
   {
     $idabsensi = $this->input->post('idabsensi');

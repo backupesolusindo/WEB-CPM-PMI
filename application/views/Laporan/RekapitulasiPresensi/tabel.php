@@ -12,7 +12,9 @@
       <th>Cuti</th>
       <th>Tepat Waktu</th>
       <th>Terlambat / Pulang awal</th>
-      <th>Jumlah Presensi</th>
+      <th>Jml Presensi</th>
+      <th>Jml Pulang</th>
+      <th>Jml Libur</th>
       <th>Tidak Valid</th>
       <th>Total Jam</th>
       <th>Over Time</th>
@@ -26,6 +28,7 @@
       $total = 0;
       $wfh = 0;
       $wfo = 0;
+      $jml_pulang = 0;
       $terlambat = 0;
       $tepat = 0;
       $total_detik = 0; // Total waktu kerja dalam detik
@@ -35,6 +38,7 @@
       $pulang_awal = 0;
       $tidak_valid = 0;
 
+      $libur = $this->ModelLibur->getDataLiburPegawai($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows();
       foreach ($this->ModelLaporan->rekapPresensi($data->uuid, $tgl_mulai, $tgl_akhir)->result() as $value) {
         $s_terlambat = 0;
         $s_tepat = 0;
@@ -44,6 +48,9 @@
         $jadwal_masuk = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
 
         if (@$presensi_pulang['waktu'] != null && $value->status_absensi != 2) {
+          if (@$presensi_pulang['waktu'] != null) {
+            $jml_pulang += 1;
+          }
           // Cek apakah pegawai bekerja di hari libur/weekend
           $kerja_libur = false;
           if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
@@ -146,6 +153,8 @@
         <td><?php echo $tepat ?></td>
         <td><?php echo $terlambat + $pulang_awal ?></td>
         <td><?php echo $jumlah_presensi ?></td>
+        <td><?php echo $jml_pulang ?></td>
+        <td><?php echo $libur ?></td>
         <td><?php echo $tidak_valid ?></td>
         <td><?php echo $total_jam . " Jam " . $total_menit . " Menit"; ?></td>
         <td><?php

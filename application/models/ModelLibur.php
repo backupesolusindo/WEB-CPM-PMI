@@ -96,6 +96,14 @@ class ModelLibur extends CI_Model
     return $this->db->get('libur_pegawai');
   }
 
+  function getDataLiburPegawai($uuid, $tgl_mulai, $tgl_akhir)
+  {
+    $this->db->where('pegawai_uuid', $uuid);
+    $this->db->where('tanggal >=', $tgl_mulai);
+    $this->db->where('tanggal <=', $tgl_akhir);
+    return $this->db->get('libur_pegawai');
+  }
+
   /**
    * Insert libur pegawai
    */

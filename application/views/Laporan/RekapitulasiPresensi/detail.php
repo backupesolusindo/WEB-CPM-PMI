@@ -1,4 +1,3 @@
-
 <div class="row">
   <div class="col-12">
     <div class="card">
@@ -30,24 +29,26 @@
             </tr>
           </table>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
           <br>
           <label>Menurut Tanggal :</label>
           <div class="input-daterange input-group" id="date-range">
-                                                  <input type="text" class="form-control" name="start" id="start" value="<?php echo '01'.date("-m-Y")?>" readonly/>
-                                                  <div class="input-group-append">
-                                                      <span class="input-group-text bg-info b-0 text-white">S/D</span>
-                                                  </div>
-                                                  <input type="text" class="form-control" name="end" id="end" value="<?php echo date("d-m-Y") ?>" readonly/>
-                                              </div>
-                                              <input type="hidden" id="uuid" value="<?php echo $pegawai['uuid'] ?>">
-                                              <br>
-                                              <br>
+            <input type="text" class="form-control" name="start" id="start" value="<?php echo '01' . date("-m-Y") ?>" readonly />
+            <div class="input-group-append">
+              <span class="input-group-text bg-info b-0 text-white">S/D</span>
+            </div>
+            <input type="text" class="form-control" name="end" id="end" value="<?php echo date("d-m-Y") ?>" readonly />
+          </div>
+          <input type="hidden" id="uuid" value="<?php echo $pegawai['uuid'] ?>">
+          <br>
+          <br>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <br>
           <br>
-          <button type="button" class="btn btn-info btn-md" onclick="search()"> <i class="fa fa-search"></i> Cari</button>
+          <button type="button" class="btn btn-info btn-sm btn-rounded" onclick="search()"> <i class="fa fa-search"></i> Cari</button>
+          <a id="btn-export-excel" href="#" class="btn btn-success btn-sm btn-rounded" target="_blank"> <i class="fas fa-file-excel"></i> Excel</a>
+          <a id="btn-export-pdf" href="#" class="btn btn-danger btn-sm btn-rounded" target="_blank"> <i class="fas fa-file-pdf"></i> PDF</a>
         </div>
         <div class="col-12 hasilSearch">
 
@@ -60,38 +61,47 @@
 <script src="<?php echo base_url() ?>/desain/dist/js/pages/jquery.PrintArea.js" type="text/JavaScript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-  search();
-});
-function search() {
-  var start  = $('#start').val();
-  var end  = $('#end').val();
-  var uuid  = $('#uuid').val();
-  // alert(uuid);
-  $.ajax({
-         type: "POST",
-         url: "<?php echo base_url();?>Laporan/tabelDetailRekap",
-         data: {start: start, end:end, uuid:uuid},
-         success: function(data){
-                    $('.hasilSearch').html(data);
-                    // alert(data);  //as a debugging message.
-              },
-        error: function(e) {
-              alert(e);
-              },
-        });
+  $(document).ready(function() {
+    search();
+  });
 
-}
+  function search() {
+    var start = $('#start').val();
+    var end = $('#end').val();
+    var uuid = $('#uuid').val();
+
+    // Update URL tombol export
+    var baseUrl = "<?php echo base_url(); ?>";
+    $('#btn-export-excel').attr('href', baseUrl + 'Laporan/exportDetailRekapExcel?start=' + start + '&end=' + end + '&uuid=' + uuid);
+    $('#btn-export-pdf').attr('href', baseUrl + 'Laporan/exportDetailRekapPdf?start=' + start + '&end=' + end + '&uuid=' + uuid);
+
+    $.ajax({
+      type: "POST",
+      url: "<?php echo base_url(); ?>Laporan/tabelDetailRekap",
+      data: {
+        start: start,
+        end: end,
+        uuid: uuid
+      },
+      success: function(data) {
+        $('.hasilSearch').html(data);
+      },
+      error: function(e) {
+        alert(e);
+      },
+    });
+
+  }
 
 
 
-function getMaps(id,lat,lng) {
-  var map;
-  var marker;
-  var myLatlng = new google.maps.LatLng(lat,lng);
-  var geocoder = new google.maps.Geocoder();
-  var infowindow = new google.maps.InfoWindow();
-  var mapOptions = {
+  function getMaps(id, lat, lng) {
+    var map;
+    var marker;
+    var myLatlng = new google.maps.LatLng(lat, lng);
+    var geocoder = new google.maps.Geocoder();
+    var infowindow = new google.maps.InfoWindow();
+    var mapOptions = {
       zoom: 18,
       center: myLatlng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -105,19 +115,25 @@ function getMaps(id,lat,lng) {
       draggable: false
     });
 
-    geocoder.geocode({'latLng': myLatlng }, function(results, status) {
-      geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
+    geocoder.geocode({
+      'latLng': myLatlng
+    }, function(results, status) {
+      geocoder.geocode({
+        'latLng': marker.getPosition()
+      }, function(results, status) {
         $("#latitude").val(marker.getPosition().lat());
         $("#longitude").val(marker.getPosition().lng());
       });
     });
 
     google.maps.event.addListener(marker, 'dragend', function() {
-      geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
+      geocoder.geocode({
+        'latLng': marker.getPosition()
+      }, function(results, status) {
         $("#latitude").val(marker.getPosition().lat());
         $("#longitude").val(marker.getPosition().lng());
       });
     });
-}
-google.maps.event.addDomListener(window, 'load', initialize);
+  }
+  google.maps.event.addDomListener(window, 'load', initialize);
 </script>

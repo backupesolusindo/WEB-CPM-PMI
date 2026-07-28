@@ -518,6 +518,65 @@ class Laporan extends CI_Controller
     $this->load->view('Laporan/RekapitulasiPresensi/detail_tabel', $data);
   }
 
+  function exportDetailRekapPdf()
+  {
+    $tgl_mulai  = date("Y-m-d", strtotime($this->input->get("start")));
+    $tgl_akhir  = date("Y-m-d", strtotime($this->input->get("end")));
+    $uuid       = $this->input->get("uuid");
+
+    $this->load->model("ModelLembur");
+
+    $data = array(
+      'tgl_mulai'     => $tgl_mulai,
+      'tgl_akhir'     => $tgl_akhir,
+      'pegawai'       => $this->ModelPegawai->edit($uuid)->row_array(),
+      'presensi'      => $this->ModelRiwayat->RiwayatHarian($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'kegiatan'      => $this->ModelLaporan->rekapKegiatan($uuid, $tgl_mulai, $tgl_akhir)->result(),
+      'luar_jam'      => $this->ModelLaporan->rekapPresensiLuarJam($uuid, $tgl_mulai, $tgl_akhir)->result(),
+      'cuti'          => $this->ModelPerizinan->get_riwayat($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'lembur'        => $this->ModelLembur->riwayat_lembur($uuid, null, $tgl_mulai, $tgl_akhir)->result()
+    );
+
+    $this->load->view('Laporan/RekapitulasiPresensi/export_detail_pdf', $data);
+  }
+
+  function exportDetailRekapExcel()
+  {
+    $tgl_mulai  = date("Y-m-d", strtotime($this->input->get("start")));
+    $tgl_akhir  = date("Y-m-d", strtotime($this->input->get("end")));
+    $uuid       = $this->input->get("uuid");
+
+    $this->load->model("ModelLembur");
+
+    $pegawai = $this->ModelPegawai->edit($uuid)->row_array();
+
+    // Build filename
+    $nama_file = "Detail_Rekap_Presensi_" . str_replace(' ', '_', $pegawai['nama_pegawai'])
+      . "_" . date("dMY", strtotime($tgl_mulai))
+      . "_sd_" . date("dMY", strtotime($tgl_akhir));
+
+    // Prepare data
+    $data = array(
+      'tgl_mulai'     => $tgl_mulai,
+      'tgl_akhir'     => $tgl_akhir,
+      'pegawai'       => $pegawai,
+      'presensi'      => $this->ModelRiwayat->RiwayatHarian($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'kegiatan'      => $this->ModelLaporan->rekapKegiatan($uuid, $tgl_mulai, $tgl_akhir)->result(),
+      'luar_jam'      => $this->ModelLaporan->rekapPresensiLuarJam($uuid, $tgl_mulai, $tgl_akhir)->result(),
+      'cuti'          => $this->ModelPerizinan->get_riwayat($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'lembur'        => $this->ModelLembur->riwayat_lembur($uuid, null, $tgl_mulai, $tgl_akhir)->result(),
+      'nama_file'     => $nama_file
+    );
+
+    // Set headers SEBELUM output apapun
+    header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=\"{$nama_file}.xls\"");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    $this->load->view('Laporan/RekapitulasiPresensi/export_detail_excel', $data);
+  }
+
   function LaporanKejanggalanPresensi()
   {
     $data = array(
