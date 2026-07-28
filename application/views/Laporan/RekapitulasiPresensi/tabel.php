@@ -13,6 +13,7 @@
       <th>Tepat Waktu</th>
       <th>Terlambat / Pulang awal</th>
       <th>Jml Presensi</th>
+      <th>Jml Datang</th>
       <th>Jml Pulang</th>
       <th>Jml Libur</th>
       <th>Tidak Valid</th>
@@ -29,6 +30,7 @@
       $wfh = 0;
       $wfo = 0;
       $jml_pulang = 0;
+      $jml_datang = 0;
       $terlambat = 0;
       $tepat = 0;
       $total_detik = 0; // Total waktu kerja dalam detik
@@ -40,6 +42,7 @@
 
       $libur = $this->ModelLibur->getDataLiburPegawai($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows();
       foreach ($this->ModelLaporan->rekapPresensi($data->uuid, $tgl_mulai, $tgl_akhir)->result() as $value) {
+        $jml_datang += 1;
         $s_terlambat = 0;
         $s_tepat = 0;
         $hari = date("D", strtotime($value->waktu));
@@ -153,7 +156,8 @@
         <td><?php echo $tepat ?></td>
         <td><?php echo $terlambat + $pulang_awal ?></td>
         <td><?php echo $jumlah_presensi ?></td>
-        <td><?php echo $jml_pulang ?></td>
+        <td><?= $jml_datang ?></td>
+        <td><?= $jml_pulang ?></td>
         <td><?php echo $libur ?></td>
         <td><?php echo $tidak_valid ?></td>
         <td><?php echo $total_jam . " Jam " . $total_menit . " Menit"; ?></td>
