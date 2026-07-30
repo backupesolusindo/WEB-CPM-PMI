@@ -145,6 +145,8 @@
               $tidak_valid = 0;
               $pulang_awal = 0;
               $terlambat   = 0;
+              $tepat_waktu = 0;
+              $toleransi_count = 0;
               foreach ($presensi as $value):
                 $total_jam = 0;
                 $total_menit = 0;
@@ -170,6 +172,36 @@
                 if ($value->status_absensi == 1) {
                   $status_absensi = "<span class='badge bg-info'>Sudah Di Setujui</span>";
                 }
+                // Hitung status ketepatan datang 
+                $data_jadwal_rkp  = @$this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
+                $jam_jadwal_rkp   = strtotime($value->jam_jadwal);
+                $masuk_rkp        = strtotime(date("H:i:s", strtotime($value->waktu)));
+                $diff_rkp         = $masuk_rkp - $jam_jadwal_rkp;
+                $jam_toleransi_rkp = $value->jam_toleransi ?? null;
+                if ($jam_toleransi_rkp == null || $jam_toleransi_rkp == "") {
+                  $jam_toleransi_rkp = ($data_jadwal_rkp != null) ? @$data_jadwal_rkp['toleransi_kedatangan'] : null;
+                }
+                // status_ketepatan: 1=tepat waktu, 2=toleransi, 3=terlambat
+                $status_ketepatan = 0;
+                if ($diff_rkp <= 0) {
+                  $status_ketepatan = 1;
+                } elseif ($jam_toleransi_rkp != null && $jam_toleransi_rkp != "" && $masuk_rkp <= strtotime($jam_toleransi_rkp)) {
+                  $status_ketepatan = 2;
+                } else {
+                  $status_ketepatan = 3;
+                }
+
+                // Hitung ringkasan hanya untuk yang sudah disetujui
+                if ($value->status_absensi == 1) {
+                  if ($status_ketepatan == 1) {
+                    $tepat_waktu += 1;
+                  } elseif ($status_ketepatan == 2) {
+                    $toleransi_count += 1;
+                  } else {
+                    $terlambat += 1;
+                  }
+                }
+
                 if (@$absenpulang['waktu'] == null) {
                   $total_jam = 0;
                   $total_menit = 0;
@@ -190,30 +222,10 @@
                     $jam_pulang = date("Y-m-d H:i", strtotime('+1 days', strtotime($tgl_pulang)));
                   }
                   $j_awal  = date_create($jam_masuk);
-                  $j_akhir = date_create($jam_pulang); // waktu sekarang
+                  $j_akhir = date_create($jam_pulang);
                   $j_diff  = date_diff($j_awal, $j_akhir);
                   $j_totalkerja = date("H:i:s", strtotime($j_diff->h . ":" . $j_diff->i . ":00"));
 
-                  $jam_jadwal  = strtotime($value->jam_jadwal);
-                  $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                  $diff  = $masuk - $jam_jadwal;
-                  if ($diff <= 0) {
-                    // $tepat += 1;
-                    $s_tepat = 1;
-                  } else {
-                    $jam_toleransi = $value->jam_toleransi;
-                    if ($jam_toleransi == null || $jam_toleransi == "") {
-                      $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-                    }
-                    $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                    if ($diff <= $toleransi) {
-                      // $tepat += 1;
-                      $s_tepat = 1;
-                    } else {
-                      // $terlambat += 1;
-                      $s_terlambat = 1;
-                    }
-                  }
                   $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
                   $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
                   $pulang         = strtotime(date("H:i:s", strtotime($absenpulang['waktu'])));
@@ -221,17 +233,14 @@
 
                   if ($value->status_absensi == 2) {
                     $tidak_valid += 1;
-                  } else if ($s_tepat == 1 && $diff >= 0) {
+                  } else if ($status_ketepatan == 1 && $diff >= 0) {
                     $validpresensi = 1;
                     $total_valid += 1;
                   } else {
-                    if ($diff > 0 && $s_terlambat == 1) {
-                      $tidak_valid += 1;
-                    } else if ($s_terlambat == 1) {
-                      $terlambat += 1;
-                    } else if ($diff < 0) {
+                    if ($diff < 0) {
                       $pulang_awal += 1;
                     }
+                    $tidak_valid += 1;
                   }
                 }
               ?>
@@ -253,19 +262,24 @@
                     } ?>
                   </td>
                   <td class="text-center"><?php
+                                          $data_jadwal   = @$this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
                                           $jam_jadwal = strtotime($value->jam_jadwal);
                                           $masuk = strtotime(date("H:i:s", strtotime($value->waktu)));
                                           $diff = $masuk - $jam_jadwal;
-
+                                          $status_presensi = 1;
+                                          $jam_toleransi = $value->jam_toleransi ?? null;
+                                          if ($jam_toleransi == null || $jam_toleransi == "") {
+                                            $jam_toleransi = ($data_jadwal != null) ? @$data_jadwal['toleransi_kedatangan'] : null;
+                                          }
                                           if ($diff <= 0) {
                                             echo '<span class="badge bg-success">Tepat Waktu</span>';
+                                            // $status_presensi = 1;
+                                          } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
+                                            echo '<span class="badge bg-warning">Toleransi</span>';
+                                            // $status_presensi = 2;
                                           } else {
-                                            $toleransi = strtotime(date("H:i:s", strtotime($value->jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                                            if ($diff <= $toleransi) {
-                                              echo '<span class="badge bg-warning">Toleransi</span>';
-                                            } else {
-                                              echo '<span class="badge bg-danger">Terlambat</span>';
-                                            }
+                                            echo '<span class="badge bg-danger">Terlambat</span>';
+                                            // $status_presensi = 3;
                                           }
                                           ?>
                   </td>
@@ -310,15 +324,26 @@
               <tbody>
                 <tr>
                   <td width="70%">Presensi Valid</td>
-                  <td class="text-center"><strong><?= $total_valid ?></strong></td>
+                  <td class="text-center"><strong><?= $tepat_waktu ?></strong></td>
                 </tr>
                 <tr>
-                  <td>Terlambat / Pulang Awal</td>
-                  <td class="text-center"><strong><?= $terlambat + $pulang_awal ?></strong></td>
-                </tr>
-                <tr>
-                  <td>Tidak Valid</td>
+                  <td>Presensi Tidak Valid</td>
                   <td class="text-center"><strong><?= $tidak_valid ?></strong></td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="bg-light"><strong>Detail:</strong></td>
+                </tr>
+                <tr>
+                  <td class="pl-4">- Presensi Tepat Waktu</td>
+                  <td class="text-center"><strong><?= $tepat_waktu ?></strong></td>
+                </tr>
+                <tr>
+                  <td class="pl-4">- Presensi Toleransi</td>
+                  <td class="text-center"><strong><?= $toleransi_count ?></strong></td>
+                </tr>
+                <tr>
+                  <td class="pl-4">- Presensi Terlambat</td>
+                  <td class="text-center"><strong><?= $terlambat ?></strong></td>
                 </tr>
               </tbody>
             </table>

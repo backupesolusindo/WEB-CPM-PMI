@@ -36,86 +36,57 @@
         $hari = date("D", strtotime($value->waktu));
         $presensi_pulang = $this->ModelAbsensi->get_AbsensiPulang($value->idabsensi)->row_array();
         $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
+        $jadwal_masuk = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
+
+        // Hitung status ketepatan jam masuk (selalu dihitung, meski tidak absen pulang)
+        $jam_jadwal_rkp    = strtotime($value->jam_jadwal);
+        $masuk_rkp         = strtotime(date("H:i:s", strtotime($value->waktu)));
+        $diff_rkp          = $masuk_rkp - $jam_jadwal_rkp;
+        $jam_toleransi_rkp = $value->jam_toleransi;
+        if ($jam_toleransi_rkp == null || $jam_toleransi_rkp == "") {
+          $jam_toleransi_rkp = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+        }
+        if ($diff_rkp <= 0) {
+          $status_ketepatan = 1; // Tepat Waktu
+        } elseif ($jam_toleransi_rkp != null && $jam_toleransi_rkp != "" && $masuk_rkp <= strtotime($jam_toleransi_rkp)) {
+          $status_ketepatan = 2; // Toleransi
+        } else {
+          $status_ketepatan = 3; // Terlambat
+          $terlambat += 1;
+        }
 
         if (@$presensi_pulang['waktu'] != null) {
+          $kerja_libur = false;
           if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
             if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
-              if ($value->jenis_tempat == 1) {
-                $wfo += 1;
-              } elseif ($value->jenis_tempat == 2) {
-                $wfh += 1;
-              } elseif ($value->jenis_tempat == 3) {
-                $wfo += 1; // Mobile Unit dihitung sebagai hadir
-              }
-              $jam_jadwal  = strtotime($value->jam_jadwal);
-              $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-              $diff  = $masuk - $jam_jadwal;
-              if ($diff <= 0) {
-                // $tepat += 1;
-                $s_tepat = 1;
-              } else {
-                $jam_toleransi = $value->jam_toleransi;
-                if ($jam_toleransi == null || $jam_toleransi == "") {
-                  $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-                }
-                $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                if ($diff <= $toleransi) {
-                  // $tepat += 1;
-                  $s_tepat = 1;
-                } else {
-                  // $terlambat += 1;
-                  $s_terlambat = 1;
-                }
-              }
+              $kerja_libur = true;
             }
           } else {
+            $kerja_libur = true;
+          }
+
+          if ($kerja_libur) {
             if ($value->jenis_tempat == 1) {
               $wfo += 1;
             } elseif ($value->jenis_tempat == 2) {
               $wfh += 1;
             } elseif ($value->jenis_tempat == 3) {
-              $wfo += 1; // Mobile Unit dihitung sebagai hadir
+              $wfo += 1;
             }
-            $jam_jadwal  = strtotime($value->jam_jadwal);
-            $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-            $diff  = $masuk - $jam_jadwal;
-            if ($diff <= 0) {
-              // $tepat += 1;
-              $s_tepat = 1;
-            } else {
-              $jam_toleransi = $value->jam_toleransi;
-              if ($jam_toleransi == null || $jam_toleransi == "") {
-                $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-              }
-              $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-              if ($diff <= $toleransi) {
-                // $tepat += 1;
-                $s_tepat = 1;
-              } else {
-                // $terlambat += 1;
-                $s_terlambat = 1;
-              }
-            }
-          }
 
-          $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
-          if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
-            $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
-            $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
-            $diff           = $pulang - $jam_jadwal;
-            if ($s_tepat == 1 && $diff >= 0) {
+            // Cek pulang awal
+            $jam_jadwal_pulang = (!empty($jadwal_masuk) && isset($jadwal_masuk['jam_pulang'])) ? strtotime($jadwal_masuk['jam_pulang']) : 0;
+            $pulang_time = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
+            $diff_pulang = $pulang_time - $jam_jadwal_pulang;
+
+            if ($status_ketepatan == 1 && $diff_pulang >= 0) {
               $tepat += 1;
             } else {
-              if ($diff > 0 && $s_terlambat == 1) {
-                $tidak_valid += 1;
-              } else if ($s_terlambat == 1) {
-                $terlambat += 1;
-              } else if ($diff < 0) {
+              if ($diff_pulang < 0) {
                 $pulang_awal += 1;
               }
+              $tidak_valid += 1;
             }
-          } else {
-            $tidak_valid += 1;
           }
 
           $datang = date_create($value->waktu);
@@ -239,86 +210,57 @@
             $hari = date("D", strtotime($value->waktu));
             $presensi_pulang = $this->ModelAbsensi->get_AbsensiPulang($value->idabsensi)->row_array();
             $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
+            $jadwal_masuk = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
+
+            // Hitung status ketepatan jam masuk (selalu dihitung, meski tidak absen pulang)
+            $jam_jadwal_rkp    = strtotime($value->jam_jadwal);
+            $masuk_rkp         = strtotime(date("H:i:s", strtotime($value->waktu)));
+            $diff_rkp          = $masuk_rkp - $jam_jadwal_rkp;
+            $jam_toleransi_rkp = $value->jam_toleransi;
+            if ($jam_toleransi_rkp == null || $jam_toleransi_rkp == "") {
+              $jam_toleransi_rkp = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+            }
+            if ($diff_rkp <= 0) {
+              $status_ketepatan = 1; // Tepat Waktu
+            } elseif ($jam_toleransi_rkp != null && $jam_toleransi_rkp != "" && $masuk_rkp <= strtotime($jam_toleransi_rkp)) {
+              $status_ketepatan = 2; // Toleransi
+            } else {
+              $status_ketepatan = 3; // Terlambat
+              $terlambat += 1;
+            }
 
             if (@$presensi_pulang['waktu'] != null) {
+              $kerja_libur = false;
               if ($hari_libur > 0 || $hari == "Sat" || $hari == "Sun") {
                 if ($data->jab_struktur == "Anggota Satpam" || $data->jab_struktur == "Waker" || $data->jab_struktur == "Parkir") {
-                  if ($value->jenis_tempat == 1) {
-                    $wfo += 1;
-                  } elseif ($value->jenis_tempat == 2) {
-                    $wfh += 1;
-                  } elseif ($value->jenis_tempat == 3) {
-                    $wfo += 1; // Mobile Unit dihitung sebagai hadir
-                  }
-                  $jam_jadwal  = strtotime($value->jam_jadwal);
-                  $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                  $diff  = $masuk - $jam_jadwal;
-                  if ($diff <= 0) {
-                    // $tepat += 1;
-                    $s_tepat = 1;
-                  } else {
-                    $jam_toleransi = $value->jam_toleransi;
-                    if ($jam_toleransi == null || $jam_toleransi == "") {
-                      $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-                    }
-                    $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                    if ($diff <= $toleransi) {
-                      // $tepat += 1;
-                      $s_tepat = 1;
-                    } else {
-                      // $terlambat += 1;
-                      $s_terlambat = 1;
-                    }
-                  }
+                  $kerja_libur = true;
                 }
               } else {
+                $kerja_libur = true;
+              }
+
+              if ($kerja_libur) {
                 if ($value->jenis_tempat == 1) {
                   $wfo += 1;
                 } elseif ($value->jenis_tempat == 2) {
                   $wfh += 1;
                 } elseif ($value->jenis_tempat == 3) {
-                  $wfo += 1; // Mobile Unit dihitung sebagai hadir
+                  $wfo += 1;
                 }
-                $jam_jadwal  = strtotime($value->jam_jadwal);
-                $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                $diff  = $masuk - $jam_jadwal;
-                if ($diff <= 0) {
-                  // $tepat += 1;
-                  $s_tepat = 1;
-                } else {
-                  $jam_toleransi = $value->jam_toleransi;
-                  if ($jam_toleransi == null || $jam_toleransi == "") {
-                    $jam_toleransi = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array()['toleransi_kedatangan'];
-                  }
-                  $toleransi = strtotime(date("H:i:s", strtotime($jam_toleransi))) - strtotime(date("H:i:s", strtotime("00:00:00")));
-                  if ($diff <= $toleransi) {
-                    // $tepat += 1;
-                    $s_tepat = 1;
-                  } else {
-                    // $terlambat += 1;
-                    $s_terlambat = 1;
-                  }
-                }
-              }
 
-              $jam_toleransi  = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
-              if (!empty($jam_toleransi) && isset($jam_toleransi['jam_pulang'])) {
-                $jam_jadwal     = strtotime($jam_toleransi['jam_pulang']);
-                $pulang         = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
-                $diff           = $pulang - $jam_jadwal;
-                if ($s_tepat == 1) {
+                // Cek pulang awal
+                $jam_jadwal_pulang = (!empty($jadwal_masuk) && isset($jadwal_masuk['jam_pulang'])) ? strtotime($jadwal_masuk['jam_pulang']) : 0;
+                $pulang_time = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
+                $diff_pulang = $pulang_time - $jam_jadwal_pulang;
+
+                if ($status_ketepatan == 1 && $diff_pulang >= 0) {
                   $tepat += 1;
                 } else {
-                  if ($diff > 0 && $s_terlambat == 1) {
-                    $tidak_valid += 1;
-                  } else if ($s_terlambat == 1) {
-                    $terlambat += 1;
-                  } else if ($diff > 0) {
+                  if ($diff_pulang < 0) {
                     $pulang_awal += 1;
                   }
+                  $tidak_valid += 1;
                 }
-              } else {
-                $tidak_valid += 1;
               }
 
               $datang = date_create($value->waktu);

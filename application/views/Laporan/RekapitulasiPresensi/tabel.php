@@ -50,6 +50,23 @@
         $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
         $jadwal_masuk = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
 
+        // Hitung status ketepatan jam masuk (sama persis dengan logika badge di kolom tabel)
+        $jam_jadwal_rkp    = strtotime($value->jam_jadwal);
+        $masuk_rkp         = strtotime(date("H:i:s", strtotime($value->waktu)));
+        $diff_rkp          = $masuk_rkp - $jam_jadwal_rkp;
+        $jam_toleransi_rkp = $value->jam_toleransi;
+        if ($jam_toleransi_rkp == null || $jam_toleransi_rkp == "") {
+          $jam_toleransi_rkp = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+        }
+        if ($diff_rkp <= 0) {
+          $status_ketepatan = 1; // Tepat Waktu
+        } elseif ($jam_toleransi_rkp != null && $jam_toleransi_rkp != "" && $masuk_rkp <= strtotime($jam_toleransi_rkp)) {
+          $status_ketepatan = 2; // Toleransi
+        } else {
+          $status_ketepatan = 3; // Terlambat
+          $terlambat += 1;
+        }
+
         if (@$presensi_pulang['waktu'] != null && $value->status_absensi != 2) {
           if (@$presensi_pulang['waktu'] != null) {
             $jml_pulang += 1;
@@ -74,42 +91,18 @@
               $wfo += 1; // Mobile Unit dihitung sebagai hadir
             }
 
-            // Cek keterlambatan
-            $jam_jadwal  = strtotime($value->jam_jadwal);
-            $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-            $diff  = $masuk - $jam_jadwal;
-
-            $jam_toleransi = $value->jam_toleransi;
-            if ($jam_toleransi == null || $jam_toleransi == "") {
-              $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
-            }
-
-            if ($diff <= 0) {
-              // Masuk sebelum atau tepat jam jadwal
-              $s_tepat = 1;
-            } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
-              // Masuk setelah jam jadwal tapi masih dalam batas jam toleransi
-              $s_tepat = 1;
-            } else {
-              // Melebihi jam toleransi atau tidak ada toleransi
-              $s_terlambat = 1;
-            }
-
             // Cek pulang awal
             $jam_jadwal_pulang = ($jadwal_masuk != null && $jadwal_masuk['jam_pulang'] != null) ? strtotime($jadwal_masuk['jam_pulang']) : 0;
             $pulang = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
             $diff_pulang = $pulang - $jam_jadwal_pulang;
 
-            if ($s_tepat == 1 && $diff_pulang >= 0) {
+            if ($status_ketepatan == 1 && $diff_pulang >= 0) {
               $tepat += 1;
             } else {
-              if ($diff_pulang > 0 && $s_terlambat == 1) {
-                $tidak_valid += 1;
-              } else if ($s_terlambat == 1) {
-                $terlambat += 1;
-              } else if ($diff_pulang < 0) {
+              if ($diff_pulang < 0) {
                 $pulang_awal += 1;
               }
+              $tidak_valid += 1;
             }
 
             // Hitung total jam kerja aktual (masuk - pulang) dengan istirahat 1 jam
@@ -256,6 +249,23 @@
             $hari_libur = $this->ModelLibur->getDataLibur(date("d-m-Y", strtotime($value->waktu)))->num_rows();
             $jadwal_masuk = $this->ModelJadwalMasuk->get_edit($value->idjadwal)->row_array();
 
+            // Hitung status ketepatan jam masuk (sama persis dengan logika badge di kolom tabel)
+            $jam_jadwal_rkp    = strtotime($value->jam_jadwal);
+            $masuk_rkp         = strtotime(date("H:i:s", strtotime($value->waktu)));
+            $diff_rkp          = $masuk_rkp - $jam_jadwal_rkp;
+            $jam_toleransi_rkp = $value->jam_toleransi;
+            if ($jam_toleransi_rkp == null || $jam_toleransi_rkp == "") {
+              $jam_toleransi_rkp = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
+            }
+            if ($diff_rkp <= 0) {
+              $status_ketepatan = 1; // Tepat Waktu
+            } elseif ($jam_toleransi_rkp != null && $jam_toleransi_rkp != "" && $masuk_rkp <= strtotime($jam_toleransi_rkp)) {
+              $status_ketepatan = 2; // Toleransi
+            } else {
+              $status_ketepatan = 3; // Terlambat
+              $terlambat += 1;
+            }
+
             if (@$presensi_pulang['waktu'] != null) {
               // Cek apakah pegawai bekerja di hari libur/weekend
               $kerja_libur = false;
@@ -277,42 +287,18 @@
                   $wfo += 1; // Mobile Unit dihitung sebagai hadir
                 }
 
-                // Cek keterlambatan
-                $jam_jadwal  = strtotime($value->jam_jadwal);
-                $masuk       = strtotime(date("H:i:s", strtotime($value->waktu)));
-                $diff  = $masuk - $jam_jadwal;
-
-                $jam_toleransi = $value->jam_toleransi;
-                if ($jam_toleransi == null || $jam_toleransi == "") {
-                  $jam_toleransi = ($jadwal_masuk != null) ? $jadwal_masuk['toleransi_kedatangan'] : null;
-                }
-
-                if ($diff <= 0) {
-                  // Masuk sebelum atau tepat jam jadwal
-                  $s_tepat = 1;
-                } elseif ($jam_toleransi != null && $jam_toleransi != "" && $masuk <= strtotime($jam_toleransi)) {
-                  // Masuk setelah jam jadwal tapi masih dalam batas jam toleransi
-                  $s_tepat = 1;
-                } else {
-                  // Melebihi jam toleransi atau tidak ada toleransi
-                  $s_terlambat = 1;
-                }
-
                 // Cek pulang awal
                 $jam_jadwal_pulang = strtotime($jadwal_masuk['jam_pulang']);
                 $pulang = strtotime(date("H:i:s", strtotime($presensi_pulang['waktu'])));
                 $diff_pulang = $pulang - $jam_jadwal_pulang;
 
-                if ($s_tepat == 1 && $diff_pulang >= 0) {
+                if ($status_ketepatan == 1 && $diff_pulang >= 0) {
                   $tepat += 1;
                 } else {
-                  if ($diff_pulang > 0 && $s_terlambat == 1) {
-                    $tidak_valid += 1;
-                  } else if ($s_terlambat == 1) {
-                    $terlambat += 1;
-                  } else if ($diff_pulang < 0) {
+                  if ($diff_pulang < 0) {
                     $pulang_awal += 1;
                   }
+                  $tidak_valid += 1;
                 }
 
                 // Hitung total jam kerja aktual dengan istirahat 1 jam
