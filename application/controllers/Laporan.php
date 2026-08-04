@@ -367,6 +367,30 @@ class Laporan extends CI_Controller
     $this->load->view('Laporan/RekapitulasiPresensi/tabel', $data);
   }
 
+  function exportRekapitulasiPresensiPdf()
+  {
+    // start & end dikirim dalam format Y-m-d dari tabel.php
+    $tgl_mulai    = $this->input->get("start");
+    $tgl_akhir    = $this->input->get("end");
+    $unit         = $this->input->get("unit");
+    $sub_unit     = $this->input->get("sub_unit");
+    $tipe_pegawai = $this->input->get("tipe_pegawai");
+    $jabatan      = $this->input->get("jabatan");
+
+    // Query pegawai sebelum mengubah $unit (sama persis dengan tabelRekapitulasiPresensi)
+    $pegawai = $this->ModelPegawai->get_UnitPegawai($unit, $sub_unit, $tipe_pegawai, $jabatan);
+
+    $unit_label = ($unit == "" || $unit == null) ? "Semua Unit" : $unit;
+
+    $data = array(
+      'unit'      => $unit_label,
+      'pegawai'   => $pegawai,
+      'tgl_mulai' => $tgl_mulai,
+      'tgl_akhir' => $tgl_akhir,
+    );
+    $this->load->view('Laporan/RekapitulasiPresensi/export_pdf', $data);
+  }
+
   function TotalPresensi()
   {
     $data = array(
