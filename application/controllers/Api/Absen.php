@@ -117,8 +117,24 @@ class Absen extends CI_Controller
               $boleh_presensis = 0;
               $pesan_presensi = "Maaf, presensi masuk hanya diizinkan di lokasi: " . implode(', ', $nama_lokasi_valid);
             }
+          } elseif (!empty($idkampus)) {
+            // Jadwal tidak punya lokasi spesifik, tapi pegawai memilih kampus —
+            // validasi radius terhadap kampus yang dipilih
+            $kmp = $this->ModelKampus->get_edit($idkampus)->row_array();
+            if (!empty($kmp)) {
+              $jarak = $this->ModelAbsensi->getDistanceBetweenPoints(
+                $lat,
+                $long,
+                $kmp['latitude'],
+                $kmp['longtitude']
+              );
+              if ($jarak > $kmp['radius']) {
+                $boleh_presensis = 0;
+                $pesan_presensi = "Maaf, Anda berada di luar radius lokasi " . $kmp['nama_kampus'];
+              }
+            }
           }
-          // Jika kosong = tidak ada pembatasan lokasi, semua lokasi diizinkan
+          // Jika kosong dan tidak ada idkampus = tidak ada pembatasan lokasi, semua lokasi diizinkan
         }
       }
     }
@@ -263,6 +279,7 @@ class Absen extends CI_Controller
     $data_jadwal = $this->ModelJadwalMasuk->get_edit($data_absen['idjadwal'])->row_array();
     $lat = $this->input->post("lat");
     $long = $this->input->post("long");
+    $idkampus = $this->input->post("idkampus");
     $jam_jadwal = date("H:i:s", strtotime($data_jadwal["jam_pulang"]));
     $masuk = date("H:i:s");
     $diff = strtotime($masuk) - strtotime($jam_jadwal);
@@ -295,8 +312,24 @@ class Absen extends CI_Controller
           $boleh_absen = false;
           $message = "Maaf, presensi pulang hanya diizinkan di lokasi: " . implode(', ', $nama_lokasi_valid);
         }
+      } elseif (!empty($idkampus)) {
+        // Jadwal tidak punya lokasi spesifik, tapi pegawai memilih kampus —
+        // validasi radius terhadap kampus yang dipilih
+        $kmp = $this->ModelKampus->get_edit($idkampus)->row_array();
+        if (!empty($kmp)) {
+          $jarak = $this->ModelAbsensi->getDistanceBetweenPoints(
+            $lat,
+            $long,
+            $kmp['latitude'],
+            $kmp['longtitude']
+          );
+          if ($jarak > $kmp['radius']) {
+            $boleh_absen = false;
+            $message = "Maaf, Anda berada di luar radius lokasi " . $kmp['nama_kampus'];
+          }
+        }
       }
-      // Jika kosong = tidak ada pembatasan lokasi, semua lokasi diizinkan
+      // Jika kosong dan tidak ada idkampus = tidak ada pembatasan lokasi, semua lokasi diizinkan
     }
     // if ($diff < 7200) {
     if ($boleh_absen) {
