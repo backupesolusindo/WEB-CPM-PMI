@@ -92,6 +92,34 @@ class Absen extends CI_Controller
         } else {
           $boleh_presensis = 1;
         }
+
+        // Cek validasi lokasi terhadap kampus yang terdaftar di jadwal
+        if ($boleh_presensis == 1 && !empty($idjadwal)) {
+          $kampus_jadwal = $this->ModelJadwalMasuk->get_kampus_detail_by_jadwal($idjadwal);
+          if (!empty($kampus_jadwal)) {
+            // Jadwal punya lokasi spesifik — pegawai harus berada dalam radius salah satu kampus
+            $dalam_radius = false;
+            $nama_lokasi_valid = array();
+            foreach ($kampus_jadwal as $kmp) {
+              $jarak = $this->ModelAbsensi->getDistanceBetweenPoints(
+                $lat,
+                $long,
+                $kmp['latitude'],
+                $kmp['longtitude']
+              );
+              $nama_lokasi_valid[] = $kmp['nama_kampus'];
+              if ($jarak <= $kmp['radius']) {
+                $dalam_radius = true;
+                break;
+              }
+            }
+            if (!$dalam_radius) {
+              $boleh_presensis = 0;
+              $pesan_presensi = "Maaf, presensi masuk hanya diizinkan di lokasi: " . implode(', ', $nama_lokasi_valid);
+            }
+          }
+          // Jika kosong = tidak ada pembatasan lokasi, semua lokasi diizinkan
+        }
       }
     }
 
@@ -242,13 +270,33 @@ class Absen extends CI_Controller
     $message = "Waktu Presensi Anda Melewati Batas";
     $boleh_absen = true;
 
-    if (@$data_absen['jab_struktur'] == "MBC") { #Status 4 untuk WFH
-      $kampus = $this->ModelKampus->get_edit("1")->row_array();
-      $jarak = $this->ModelAbsensi->getDistanceBetweenPoints($lat, $long, $kampus['latitude'], $kampus['longtitude']);
-      if ($jarak < $kampus['radius']) {
-        $boleh_absen = false;
-        $message = "Maaf Tidak boleh Presensi Pulang di Pusat";
+    // Cek validasi lokasi terhadap kampus yang terdaftar di jadwal
+    $idjadwal = $data_absen['idjadwal'];
+    if (!empty($idjadwal)) {
+      $kampus_jadwal = $this->ModelJadwalMasuk->get_kampus_detail_by_jadwal($idjadwal);
+      if (!empty($kampus_jadwal)) {
+        // Jadwal punya lokasi spesifik — pegawai harus berada dalam radius salah satu kampus
+        $dalam_radius = false;
+        $nama_lokasi_valid = array();
+        foreach ($kampus_jadwal as $kmp) {
+          $jarak = $this->ModelAbsensi->getDistanceBetweenPoints(
+            $lat,
+            $long,
+            $kmp['latitude'],
+            $kmp['longtitude']
+          );
+          $nama_lokasi_valid[] = $kmp['nama_kampus'];
+          if ($jarak <= $kmp['radius']) {
+            $dalam_radius = true;
+            break;
+          }
+        }
+        if (!$dalam_radius) {
+          $boleh_absen = false;
+          $message = "Maaf, presensi pulang hanya diizinkan di lokasi: " . implode(', ', $nama_lokasi_valid);
+        }
       }
+      // Jika kosong = tidak ada pembatasan lokasi, semua lokasi diizinkan
     }
     // if ($diff < 7200) {
     if ($boleh_absen) {

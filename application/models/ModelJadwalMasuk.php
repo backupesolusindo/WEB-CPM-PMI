@@ -136,6 +136,57 @@ class ModelJadwalMasuk extends CI_Model
   }
 
   /**
+   * Ambil ID kampus yang sudah di-assign ke jadwal tertentu
+   * Return: array of idkampus
+   */
+  public function get_kampus_by_jadwal($idjadwal_masuk)
+  {
+    $this->db->select("idkampus");
+    $this->db->where("idjadwal_masuk", $idjadwal_masuk);
+    $rows = $this->db->get("jadwal_masuk_kampus")->result_array();
+    return array_column($rows, 'idkampus');
+  }
+
+  /**
+   * Simpan relasi jadwal <-> kampus (bulk insert)
+   * $kampus_ids: array of idkampus — kosong berarti berlaku untuk semua kampus
+   */
+  public function save_jadwal_kampus($idjadwal_masuk, array $kampus_ids)
+  {
+    // Hapus relasi lama dulu
+    $this->db->where("idjadwal_masuk", $idjadwal_masuk);
+    $this->db->delete("jadwal_masuk_kampus");
+
+    if (empty($kampus_ids)) {
+      return true; // tidak ada kampus spesifik = berlaku untuk semua kampus
+    }
+
+    $insert_data = array();
+    foreach ($kampus_ids as $idkampus) {
+      if (!empty($idkampus)) {
+        $insert_data[] = array(
+          'idjadwal_masuk' => $idjadwal_masuk,
+          'idkampus'       => $idkampus,
+        );
+      }
+    }
+
+    if (!empty($insert_data)) {
+      return $this->db->insert_batch("jadwal_masuk_kampus", $insert_data);
+    }
+    return true;
+  }
+
+  /**
+   * Hapus semua relasi kampus untuk jadwal tertentu
+   */
+  public function delete_jadwal_kampus($idjadwal_masuk)
+  {
+    $this->db->where("idjadwal_masuk", $idjadwal_masuk);
+    return $this->db->delete("jadwal_masuk_kampus");
+  }
+
+  /**
    * Mapping nilai jenis ke label nama
    */
   public static function nama_jenis($jenis)

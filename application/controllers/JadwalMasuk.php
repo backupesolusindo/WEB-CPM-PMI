@@ -9,6 +9,7 @@ class JadwalMasuk extends CI_Controller
     parent::__construct();
     $this->load->model("ModelJadwalMasuk");
     $this->load->model("ModelJabatan");
+    $this->load->model("ModelKampus");
   }
 
   function index()
@@ -33,12 +34,14 @@ class JadwalMasuk extends CI_Controller
   function input()
   {
     $data = array(
-      'title'        => 'FORM INPUT JADWAL MASUK',
-      'form'         => 'JadwalMasuk/form',
-      'body'         => 'JadwalMasuk/input',
-      'jabatan'      => $this->ModelJabatan->get_jabatan_aktif()->result(),
-      'pegawai_list' => array(),
+      'title'            => 'FORM INPUT JADWAL MASUK',
+      'form'             => 'JadwalMasuk/form',
+      'body'             => 'JadwalMasuk/input',
+      'jabatan'          => $this->ModelJabatan->get_jabatan_aktif()->result(),
+      'pegawai_list'     => array(),
       'selected_pegawai' => array(),
+      'kampus_list'      => $this->ModelKampus->get_kampus_aktif()->result(),
+      'selected_kampus'  => array(),
     );
     $this->load->view('index', $data);
   }
@@ -71,6 +74,13 @@ class JadwalMasuk extends CI_Controller
         $pegawai_uuids = array($pegawai_uuids);
       }
       $this->ModelJadwalMasuk->save_jadwal_pegawai($idjadwal_masuk, $pegawai_uuids);
+
+      // Simpan relasi kampus (bisa lebih dari satu, kosong = semua kampus)
+      $kampus_ids = $this->input->post("kampus_id") ?: array();
+      if (!is_array($kampus_ids)) {
+        $kampus_ids = array($kampus_ids);
+      }
+      $this->ModelJadwalMasuk->save_jadwal_kampus($idjadwal_masuk, $kampus_ids);
 
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Berhasil Tambah Data Jadwal Masuk"));
     } else {
@@ -107,6 +117,9 @@ class JadwalMasuk extends CI_Controller
     // UUID pegawai yang sudah di-assign ke jadwal ini
     $selected_pegawai = $this->ModelJadwalMasuk->get_pegawai_by_jadwal($idjadwal_masuk);
 
+    // ID kampus yang sudah di-assign ke jadwal ini
+    $selected_kampus = $this->ModelJadwalMasuk->get_kampus_by_jadwal($idjadwal_masuk);
+
     $data = array(
       'title'            => 'FORM EDIT JADWAL MASUK',
       'form'             => 'JadwalMasuk/form',
@@ -115,6 +128,8 @@ class JadwalMasuk extends CI_Controller
       'jabatan'          => $this->ModelJabatan->get_jabatan_aktif()->result(),
       'pegawai_list'     => $pegawai_list,
       'selected_pegawai' => $selected_pegawai,
+      'kampus_list'      => $this->ModelKampus->get_kampus_aktif()->result(),
+      'selected_kampus'  => $selected_kampus,
     );
     $this->load->view('index', $data);
   }
@@ -149,6 +164,13 @@ class JadwalMasuk extends CI_Controller
       }
       $this->ModelJadwalMasuk->save_jadwal_pegawai($idjadwal_masuk, $pegawai_uuids);
 
+      // Update relasi kampus
+      $kampus_ids = $this->input->post("kampus_id") ?: array();
+      if (!is_array($kampus_ids)) {
+        $kampus_ids = array($kampus_ids);
+      }
+      $this->ModelJadwalMasuk->save_jadwal_kampus($idjadwal_masuk, $kampus_ids);
+
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Berhasil Merubah Data Jadwal Masuk"));
     } else {
       $this->session->set_flashdata('notifJS', $this->core->NotifError("Gagal Mohon Untuk Melakukan Merubah Data Ulang"));
@@ -158,8 +180,9 @@ class JadwalMasuk extends CI_Controller
 
   function hapus($idjadwal_masuk)
   {
-    // Hapus relasi pegawai dulu (FK)
+    // Hapus relasi pegawai dan kampus dulu (FK)
     $this->ModelJadwalMasuk->delete_jadwal_pegawai($idjadwal_masuk);
+    $this->ModelJadwalMasuk->delete_jadwal_kampus($idjadwal_masuk);
 
     $this->db->where("idjadwal_masuk", $idjadwal_masuk);
     if ($this->db->delete('jadwal_masuk')) {

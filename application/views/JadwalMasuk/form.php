@@ -15,31 +15,51 @@
       <?php endforeach; ?>
     </select>
     <br>
+    <br>
   </div>
 
-  <!-- Multi-select Pegawai Spesifik (opsional) -->
-  <div class="col-12" id="wrap_pegawai_spesifik">
+  <!-- Multi-select Kampus -->
+  <div class="col-12">
     <div class="form-group">
-      <label>
-        Pegawai Spesifik :
-        <small class="text-muted">
-          (opsional — kosongkan jika jadwal berlaku untuk semua pegawai jabatan ini)
-        </small>
-      </label>
-      <select name="pegawai_uuid[]" id="select_pegawai" class="form-control select2 col-md-12" multiple>
-        <?php if (!empty($pegawai_list)): ?>
-          <?php foreach ($pegawai_list as $peg): ?>
-            <option value="<?php echo $peg->uuid; ?>"
-              <?php if (in_array($peg->uuid, (array)@$selected_pegawai)): ?>selected<?php endif; ?>>
-              <?php echo $peg->nama_pegawai; ?>
+      <label>Lokasi Kantor :</label>
+      <select name="kampus_id[]" id="select_kampus" class="form-control select2 col-md-12" multiple>
+        <?php if (!empty($kampus_list)): ?>
+          <?php foreach ($kampus_list as $kmp): ?>
+            <option value="<?php echo $kmp->idkampus; ?>"
+              <?php if (in_array($kmp->idkampus, (array)@$selected_kampus)): ?>selected<?php endif; ?>>
+              <?php echo $kmp->nama_kampus; ?>
             </option>
           <?php endforeach; ?>
         <?php endif; ?>
       </select>
       <small class="text-muted">
-        Pilih satu atau lebih pegawai. Jika tidak dipilih, jadwal berlaku untuk seluruh pegawai jabatan ini.
+        Pilih satu atau lebih lokasi kantor. Jika tidak dipilih, jadwal berlaku untuk semua lokasi kantor.
       </small>
     </div>
+  </div>
+
+  <!-- Multi-select Pegawai Spesifik (opsional) -->
+  <div class="col-12" id="wrap_pegawai_spesifik">
+    <label>
+      Pegawai Spesifik :
+      <small class="text-muted">
+        (opsional — kosongkan jika jadwal berlaku untuk semua pegawai jabatan ini)
+      </small>
+    </label>
+    <select name="pegawai_uuid[]" id="select_pegawai" class="form-control select2 col-md-12" multiple>
+      <?php if (!empty($pegawai_list)): ?>
+        <?php foreach ($pegawai_list as $peg): ?>
+          <option value="<?php echo $peg->uuid; ?>"
+            <?php if (in_array($peg->uuid, (array)@$selected_pegawai)): ?>selected<?php endif; ?>>
+            <?php echo $peg->nama_pegawai; ?>
+          </option>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </select>
+    <small class="text-muted">
+      Pilih satu atau lebih pegawai. Jika tidak dipilih, jadwal berlaku untuk seluruh pegawai jabatan ini.
+    </small>
+    <br>
     <br>
   </div>
 
@@ -168,6 +188,12 @@
   }
 
   $(document).ready(function() {
+    // Inisialisasi select2 multi untuk kampus
+    $('#select_kampus').select2({
+      placeholder: "-- Semua Lokasi Kantor --",
+      allowClear: true
+    });
+
     // Inisialisasi select2 multi untuk pegawai
     $('#select_pegawai').select2({
       placeholder: "-- Pilih Pegawai (opsional) --",
