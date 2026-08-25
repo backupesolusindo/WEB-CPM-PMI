@@ -76,23 +76,32 @@
 <table class="rekap">
   <thead>
     <tr>
-      <th>NO</th>
-      <th>NIP</th>
-      <th>Nama</th>
-      <th>Jabatan</th>
-      <th>Kegiatan</th>
-      <th>Cuti</th>
-      <th>Jml Presensi</th>
-      <th>Tepat Waktu</th>
+      <th rowspan="2">NO</th>
+      <th rowspan="2">NIP</th>
+      <th rowspan="2">Nama</th>
+      <th rowspan="2">Jabatan</th>
+      <th rowspan="2">Kegiatan</th>
+      <th rowspan="2">Cuti</th>
+      <th colspan="3">Kehadiran</th>
+      <th colspan="4">Ketepatan</th>
+      <th colspan="5">Akumulasi</th>
+      <th colspan="2">Waktu Kerja</th>
+    </tr>
+    <tr>
+      <th>Target</th>
+      <th>Hadir</th>
+      <th>% Masuk</th>
+      <th>Tepat</th>
       <th>Toleransi</th>
-      <th>Terlambat</th>
-      <th>Pulang Awal</th>
-      <th>Jml Datang</th>
-      <th>Jml Pulang</th>
-      <th>Jml Libur</th>
-      <th>Tidak Valid</th>
+      <th>Telat</th>
+      <th>% Telat</th>
+      <th>Plg Awal</th>
+      <th>Datang</th>
+      <th>Pulang</th>
+      <th>Libur</th>
+      <th>Tdk Valid</th>
       <th>Total Jam</th>
-      <th>Over Time</th>
+      <th>Lembur</th>
     </tr>
   </thead>
   <tbody>
@@ -127,11 +136,12 @@
           $status_ketepatan = 3;
         }
 
-        // Tepat waktu, toleransi, terlambat — hanya status_absensi == 1
-        if ($value->status_absensi == 1) {
-          if ($status_ketepatan == 1)      $tepat += 1;
-          elseif ($status_ketepatan == 2)  $toleransi += 1;
-          else                             $terlambat += 1;
+        if ($status_ketepatan == 1) {
+          $tepat += 1;
+        } elseif ($status_ketepatan == 2) {
+          $toleransi += 1;
+        } else {
+          $terlambat += 1;
         }
 
         if (@$presensi_pulang['waktu'] != null && $value->status_absensi != 2) {
@@ -180,6 +190,30 @@
       $jam_over    = floor($overtime_detik / 3600);
       $menit_over  = floor(($overtime_detik % 3600) / 60);
       $jml_presensi = $tepat + $toleransi + $terlambat;
+
+      // Hitung Target Masuk Bulanan dari target_presensi
+      $target_masuk = 0;
+      $target_cache = [];
+      $curr_target  = strtotime(date('Y-m-01', strtotime($tgl_mulai)));
+      $last_target  = strtotime(date('Y-m-01', strtotime($tgl_akhir)));
+      while ($curr_target <= $last_target) {
+        $thn = date('Y', $curr_target);
+        $bln = (int)date('n', $curr_target);
+        if (!isset($target_cache[$thn])) {
+          $target_cache[$thn] = $this->ModelTargetPresensi->get_by_pegawai_tahun($data->uuid, $thn);
+        }
+        if (!empty($target_cache[$thn])) {
+          $key = 'bulan_' . $bln;
+          $target_masuk += isset($target_cache[$thn][$key]) ? (int)$target_cache[$thn][$key] : 0;
+        }
+        $curr_target = strtotime('+1 month', $curr_target);
+      }
+
+      // Persentase Total Masuk dari Target Masuk Bulanan
+      $persen_masuk = ($target_masuk > 0) ? round(($jml_presensi / $target_masuk) * 100, 2) . '%' : '-';
+
+      // Persentase Keterlambatan dari Total Masuk
+      $persen_terlambat = ($jml_presensi > 0) ? round(($terlambat / $jml_presensi) * 100, 2) . '%' : '0%';
     ?>
     <tr>
       <td><?php echo $no++ ?></td>
@@ -188,10 +222,13 @@
       <td class="text-left"><?php echo $data->namajabatan ?></td>
       <td><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
       <td><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
+      <td><?php echo $target_masuk > 0 ? $target_masuk : '-' ?></td>
       <td><?php echo $jml_presensi ?></td>
+      <td><?php echo $persen_masuk ?></td>
       <td><?php echo $tepat ?></td>
       <td><?php echo $toleransi ?></td>
       <td><?php echo $terlambat ?></td>
+      <td><?php echo $persen_terlambat ?></td>
       <td><?php echo $pulang_awal ?></td>
       <td><?php echo $jml_datang ?></td>
       <td><?php echo $jml_pulang ?></td>

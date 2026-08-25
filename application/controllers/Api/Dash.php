@@ -313,9 +313,10 @@ class Dash extends CI_Controller
       $istirahat        = @$this->ModelAbsensi->get_Absensi_Istirahat($pegawai["idistirahat"], date("Y-m-d"))->row_array();
       $selesaiIstirahat = @$this->ModelAbsensi->get_Selesai_Istirahat($istirahat["idabsensi"])->row_array();
 
-      // Tambah nama_jenis ke setiap item jadwal
+      // Tambah nama_jenis dan kampus_ids ke setiap item jadwal
       $jadwalmasuk = array_map(function ($j) {
         $j->nama_jenis = ModelJadwalMasuk::nama_jenis($j->jenis);
+        $j->kampus_ids = $this->ModelJadwalMasuk->get_kampus_by_jadwal($j->idjadwal_masuk);
         return $j;
       }, $jadwalmasuk);
 
@@ -366,9 +367,10 @@ class Dash extends CI_Controller
       $istirahat        = @$this->ModelAbsensi->get_Absensi_Istirahat($pegawai["idistirahat"], date("Y-m-d"))->row_array();
       $selesaiIstirahat = @$this->ModelAbsensi->get_Selesai_Istirahat($istirahat["idabsensi"])->row_array();
 
-      // Tambah nama_jenis ke setiap item jadwal
+      // Tambah nama_jenis dan kampus_ids ke setiap item jadwal
       $jadwalmasuk = array_map(function ($j) {
         $j->nama_jenis = ModelJadwalMasuk::nama_jenis($j->jenis);
+        $j->kampus_ids = $this->ModelJadwalMasuk->get_kampus_by_jadwal($j->idjadwal_masuk);
         return $j;
       }, $jadwalmasuk);
 

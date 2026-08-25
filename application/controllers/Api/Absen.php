@@ -95,6 +95,17 @@ class Absen extends CI_Controller
       }
     }
 
+    // Validasi lokasi kampus sesuai jadwal masuk
+    if ($boleh_presensis == 1 && !empty($idjadwal)) {
+      $kampus_jadwal = $this->ModelJadwalMasuk->get_kampus_by_jadwal($idjadwal);
+      if (!empty($kampus_jadwal)) {
+        if (empty($idkampus) || !in_array($idkampus, $kampus_jadwal)) {
+          $boleh_presensis = 0;
+          $pesan_presensi = "Maaf, lokasi kampus tidak sesuai dengan jadwal masuk yang dipilih";
+        }
+      }
+    }
+
     $jam_jadwal = date("H:i:s", strtotime($this->input->post("jam_masuk")));
     $masuk = date("H:i:s");
     $diff = strtotime($masuk) - strtotime($jam_jadwal);
@@ -232,15 +243,37 @@ class Absen extends CI_Controller
   {
     $idabsensi = $this->input->post("idabsensi");
     $data_absen = $this->ModelAbsensi->get_Absensi($idabsensi)->row_array();
+
+    if (empty($data_absen)) {
+      $res = array(
+        'message' => "Data presensi tidak ditemukan",
+        'status' => 502
+      );
+      echo json_encode(array('response' => array(), 'message' => $res));
+      return;
+    }
+
     $data_jadwal = $this->ModelJadwalMasuk->get_edit($data_absen['idjadwal'])->row_array();
     $lat = $this->input->post("lat");
     $long = $this->input->post("long");
+    $idkampus = $this->input->post("idkampus") ?: @$data_absen['kampus_idkampus'];
     $jam_jadwal = date("H:i:s", strtotime($data_jadwal["jam_pulang"]));
     $masuk = date("H:i:s");
     $diff = strtotime($masuk) - strtotime($jam_jadwal);
     $data = array();
     $message = "Waktu Presensi Anda Melewati Batas";
     $boleh_absen = true;
+
+    // Cek kesesuaian lokasi kampus dengan jadwal masuk
+    if (!empty($data_absen['idjadwal'])) {
+      $kampus_jadwal = $this->ModelJadwalMasuk->get_kampus_by_jadwal($data_absen['idjadwal']);
+      if (!empty($kampus_jadwal)) {
+        if (empty($idkampus) || !in_array($idkampus, $kampus_jadwal)) {
+          $boleh_absen = false;
+          $message = "Maaf, lokasi kampus tidak sesuai dengan jadwal masuk";
+        }
+      }
+    }
 
     if (@$data_absen['jab_struktur'] == "MBC") { #Status 4 untuk WFH
       $kampus = $this->ModelKampus->get_edit("1")->row_array();

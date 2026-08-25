@@ -20,6 +20,7 @@ class Laporan extends CI_Controller
     $this->load->model("ModelLibur");
     $this->load->model("ModelJadwalMasuk");
     $this->load->model("ModelLembur");
+    $this->load->model("ModelTargetPresensi");
   }
 
   function sub_unit()

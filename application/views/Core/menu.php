@@ -288,6 +288,11 @@
           <i class="fas fa-calendar-day"></i><span class="hide-menu">Jadwal Masuk</span>
         </a>
       </li>
+      <li <?php if ($this->uri->segment(1) == 'TargetPresensi'): ?>class="active" <?php endif; ?>>
+        <a href="<?php echo base_url() . 'TargetPresensi'; ?>">
+          <i class="fas fa-calendar-day"></i><span class="hide-menu">Jadwal Jml Presensi</span>
+        </a>
+      </li>
     <?php endif; ?>
     <?php if (@$Menu_Roles['Libur']): ?>
       <li <?php if ($this->uri->segment(1) == 'Libur'): ?>class="active" <?php endif; ?>>

@@ -60,6 +60,7 @@
                             <a href="<?php echo base_url() ?>Laporan/RealtimeLocatioan/<?php echo $value->uuid; ?>" class="btn-floating btn-sm btn-info" data-toggle="tooltip" data-placement="top" data-original-title="Realtime Location"><i class="fas fa-location-arrow"></i></a>
                           </td>
                           <td>
+                            <a href="<?php echo base_url() ?>TargetPresensi/form/<?php echo $value->uuid; ?>" class="btn-floating btn-sm btn-success" data-toggle="tooltip" data-placement="top" data-original-title="Target Presensi"><i class="fas fa-bullseye"></i></a>
                             <a href="<?php echo base_url() ?>Pegawai/edit/<?php echo $value->uuid; ?>" class="btn-floating btn-sm btn-warning" data-toggle="tooltip" data-placement="top" data-original-title="EDIT"><i class="fas fa-pen"></i></a>
                             <a href="<?php echo base_url() ?>Pegawai/hapus/<?php echo $value->uuid; ?>" class="btn-floating btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fas fa-trash"></i></a>
                           </td>

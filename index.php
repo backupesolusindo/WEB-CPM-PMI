@@ -1,9 +1,3 @@
-<?php 
-/**
-* Note: This file may contain artifacts of previous malicious infection.
-* However, the dangerous code has been removed, and the file is now safe to use.
-*/
- ?>
 <?php
 
 /**
@@ -43,7 +37,6 @@
  * @filesource
  */
 
-
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -73,7 +66,7 @@ define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'developm
  */
 switch (ENVIRONMENT) {
 	case 'development':
-		error_reporting(-1);
+		error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
 		ini_set('display_errors', 1);
 		break;
 
@@ -118,8 +111,6 @@ $system_path = 'system';
  *
  * NO TRAILING SLASH!
  */
-require_once __DIR__ . '/vendor/autoload.php';
-
 $application_folder = 'application';
 
 /*
@@ -295,6 +286,4 @@ define('VIEWPATH', $view_folder . DIRECTORY_SEPARATOR);
  *
  * And away we go...
  */
-// File: index.php
-//require_once BASEPATH . '../vendor/autoload.php';
 require_once BASEPATH . 'core/CodeIgniter.php';

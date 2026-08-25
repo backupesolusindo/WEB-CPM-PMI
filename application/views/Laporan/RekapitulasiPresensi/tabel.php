@@ -20,27 +20,51 @@
     document.getElementById('btn-print-rekap').href = url;
   })();
 </script>
-<table id="table-print" class="display nowrap table table-hover table-striped table-bordered">
-  <thead>
+<style>
+  #table-print th {
+    vertical-align: middle !important;
+    text-align: center;
+    font-size: 11px;
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+  #table-print td {
+    vertical-align: middle !important;
+    font-size: 11px;
+    padding: 5px 4px;
+    white-space: nowrap;
+  }
+</style>
+<table id="table-print" class="display nowrap table table-hover table-striped table-bordered table-sm">
+  <thead class="bg-light">
     <tr>
-      <th>NO</th>
-      <th>NIP</th>
-      <th>Nama</th>
-      <th>Jabatan</th>
-      <th>Kegiatan</th>
-      <th>Cuti</th>
-      <th>Jml Presensi</th>
-      <th>Tepat Waktu</th>
-      <th>Toleransi</th>
-      <th>Terlambat</th>
-      <th>Pulang Awal</th>
-      <th>Jml Datang</th>
-      <th>Jml Pulang</th>
-      <th>Jml Libur</th>
-      <th>Tidak Valid</th>
-      <th>Total Jam</th>
-      <th>Over Time</th>
-      <th>Detail</th>
+      <th rowspan="2" class="text-center align-middle">NO</th>
+      <th rowspan="2" class="text-center align-middle">NIP</th>
+      <th rowspan="2" class="align-middle">Nama</th>
+      <th rowspan="2" class="align-middle">Jabatan</th>
+      <th rowspan="2" class="text-center align-middle">Kegiatan</th>
+      <th rowspan="2" class="text-center align-middle">Cuti</th>
+      <th colspan="3" class="text-center bg-info text-white">Kehadiran</th>
+      <th colspan="4" class="text-center bg-primary text-white">Ketepatan</th>
+      <th colspan="5" class="text-center bg-secondary text-white">Akumulasi</th>
+      <th colspan="2" class="text-center bg-dark text-white">Waktu Kerja</th>
+      <th rowspan="2" class="text-center align-middle">Aksi</th>
+    </tr>
+    <tr>
+      <th class="text-center">Target</th>
+      <th class="text-center">Hadir</th>
+      <th class="text-center">% Masuk</th>
+      <th class="text-center">Tepat</th>
+      <th class="text-center">Toleransi</th>
+      <th class="text-center">Telat</th>
+      <th class="text-center">% Telat</th>
+      <th class="text-center">Plg Awal</th>
+      <th class="text-center">Datang</th>
+      <th class="text-center">Pulang</th>
+      <th class="text-center">Libur</th>
+      <th class="text-center">Tdk Valid</th>
+      <th class="text-center">Total Jam</th>
+      <th class="text-center">Lembur</th>
     </tr>
   </thead>
   <tbody>
@@ -166,33 +190,59 @@
 
       // Jml Presensi = tepat waktu + toleransi + terlambat (sesuai detail rekap)
       $jumlah_presensi = $tepat + $toleransi + $terlambat;
+
+      // Hitung Target Masuk Bulanan dari target_presensi
+      $target_masuk = 0;
+      $target_cache = [];
+      $curr_target  = strtotime(date('Y-m-01', strtotime($tgl_mulai)));
+      $last_target  = strtotime(date('Y-m-01', strtotime($tgl_akhir)));
+      while ($curr_target <= $last_target) {
+        $thn = date('Y', $curr_target);
+        $bln = (int)date('n', $curr_target);
+        if (!isset($target_cache[$thn])) {
+          $target_cache[$thn] = $this->ModelTargetPresensi->get_by_pegawai_tahun($data->uuid, $thn);
+        }
+        if (!empty($target_cache[$thn])) {
+          $key = 'bulan_' . $bln;
+          $target_masuk += isset($target_cache[$thn][$key]) ? (int)$target_cache[$thn][$key] : 0;
+        }
+        $curr_target = strtotime('+1 month', $curr_target);
+      }
+
+      // Persentase Total Masuk dari Target Masuk Bulanan
+      $persen_masuk = ($target_masuk > 0) ? round(($jumlah_presensi / $target_masuk) * 100, 1) . '%' : '-';
+
+      // Persentase Keterlambatan dari Total Masuk
+      $persen_terlambat = ($jumlah_presensi > 0) ? round(($terlambat / $jumlah_presensi) * 100, 1) . '%' : '0%';
       ?>
       <tr>
-        <td><?php echo $no++ ?></td>
-        <td><?php echo $data->NIP ?></td>
+        <td class="text-center"><?php echo $no++ ?></td>
+        <td class="text-center"><?php echo $data->NIP ?></td>
         <td><?php echo $data->nama_pegawai ?></td>
         <td><?php echo $data->namajabatan ?></td>
-        <td><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
-        <td><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
-        <td><?php echo $jumlah_presensi ?></td>
-        <td><?php echo $tepat ?></td>
-        <td><?php echo $toleransi ?></td>
-        <td><?php echo $terlambat ?></td>
-        <td><?php echo $pulang_awal ?></td>
-        <td><?= $jml_datang ?></td>
-        <td><?= $jml_pulang ?></td>
-        <td><?php echo $libur ?></td>
-        <td><?php echo $tidak_valid ?></td>
-        <td><?php echo $total_jam . " Jam " . $total_menit . " Menit"; ?></td>
-        <td><?php
-            // Tampilkan overtime jika ada, jika tidak tampilkan 0
+        <td class="text-center"><?php echo $this->ModelLaporan->rekapKegiatan($data->uuid, $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
+        <td class="text-center"><?php echo $this->ModelPerizinan->get_riwayat($data->uuid, "1", $tgl_mulai, $tgl_akhir)->num_rows() ?></td>
+        <td class="text-center"><?php echo $target_masuk > 0 ? $target_masuk : '-' ?></td>
+        <td class="text-center font-weight-bold"><?php echo $jumlah_presensi ?></td>
+        <td class="text-center font-weight-bold text-primary"><?php echo $persen_masuk ?></td>
+        <td class="text-center"><?php echo $tepat ?></td>
+        <td class="text-center"><?php echo $toleransi ?></td>
+        <td class="text-center <?php echo $terlambat > 0 ? 'text-danger font-weight-bold' : '' ?>"><?php echo $terlambat ?></td>
+        <td class="text-center <?php echo $terlambat > 0 ? 'text-danger font-weight-bold' : '' ?>"><?php echo $persen_terlambat ?></td>
+        <td class="text-center"><?php echo $pulang_awal ?></td>
+        <td class="text-center"><?= $jml_datang ?></td>
+        <td class="text-center"><?= $jml_pulang ?></td>
+        <td class="text-center"><?php echo $libur ?></td>
+        <td class="text-center"><?php echo $tidak_valid ?></td>
+        <td class="text-center"><?php echo $total_jam . "j " . $total_menit . "m"; ?></td>
+        <td class="text-center"><?php
             if ($total_jam_over > 0 || $total_menit_over > 0) {
-              echo $total_jam_over . " Jam " . $total_menit_over . " Menit";
+              echo $total_jam_over . "j " . $total_menit_over . "m";
             } else {
-              echo "0 Jam 0 Menit";
+              echo "-";
             }
             ?></td>
-        <td>
+        <td class="text-center">
           <a href="<?php echo base_url() ?>Laporan/DetailRekap/<?php echo $data->uuid; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL"><i class="fas fa-info-circle"></i></a>
         </td>
       </tr>
