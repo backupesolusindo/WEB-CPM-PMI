@@ -53,6 +53,7 @@
                 <th>Jam Pulang</th>
                 <th>Status Ketepatan Waktu</th>
                 <th>Status Approval</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -139,6 +140,7 @@
                     <td align="center"><?php echo @$absenpulang['waktu'] ? date("H:i:s", strtotime($absenpulang['waktu'])) : '-'; ?></td>
                     <td align="center"><?php echo $status_waktu_str; ?></td>
                     <td align="center"><?php echo $status_approval_str; ?></td>
+                    <td><?php echo !empty($value->keterangan) ? htmlspecialchars($value->keterangan) : '-'; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

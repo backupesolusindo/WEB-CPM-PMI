@@ -179,12 +179,13 @@
         <thead>
             <tr>
                 <th width="4%">#</th>
-                <th width="12%">Tanggal</th>
-                <th width="12%">Jam Masuk</th>
-                <th width="17%">Istirahat</th>
-                <th width="12%">Jam Pulang</th>
-                <th width="14%">Status Waktu</th>
+                <th width="11%">Tanggal</th>
+                <th width="10%">Jam Masuk</th>
+                <th width="14%">Istirahat</th>
+                <th width="10%">Jam Pulang</th>
+                <th width="12%">Status Waktu</th>
                 <th width="14%">Status Approval</th>
+                <th width="25%">Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -275,6 +276,7 @@
                     <td class="text-center"><?php echo @$absenpulang['waktu'] ? date("H:i:s", strtotime($absenpulang['waktu'])) : '-'; ?></td>
                     <td class="text-center"><?php echo $status_waktu_label; ?></td>
                     <td class="text-center"><?php echo $status_approval; ?></td>
+                    <td><?php echo !empty($value->keterangan) ? htmlspecialchars($value->keterangan) : '-'; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -419,9 +421,9 @@
 
 </body>
 <script>
-    $(document).ready(function() {
+    window.onload = function() {
         window.print();
-    });
+    };
 </script>
 
 </html>
