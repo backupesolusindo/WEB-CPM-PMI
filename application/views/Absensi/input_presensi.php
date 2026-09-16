@@ -66,6 +66,12 @@
                    <input type="text" name="jam_pulang" class="form-control waktu-input inputnone" value="<?php echo date("H:i:s") ?>">
                  </div>
                </div>
+               <div class="col-md-12">
+                 <div class="form-group">
+                   <label>Keterangan :</label>
+                   <textarea name="keterangan" class="form-control" rows="2" placeholder="Keterangan presensi (opsional)"></textarea>
+                 </div>
+               </div>
              </div>
              <div class="form-actions" >
                  <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Simpan</button>

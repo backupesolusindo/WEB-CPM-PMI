@@ -108,6 +108,10 @@ google.maps.event.addDomListener(window, 'load', initialize);
               <td>Tanggal</td>
               <td>: <?php echo date("d-m-Y", strtotime($absensi['waktu'])) ?></td>
             </tr>
+            <tr>
+              <td>Keterangan</td>
+              <td>: <?php echo !empty($absensi['keterangan']) ? htmlspecialchars($absensi['keterangan']) : '-'; ?></td>
+            </tr>
           </table>
         </div>
         <div class="col-3" >

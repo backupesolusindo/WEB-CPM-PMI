@@ -252,7 +252,12 @@
                     <?php endif; ?>
                   </td>
                   <td><?php echo date("d-m-Y", strtotime($value->waktu)) ?></td>
-                  <td><?php echo date("H:i:s", strtotime($value->waktu)) ?></td>
+                  <td>
+                    <?php echo date("H:i:s", strtotime($value->waktu)) ?>
+                    <?php if (!empty($value->keterangan)): ?>
+                      <br><small class="text-info"><i class="fas fa-comment-alt"></i> <?php echo htmlspecialchars($value->keterangan); ?></small>
+                    <?php endif; ?>
+                  </td>
                   <td><?php echo $jam_istirahat ?></td>
                   <td>
                     <?php if (@$absenpulang['waktu'] == null) {

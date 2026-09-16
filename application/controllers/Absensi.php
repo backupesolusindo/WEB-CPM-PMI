@@ -66,6 +66,7 @@ class Absensi extends CI_Controller
       'longitude'     => "113.722460",
       'jenis_absen'   => $jenis_absen,
       'jenis_tempat'  => $this->input->post("jenis_tempat"),
+      'keterangan'    => $this->input->post("keterangan"),
       'foto'          => $foto
     );
     $get_datang = $this->ModelAbsensi->cek_Absensi($this->input->post("uuid"), date("Y-m-d", strtotime($this->input->post("tanggal"))));

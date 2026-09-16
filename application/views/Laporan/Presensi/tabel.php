@@ -87,6 +87,7 @@ if (!empty($libur_pegawai_list)) {
       <th>Waktu Pulang</th>
       <th>Status Datang</th>
       <th>Lokasi Presensi</th>
+      <th>Keterangan</th>
       <th>Detail</th>
     </tr>
   </thead>
@@ -148,6 +149,7 @@ if (!empty($libur_pegawai_list)) {
             else echo 'Mobile Unit';
             ?>
           </td>
+          <td><?php echo !empty($value->keterangan) ? htmlspecialchars($value->keterangan) : '-'; ?></td>
           <td>
             <a href="<?php echo base_url(); ?>Laporan/DetailLaporanPresensi/<?php echo $value->idabsensi; ?>" class="btn-floating btn-sm btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="DETAIL">
               <i class="fas fa-info-circle"></i>
@@ -184,6 +186,7 @@ if (!empty($libur_pegawai_list)) {
             </span>
           </td>
           <td>-</td>
+          <td><?php echo !empty($lp->keterangan) ? htmlspecialchars($lp->keterangan) : '-'; ?></td>
           <td>-</td>
         </tr>
     <?php
@@ -248,6 +251,7 @@ if (!empty($libur_pegawai_list)) {
             <th>Waktu Datang</th>
             <th>Status Datang</th>
             <th>Lokasi Presensi</th>
+            <th>Keterangan</th>
           </tr>
         </thead>
         <tbody>
@@ -281,6 +285,7 @@ if (!empty($libur_pegawai_list)) {
                   elseif ($value->jenis_tempat == 2) echo 'Luar Kantor';
                   else echo 'Mobile Unit';
                   ?></td>
+              <td><?php echo !empty($value->keterangan) ? htmlspecialchars($value->keterangan) : '-'; ?></td>
             </tr>
           <?php endforeach; ?>
 
@@ -300,6 +305,7 @@ if (!empty($libur_pegawai_list)) {
                   <?php endif; ?>
                 </td>
                 <td>-</td>
+                <td><?php echo !empty($lp->keterangan) ? htmlspecialchars($lp->keterangan) : '-'; ?></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

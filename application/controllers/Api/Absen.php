@@ -130,6 +130,7 @@ class Absen extends CI_Controller
           'jenis_absen' => $this->input->post("jenis_absen"),
           'jenis_tempat' => $this->input->post("jenis_tempat"),
           'kampus_idkampus' => @$this->input->post("idkampus"),
+          'keterangan' => $this->input->post("keterangan"),
           'foto' => $patch . $this->upload->data()['file_name']
         );
         if ($this->db->insert("absensi", $data)) {

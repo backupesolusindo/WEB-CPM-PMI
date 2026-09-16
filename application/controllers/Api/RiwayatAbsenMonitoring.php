@@ -87,6 +87,7 @@ class RiwayatAbsenMonitoring extends CI_Controller
             'waktu_istirahat' => $jam_istirahat,
             'status_tepat'    => $status_tepat,
             'k_tepat'         => $k_tepat,
+            'keterangan'      => $value->keterangan ?? "",
           );
           if ($status_waktu != null || $status_waktu != "") {
             if ($status_waktu == $status_tepat) {
@@ -181,6 +182,7 @@ class RiwayatAbsenMonitoring extends CI_Controller
             'waktu_istirahat' => $jam_istirahat,
             'status_tepat'    => $status_tepat,
             'k_tepat'         => $k_tepat,
+            'keterangan'      => $value->keterangan ?? "",
           );
           if ($status_waktu != null || $status_waktu != "") {
             if ($status_waktu == $status_tepat) {

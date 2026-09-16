@@ -175,6 +175,7 @@ class Approval extends CI_Controller{
         'waktu_istirahat' => $jam_istirahat,
         'status_tepat'    => $status_tepat,
         'k_tepat'         => $k_tepat,
+        'keterangan'      => $value->keterangan ?? "",
         );
         if ($value->jenis == "LABORATORIUM" && $kep->jenis == "JURUSAN") {
         }else {

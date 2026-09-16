@@ -97,7 +97,8 @@ class RiwayatAbsen extends CI_Controller
           'waktu_istirahat' => $jam_istirahat,
           'limit_durasi'    => $limit_durasi,
           'time_durasi'     => $time_durasi,
-          'ket_durasi'      => $ket_durasi
+          'ket_durasi'      => $ket_durasi,
+          'keterangan'      => $value->keterangan ?? ""
         );
         array_push($data, $ar);
       }
