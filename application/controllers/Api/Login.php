@@ -32,6 +32,7 @@ class Login extends CI_Controller
             'nama' => "",
             'unit' => "",
             'spesial' => 0,
+            'multi_device' => 0,
           ),
           'message' => array(
             'message' => "NIP/NIK/Email dan Password harus diisi",
@@ -55,6 +56,7 @@ class Login extends CI_Controller
         'nama'  => "",
         'unit'  => "",
         'spesial'  => 0,
+        'multi_device' => 0,
       );
 
       if ($cek->num_rows() > 0) {
@@ -75,6 +77,7 @@ class Login extends CI_Controller
               'unit'  => $data_login['unit'],
               'token' => $token,
               'spesial' => $data_login['spesial'],
+              'multi_device' => isset($data_login['multi_device']) ? (int)$data_login['multi_device'] : 0,
             );
 
             $kampus = $this->ModelKampus->get_edit("1")->row_array();
@@ -91,7 +94,8 @@ class Login extends CI_Controller
               );
             } else {
               // uuid 123123 id reviewer
-              if ($data_login['status_login'] == 0 || $data_login['uuid'] == "123123") {
+              $is_multi_device = (isset($data_login['multi_device']) && $data_login['multi_device'] == 1);
+              if ($data_login['status_login'] == 0 || $is_multi_device || $data_login['uuid'] == "123123") {
                 // Update berdasarkan UUID, bukan NIP
                 // Karena user bisa login dengan NIP/NIK/Email
                 $this->db->where("uuid", $data_login['uuid']);
