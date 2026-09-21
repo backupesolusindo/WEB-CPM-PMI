@@ -230,4 +230,91 @@ class ModelPegawai extends CI_Model
   {
     return password_verify($password, $hashed_password);
   }
+
+  /**
+   * Parse token dari database (bisa berupa JSON array, comma-separated, atau single string)
+   *
+   * @param string|null $raw_tokens
+   * @return array
+   */
+  public function parse_tokens($raw_tokens)
+  {
+    if (empty($raw_tokens)) {
+      return array();
+    }
+    // Coba decode JSON array
+    $decoded = json_decode($raw_tokens, true);
+    if (is_array($decoded)) {
+      return array_values(array_filter(array_map('trim', $decoded)));
+    }
+    // Coba comma-separated
+    if (strpos($raw_tokens, ',') !== false) {
+      return array_values(array_filter(array_map('trim', explode(',', $raw_tokens))));
+    }
+    // Single plain token
+    $trimmed = trim($raw_tokens);
+    return !empty($trimmed) ? array($trimmed) : array();
+  }
+
+  /**
+   * Menambahkan token baru ke daftar token (maksimal devices diatur oleh $max_devices, default 2)
+   * Jika melebihi limit, token terlama akan dihapus (FIFO)
+   *
+   * @param string|null $current_tokens
+   * @param string $new_token
+   * @param int $max_devices 0 untuk unlimited, default 2
+   * @return string JSON array string
+   */
+  public function add_token($current_tokens, $new_token, $max_devices = 2)
+  {
+    $tokens = $this->parse_tokens($current_tokens);
+    $new_token = trim($new_token);
+    if (empty($new_token)) {
+      return json_encode($tokens);
+    }
+
+    // Hapus jika sudah ada untuk menghindari duplikat dan menaruh token terbaru di akhir
+    $tokens = array_values(array_diff($tokens, array($new_token)));
+    $tokens[] = $new_token;
+
+    // Batasi jumlah device jika $max_devices > 0
+    if ($max_devices > 0 && count($tokens) > $max_devices) {
+      $tokens = array_slice($tokens, -$max_devices);
+    }
+
+    return json_encode($tokens);
+  }
+
+  /**
+   * Menghapus token tertentu dari daftar token
+   *
+   * @param string|null $current_tokens
+   * @param string $token_to_remove
+   * @return string JSON array string
+   */
+  public function remove_token($current_tokens, $token_to_remove)
+  {
+    $tokens = $this->parse_tokens($current_tokens);
+    $token_to_remove = trim($token_to_remove);
+    $tokens = array_values(array_diff($tokens, array($token_to_remove)));
+    return json_encode($tokens);
+  }
+
+  /**
+   * Memeriksa apakah token ada dalam daftar token yang valid
+   *
+   * @param string|null $current_tokens
+   * @param string $check_token
+   * @return bool
+   */
+  public function is_token_valid($current_tokens, $check_token)
+  {
+    $tokens = $this->parse_tokens($current_tokens);
+    $check_token = trim($check_token);
+    if (empty($check_token)) {
+      return false;
+    }
+    return in_array($check_token, $tokens);
+  }
 }
+

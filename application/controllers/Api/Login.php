@@ -93,25 +93,23 @@ class Login extends CI_Controller
                 'status' => 500
               );
             } else {
-              // uuid 123123 id reviewer
-              $is_multi_device = (isset($data_login['multi_device']) && $data_login['multi_device'] == 1);
-              if ($data_login['status_login'] == 0 || $is_multi_device || $data_login['uuid'] == "123123") {
-                // Update berdasarkan UUID, bukan NIP
-                // Karena user bisa login dengan NIP/NIK/Email
-                $this->db->where("uuid", $data_login['uuid']);
-                $this->db->update("pegawai", array('status_login' => "1", 'token' => $token));
-                $res = array(
-                  'message' => "Berhasil Login",
-                  'kampus'  => $kampus,
-                  'status' => 200
-                );
-              } else {
-                $res = array(
-                  'message' => "Anda Sudah Login Dengan Device lain",
-                  'kampus'  => $kampus,
-                  'status' => 500
-                );
-              }
+              // Dukungan login multi device (maksimal 2 device secara default, atau unlimited jika multi_device = 1)
+              $is_multi_device = (isset($data_login['multi_device']) && $data_login['multi_device'] == 1) || ($data_login['uuid'] == "123123");
+              $max_devices = $is_multi_device ? 0 : 2;
+
+              $updated_tokens = $this->ModelPegawai->add_token($data_login['token'], $token, $max_devices);
+
+              $this->db->where("uuid", $data_login['uuid']);
+              $this->db->update("pegawai", array(
+                'status_login' => "1",
+                'token' => $updated_tokens
+              ));
+
+              $res = array(
+                'message' => "Berhasil Login",
+                'kampus'  => $kampus,
+                'status' => 200
+              );
             }
           } else {
             $res = array(
@@ -219,15 +217,21 @@ class Login extends CI_Controller
   {
     $uuid = $this->input->post("uuid");
     $token = $this->input->post("token");
-    $this->db->where("uuid", $uuid);
-    if ($this->db->update("pegawai", array('token' => $token))) {
+    $peg = $this->ModelPegawai->edit($uuid);
+    if ($peg->num_rows() > 0) {
+      $pegawai = $peg->row_array();
+      $is_multi = (isset($pegawai['multi_device']) && $pegawai['multi_device'] == 1) || ($pegawai['uuid'] == "123123");
+      $max_devices = $is_multi ? 0 : 2;
+      $updated_tokens = $this->ModelPegawai->add_token($pegawai['token'], $token, $max_devices);
+      $this->db->where("uuid", $uuid);
+      $this->db->update("pegawai", array('token' => $updated_tokens, 'status_login' => "1"));
       $res = array(
         'message' => "Set Token Berhasil",
         'status' => 200
       );
     } else {
       $res = array(
-        'message' => "Anda Sudah Login Dengan Device lain",
+        'message' => "Pegawai tidak ditemukan",
         'status' => 500
       );
     }
@@ -326,16 +330,33 @@ class Login extends CI_Controller
   public function aksi_logout()
   {
     $uuid = $this->input->post("uuid");
-    $this->db->where('uuid', $uuid);
-    if ($this->db->update('pegawai', array('status_login' => 0))) {
+    $token = $this->input->post("token");
+    $peg = $this->ModelPegawai->edit($uuid);
+    if ($peg->num_rows() > 0) {
+      $pegawai = $peg->row_array();
+      if (!empty($token)) {
+        $updated_tokens = $this->ModelPegawai->remove_token($pegawai['token'], $token);
+        $remaining = $this->ModelPegawai->parse_tokens($updated_tokens);
+        $status_login = count($remaining) > 0 ? 1 : 0;
+        $this->db->where('uuid', $uuid);
+        $this->db->update('pegawai', array(
+          'status_login' => $status_login,
+          'token' => $updated_tokens
+        ));
+      } else {
+        $this->db->where('uuid', $uuid);
+        $this->db->update('pegawai', array('status_login' => 0, 'token' => null));
+      }
       $res = array(
         'message' => "Berhasil Logout",
         'status' => 200
       );
     } else {
+      $this->db->where('uuid', $uuid);
+      $this->db->update('pegawai', array('status_login' => 0, 'token' => null));
       $res = array(
-        'message' => "Mohon Untuk Cek Koneksi Internet Anda",
-        'status' => 500
+        'message' => "Berhasil Logout",
+        'status' => 200
       );
     }
     echo json_encode(array('message' => $res));

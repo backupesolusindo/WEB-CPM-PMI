@@ -122,7 +122,7 @@ class Pegawai extends CI_Controller
   function reset_login($id)
   {
     $this->db->where('uuid', $id);
-    if ($this->db->update('pegawai', array('status_login' => 0))) {
+    if ($this->db->update('pegawai', array('status_login' => 0, 'token' => null))) {
       $this->session->set_flashdata('notifJS', $this->core->NotifSuccess("Selamat Berhasil Reset Login "));
       redirect('Pegawai');
     } else {

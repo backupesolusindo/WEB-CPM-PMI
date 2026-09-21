@@ -99,8 +99,38 @@ class Core
 
   public function curlNotif($token, $title, $body)
   {
+    if (empty($token)) {
+      return false;
+    }
+
+    if (is_array($token)) {
+      $tokens = $token;
+    } else {
+      $decoded = json_decode($token, true);
+      if (is_array($decoded)) {
+        $tokens = $decoded;
+      } else if (strpos($token, ',') !== false) {
+        $tokens = explode(',', $token);
+      } else {
+        $tokens = array($token);
+      }
+    }
+
+    $tokens = array_values(array_filter(array_map('trim', $tokens)));
+    if (empty($tokens)) {
+      return false;
+    }
+
     $curl = curl_init();
     $key = "AAAA1tAbue0:APA91bHuCAkaPPIgDfaNjJI9XKRmGwf0fqRDsfz1XFdmwoSQwPUI1k2SBfFXJCiUV5QZ0sW2-a2_7DMe8k2tmHibUe78HexTZYrU8CjU8t16zF2d7kBx6w3yyLDYg-6GkaCENmkktgWn";
+    $payload = array(
+      "registration_ids" => $tokens,
+      "notification" => array(
+        "title" => $title,
+        "body" => $body
+      )
+    );
+
     curl_setopt_array($curl, array(
       CURLOPT_URL => "https://fcm.googleapis.com/fcm/send",
       CURLOPT_RETURNTRANSFER => true,
@@ -109,17 +139,11 @@ class Core
       CURLOPT_TIMEOUT => 30,
       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST => "POST",
-      CURLOPT_POSTFIELDS => "{\n
-      \"registration_ids\":[\"$token\"],\n
-      \"notification\": {\n
-        \"title\":\"$title\",\n
-        \"body\":\"$body\"\n
-      }\n}",
+      CURLOPT_POSTFIELDS => json_encode($payload),
       CURLOPT_HTTPHEADER => array(
         "authorization: key=" . $key,
         "cache-control: no-cache",
-        "content-type: application/json",
-        "postman-token: 144e811b-851a-94db-1751-2373bab60f0f"
+        "content-type: application/json"
       ),
     ));
 

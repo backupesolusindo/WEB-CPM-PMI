@@ -32,8 +32,7 @@ class Dash extends CI_Controller
     $peg = $this->ModelPegawai->edit($uuid);
     if ($peg->num_rows() > 0) {
       $pegawai = $peg->row_array();
-      // die(json_encode($pegawai)); 
-      if ($pegawai['token'] != $token) {
+      if (!$this->ModelPegawai->is_token_valid($pegawai['token'], $token)) {
         $res = array(
           'message' => "Akun Anda sudah login di device lain, akun ini akan otomatis logout",
           'status' => 401
