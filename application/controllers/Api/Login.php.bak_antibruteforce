@@ -19,29 +19,6 @@ class Login extends CI_Controller
       // Log request untuk debugging
       log_message('info', 'Login attempt - POST data: ' . json_encode($this->input->post()));
 
-      // Proteksi Brute Force: Cek apakah sesi login API sedang dikunci sementara
-      $lockout_time = $this->session->userdata('lockout_time_api');
-      if ($lockout_time && time() < $lockout_time) {
-        $sisa = ceil(($lockout_time - time()) / 60);
-        $kampus_default = $this->ModelKampus->get_edit("1")->row_array();
-        echo json_encode(array(
-          'response' => array(
-            'uuid' => "",
-            'nip' => "",
-            'nama' => "",
-            'unit' => "",
-            'spesial' => 0,
-            'multi_device' => 0,
-          ),
-          'message' => array(
-            'message' => "Terlalu banyak percobaan login gagal. Silakan tunggu {$sisa} menit lagi.",
-            'kampus'  => $kampus_default,
-            'status' => 429
-          )
-        ));
-        return;
-      }
-
       $nip = trim($this->input->post('nip'));
       $password = $this->input->post('password');
       $token = $this->input->post('token');
@@ -85,7 +62,6 @@ class Login extends CI_Controller
       if ($cek->num_rows() > 0) {
         $data_login = $cek->row_array();
         if ($data_login['NIP'] == null) {
-          $this->handle_failed_login();
           $res = array(
             'message' => "Maaf Anda Salah NIP/NIK/Email Dan Password",
             'status' => 3
@@ -94,10 +70,6 @@ class Login extends CI_Controller
 
           $pw_valid = $data_login['password'];
           if (password_verify($password, $pw_valid)) {
-            // Login berhasil -> Reset counter percobaan gagal
-            $this->session->unset_userdata('failed_attempts_api');
-            $this->session->unset_userdata('lockout_time_api');
-
             $data_pegawai = array(
               'uuid'      => $data_login['uuid'],
               'nip'      => $data_login['NIP'],
@@ -140,7 +112,6 @@ class Login extends CI_Controller
               );
             }
           } else {
-            $this->handle_failed_login();
             $res = array(
               'message' => "Maaf Anda Salah Password",
               'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
@@ -149,7 +120,6 @@ class Login extends CI_Controller
           }
         }
       } else {
-        $this->handle_failed_login();
         $res = array(
           'message' => "Maaf NIP/NIK/Email tidak ditemukan",
           'kampus'  => $this->ModelKampus->get_edit("1")->row_array(),
@@ -390,17 +360,5 @@ class Login extends CI_Controller
       );
     }
     echo json_encode(array('message' => $res));
-  }
-
-  private function handle_failed_login()
-  {
-    sleep(1); // Delay 1 detik untuk memutus pola request cepat (anti brute force)
-    $attempts = ($this->session->userdata('failed_attempts_api') ?: 0) + 1;
-    $this->session->set_userdata('failed_attempts_api', $attempts);
-
-    // Kunci selama 5 menit jika gagal 5 kali berturut-turut
-    if ($attempts >= 5) {
-      $this->session->set_userdata('lockout_time_api', time() + (5 * 60));
-    }
   }
 }

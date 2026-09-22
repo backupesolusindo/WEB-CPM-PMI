@@ -102,14 +102,6 @@
   $(document).ready(function(e) {
     $("#FormLogin").on('submit', function(e) {
       e.preventDefault();
-      var submitBtn = $(this).find('input[type="submit"]');
-
-      // Cegah multi-submit / spam click
-      if (submitBtn.prop('disabled')) {
-        return false;
-      }
-      submitBtn.prop('disabled', true).val('MEMPROSES...');
-
       var username = $('#username').val();
       var password = $('#password').val();
       $.ajax({
@@ -129,30 +121,16 @@
           } else {
             $('#login-form').css("transform", "");
           }
-        },
-        complete: function() {
-          submitBtn.prop('disabled', false).val('LOG IN');
+          // alert(username+" | "+password);
         },
         error: function(e) {
-          submitBtn.prop('disabled', false).val('LOG IN');
-          $('#FormLogin').removeClass('animated flipOutX');
-          $('.loader').css("display", "none");
-          alert('Terjadi kesalahan koneksi ke server.');
+          alert(e);
         },
         success: function(response) {
-          // Tangani respon terkunci (rate limit / brute force lock)
-          if (response.indexOf("blocked:") === 0) {
-            $('#FormLogin').removeClass('animated flipOutX');
-            $('.loader').css("display", "none");
-            alert(response.replace("blocked:", "").trim());
-            return;
-          }
-
+          // alert(response);
           if (response == "u") {
-            $('#FormLogin').removeClass('animated flipOutX');
-            $('.loader').css("display", "none");
-            $('.badge-username').css("display", "block");
-            $('.username').addClass('input-fail');
+            $('#FormLogin').addClass('animated flipOutX');
+            $('#FormLogin').css("display", "block");
 
           } else if (response == "p") {
             $('#FormLogin').removeClass('animated flipOutX');
@@ -171,6 +149,8 @@
           } else {
             window.location = response;
           }
+
+
         }
       });
     });
