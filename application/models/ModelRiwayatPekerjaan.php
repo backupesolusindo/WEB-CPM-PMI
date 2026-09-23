@@ -21,8 +21,7 @@ class ModelRiwayatPekerjaan extends CI_Model
     {
         $this->db->where('pekerjaan_idpekerjaan', $pekerjaan_id);
         $this->db->where('pegawai_idpegawai', $pegawai_id);
-        $this->db->where('MONTH(created_at)', date('m')); // Cek bulan
-        $this->db->where('DAY(created_at)', date('d'));   // Cek tanggal
+        $this->db->where('DATE(created_at)', date('Y-m-d')); // Cek tanggal hari ini (Y-m-d)
         return $this->db->count_all_results('riwayat_pekerjaan') > 0;
     }
 

@@ -17,18 +17,23 @@ class Pekerjaan extends CI_Controller
         try {
             // Ambil data pekerjaan
             if ($uuid != null) {
-                $data_pegawai = $this->ModelPegawai->edit($uuid)->row();
-                $jabatan = $data_pegawai->jab_struktur;
+                $pegawai_query = $this->ModelPegawai->edit($uuid);
+                $data_pegawai = $pegawai_query ? $pegawai_query->row() : null;
+                $jabatan = $data_pegawai ? $data_pegawai->jab_struktur : null;
                 $data = $this->ModelPekerjaan->get_all($jabatan);
-            }else{
+                // Jika tidak ada pekerjaan khusus untuk jabatan ini, ambil semua pekerjaan umum
+                if (empty($data)) {
+                    $data = $this->ModelPekerjaan->get_all();
+                }
+            } else {
                 $data = $this->ModelPekerjaan->get_all();
             }
             if (!empty($data)) {
                 return $this->output_json(200, 'Data ditemukan', $data, 200);
             }
-            return $this->output_json(false, 'Data pekerjaan tidak ditemukan', null, 404);
+            return $this->output_json(200, 'Data pekerjaan tidak ditemukan', [], 200);
         } catch (Exception $e) {
-            return $this->output_json(false, 'Terjadi kesalahan: ' . $e->getMessage(), null, 500);
+            return $this->output_json(false, 'Terjadi kesalahan: ' . $e->getMessage(), [], 500);
         }
     }
 

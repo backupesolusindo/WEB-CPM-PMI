@@ -56,7 +56,14 @@ class RiwayatPekerjaan extends CI_Controller
 
     public function get_riwayat()
     {
-        $pegawai_id = $this->input->get('pegawai_idpegawai');
+        $pegawai_id = $this->input->get_post('pegawai_idpegawai');
+        if (empty($pegawai_id)) {
+            $input = json_decode(file_get_contents("php://input"), true);
+            if (!empty($input['pegawai_idpegawai'])) {
+                $pegawai_id = $input['pegawai_idpegawai'];
+            }
+        }
+
         try {
             $data = $this->ModelRiwayatPekerjaan->get_today_tasks(null, null, null, $pegawai_id);
             if (!empty($data)) {
@@ -67,19 +74,20 @@ class RiwayatPekerjaan extends CI_Controller
                     'data'    => $data
                 ];
             } else {
-                $status_code = 404;
+                $status_code = 200;
                 $response = [
-                    'status' => 404,
-                    'error'  => 'Tidak ada data riwayat untuk hari ini',
-                    'data'   => [] // Konsisten dengan format respons
+                    'status'  => 200,
+                    'message' => 'Tidak ada data riwayat untuk hari ini',
+                    'error'   => 'Tidak ada data riwayat untuk hari ini',
+                    'data'    => [] // Konsisten dengan format respons
                 ];
             }
         } catch (Exception $e) {
             $status_code = 500;
             $response = [
-                'status' => $status_code,
-                'error'  => 'Terjadi kesalahan pada server'
-                // Jangan tampilkan $e->getMessage() di produksi
+                'status'  => $status_code,
+                'error'   => 'Terjadi kesalahan pada server',
+                'message' => 'Terjadi kesalahan pada server'
             ];
         }
 
@@ -147,9 +155,13 @@ class RiwayatPekerjaan extends CI_Controller
             ];
         } catch (Exception $e) {
             $status_code = $e->getCode() ?: 500;
+            if ($status_code < 100 || $status_code > 599) {
+                $status_code = 500;
+            }
             $response = [
-                'status' => $status_code,
-                'error'  => $e->getMessage()
+                'status'  => $status_code,
+                'error'   => $e->getMessage(),
+                'message' => $e->getMessage()
             ];
         }
 
@@ -198,9 +210,13 @@ class RiwayatPekerjaan extends CI_Controller
             }
         } catch (Exception $e) {
             $status_code = $e->getCode() ?: 500;
+            if ($status_code < 100 || $status_code > 599) {
+                $status_code = 500;
+            }
             $response = [
-                'status' => $status_code,
-                'error' => $e->getMessage()
+                'status'  => $status_code,
+                'error'   => $e->getMessage(),
+                'message' => $e->getMessage()
             ];
         }
 
